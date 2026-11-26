@@ -69,13 +69,14 @@ def question_(m):
     ym = H * m.lerp(0.40, 0.475)                # centre line of the hook's return
     y_stem = m.pdot + m.lerp(0.105, 0.08) * H   # heavier weights need the room for the stem
     rx, ry = (xr - xl) * 0.5, H * 0.19
-    # hook: terminal at the upper left, over the top, down the right side and
-    # back to the middle, where it lands on the stem at a right angle
-    sk = round_path([(xl, yt - ry * 0.9), (xl, yt), (xr, yt), (xr, ym), (xs, ym)],
-                    rx, ry, m.k, radii=[(rx * 0.95, ry * 0.85), (rx, ry), (xr - xs, H * 0.17)])
+    # hook: terminal at the upper left, over the top, down the right side, then
+    # one S-bend back to the middle and down into the short stem
+    hx = (xr - xs) / 2
+    sk = round_path([(xl, yt - ry * 0.9), (xl, yt), (xr, yt), (xr, ym), (xs, ym), (xs, y_stem)],
+                    rx, ry, 0.60, radii=[(rx * 0.95, ry * 0.85), (rx, ry), (hx, H * 0.15), (hx, min(H * 0.15, (ym - y_stem) * 0.9))])
     s = stroke(sk, a, b)
     s = s - rect(-BIG, H * 0.60, xc - 0.05 * m.W, H * 0.765)
-    return s | rect(xs - a, y_stem, xs + a, ym + b) | pdot(m, xs, 0)
+    return s | pdot(m, xs, 0)
 
 
 # -- quotes ----------------------------------------------------------------
@@ -97,7 +98,8 @@ def quotedbl_(m):
 @g("`")
 def grave_(m):
     # wide and clearly slanted, so that it cannot be taken for ' at small sizes
-    return slash(m.xc + 0.165 * m.W, m.asc - 0.27 * m.cap, m.xc - 0.185 * m.W, m.asc, m.a * 1.0, m.b)
+    return slash(m.xc + 0.175 * m.W, m.asc - 0.295 * m.cap, m.xc - 0.19 * m.W, m.asc,
+                 m.a * m.lerp(1.42, 1.0), m.b * m.lerp(1.28, 1.0))   # heavier in the light weights; Bold must stay clear of '
 
 
 # -- brackets --------------------------------------------------------------
@@ -108,12 +110,15 @@ def parenleft_(m):
     c = (m.btop + m.bbot) / 2
     half = (m.btop - m.bbot) / 2
     xl = 0.295 * m.W + pa
-    s = half * 0.10
-    RX, RY = 0.50 * m.W, (half - s) * 1.10
+    # one continuous, round curve: the bowls of this family are squared, but a
+    # squared parenthesis reads as a bracket
+    s = half * 0.02
+    RX, RY = 0.41 * m.W, (half - s) * 1.07
+    k = 0.56
     sk = Skel(xl + RX, c + s + RY)
-    sk.arc(xl, c + s, "h", m.k)
+    sk.arc(xl, c + s, "h", k)
     sk.line(xl, c - s)
-    sk.arc(xl + RX, c - s - RY, "v", m.k)
+    sk.arc(xl + RX, c - s - RY, "v", k)
     return stroke(sk, pa, pb) & rect(-BIG, m.bbot, BIG, m.btop)
 
 

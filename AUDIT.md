@@ -45,7 +45,7 @@ thousandths of the em. Reference fonts (JetBrains Mono 400, Fira Code 400, Iosev
 | --- | --- | --- |
 | Punctuation too small | period 124 wide vs 166 / 176 / 156; comma 156×294 vs 210×311 …; quotes 80×241 vs 97×300 … | dots +21 %, quotes +17 % wider and +12 % taller |
 | Asterisk too small | 344×360 vs 530×516 / 503×480 / 424×400 | 404×426 |
-| Parentheses too flat | 180 wide vs 300 / 302 / 295; hard to tell from `|` and `{` at 12 px | 274 wide |
+| Parentheses too flat | 180 wide vs 300 / 302 / 295; hard to tell from `|` and `{` at 12 px | 286 wide, one round curve |
 | Braces narrow, blunt beak | 285 wide vs 430 / 334 / 316 | 336 wide, sharper middle notch |
 | Brackets narrow | 213 vs 245 / 250 / 276 | 240 |
 | `+ =` slightly small | 410 vs 470 / 469 | 438 |
@@ -96,7 +96,7 @@ weight, threshold 15 %), so `D` got tighter corners.
 4. Requested ligatures and alternates, with shaping tests. **Done.**
 5. Terminal symbols that need no third-party glyphs (Powerline). **Done.**
 6. Repository scaffolding, CI, assets. **Done locally; nothing has been published.**
-7. Variable font. **Investigated, not shipped:** 92 of 645 glyphs change their point structure between
+7. Variable font. **Investigated, not shipped:** 95 of 645 glyphs change their point structure between
    weights (`python scripts/check-interpolation.py --list`).
 8. Italics. **Not started.** A sheared roman would not meet the bar, a drawn italic is a release of its own.
 9. Rendering checks on Windows and macOS. **Open**; needs real machines.
