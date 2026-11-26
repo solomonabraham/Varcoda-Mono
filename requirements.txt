@@ -1,0 +1,11 @@
+# Build (scripts/build-fonts.py).  Exact versions used for the released files;
+# newer versions should work, but byte-identical output is only promised for these.
+fonttools==4.67.0
+ufoLib2==0.19.1
+ufo2ft==3.11.0
+skia-pathops==0.9.2
+ttfautohint-py==0.6.1      # TrueType hinting; without it the TTFs are built unhinted
+brotli==1.2.1              # WOFF2 web fonts; without it they are skipped
+
+# Optional: PostScript hints for the OTF builds (otherwise they are unhinted)
+# afdko==5.0.1

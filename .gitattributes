@@ -1,0 +1,11 @@
+* text=auto eol=lf
+*.ttf   binary
+*.otf   binary
+*.woff2 binary
+*.png   binary
+*.zip   binary
+# generated files: keep them out of language statistics and collapse them in diffs
+sources/**      linguist-generated=true
+fonts/**        linguist-generated=true
+assets/*.svg    linguist-generated=true
+tests/rendering-tests/index.html linguist-generated=true

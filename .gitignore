@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# build and scratch
+build/
+*.tmp
+.DS_Store
+Thumbs.db
+
+# reference fonts for comparisons are not part of the project
+refs/
+node_modules/
+
+# release archives are attached to GitHub releases, not committed
+releases/*.zip
+
+# rendered proofs written by the rendering tests
+tests/rendering-tests/proofs/

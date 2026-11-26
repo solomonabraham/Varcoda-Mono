@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="asterisk_slash.liga" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="42.0" y="-160.0" type="line"/>
+      <point x="127.0" y="-160.0" type="line"/>
+      <point x="480.0" y="800.0" type="line"/>
+      <point x="395.0" y="800.0" type="line"/>
+    </contour>
+    <contour>
+      <point x="-94.0" y="197.0" type="line"/>
+      <point x="-59.0" y="258.0" type="line"/>
+      <point x="-191.0" y="334.0" type="line"/>
+      <point x="-59.0" y="410.0" type="line"/>
+      <point x="-94.0" y="471.0" type="line"/>
+      <point x="-226.0" y="395.0" type="line"/>
+      <point x="-226.0" y="547.0" type="line"/>
+      <point x="-296.0" y="547.0" type="line"/>
+      <point x="-296.0" y="395.0" type="line"/>
+      <point x="-428.0" y="471.0" type="line"/>
+      <point x="-463.0" y="410.0" type="line"/>
+      <point x="-331.0" y="334.0" type="line"/>
+      <point x="-463.0" y="258.0" type="line"/>
+      <point x="-428.0" y="197.0" type="line"/>
+      <point x="-296.0" y="274.0" type="line"/>
+      <point x="-296.0" y="121.0" type="line"/>
+      <point x="-226.0" y="121.0" type="line"/>
+      <point x="-226.0" y="274.0" type="line"/>
+    </contour>
+  </outline>
+</glyph>

@@ -1,0 +1,12 @@
+# Specimens (scripts/make-specimens.py) and tests (tests/)
+-r requirements.txt
+pillow>=10
+numpy
+freetype-py
+uharfbuzz
+pygments
+pytest
+opentype-sanitizer
+
+# Optional external validator used by tests/font-validation/validate.py
+# fontbakery==1.1.0

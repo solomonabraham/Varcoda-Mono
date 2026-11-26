@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="asterisk_asterisk.liga" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="-54.0" y="263.0" type="line"/>
+      <point x="-178.0" y="334.0" type="line"/>
+      <point x="-54.0" y="406.0" type="line"/>
+      <point x="-94.0" y="476.0" type="line"/>
+      <point x="-218.0" y="404.0" type="line"/>
+      <point x="-218.0" y="547.0" type="line"/>
+      <point x="-298.0" y="547.0" type="line"/>
+      <point x="-298.0" y="404.0" type="line"/>
+      <point x="-422.0" y="476.0" type="line"/>
+      <point x="-462.0" y="406.0" type="line"/>
+      <point x="-338.0" y="334.0" type="line"/>
+      <point x="-462.0" y="263.0" type="line"/>
+      <point x="-422.0" y="193.0" type="line"/>
+      <point x="-298.0" y="265.0" type="line"/>
+      <point x="-298.0" y="121.0" type="line"/>
+      <point x="-218.0" y="121.0" type="line"/>
+      <point x="-218.0" y="265.0" type="line"/>
+      <point x="-94.0" y="193.0" type="line"/>
+    </contour>
+    <contour>
+      <point x="462.0" y="263.0" type="line"/>
+      <point x="338.0" y="334.0" type="line"/>
+      <point x="462.0" y="406.0" type="line"/>
+      <point x="422.0" y="476.0" type="line"/>
+      <point x="298.0" y="404.0" type="line"/>
+      <point x="298.0" y="547.0" type="line"/>
+      <point x="218.0" y="547.0" type="line"/>
+      <point x="218.0" y="404.0" type="line"/>
+      <point x="94.0" y="476.0" type="line"/>
+      <point x="54.0" y="406.0" type="line"/>
+      <point x="178.0" y="334.0" type="line"/>
+      <point x="54.0" y="263.0" type="line"/>
+      <point x="94.0" y="193.0" type="line"/>
+      <point x="218.0" y="265.0" type="line"/>
+      <point x="218.0" y="121.0" type="line"/>
+      <point x="298.0" y="121.0" type="line"/>
+      <point x="298.0" y="265.0" type="line"/>
+      <point x="422.0" y="193.0" type="line"/>
+    </contour>
+  </outline>
+</glyph>

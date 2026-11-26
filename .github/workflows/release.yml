@@ -1,0 +1,42 @@
+# On a version tag: rebuild from source, test, package, and attach the ZIP to
+# a draft GitHub release.  A maintainer reviews and publishes the draft.
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: System packages
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends fontconfig
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt afdko==5.0.1
+      - name: Tag matches the version in the sources
+        run: |
+          want="v$(python -c "import sys; sys.path.insert(0, 'scripts'); from fontsrc import build; print(build.RELEASE)")"
+          test "$GITHUB_REF_NAME" = "$want" || { echo "::error::tag $GITHUB_REF_NAME, sources say $want"; exit 1; }
+      - name: Build, test, package
+        run: |
+          python scripts/build-fonts.py
+          python -m pytest tests -q
+          python scripts/make-release.py
+          cd releases && sha256sum VarcodaMono-*.zip > SHA256SUMS
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" releases/VarcodaMono-*.zip releases/SHA256SUMS \
+            --draft --title "Varcoda Mono ${GITHUB_REF_NAME#v}" --notes-file "docs/RELEASE-NOTES-${GITHUB_REF_NAME#v}.md"

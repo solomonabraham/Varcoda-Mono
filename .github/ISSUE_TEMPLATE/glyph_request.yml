@@ -1,0 +1,15 @@
+name: Glyph or feature request
+description: A missing character, ligature, alternate or weight
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: what
+    attributes: { label: What is missing, description: "Unicode code points (U+XXXX) for characters; the exact sequence for ligatures." }
+    validations: { required: true }
+  - type: textarea
+    id: why
+    attributes: { label: Where you need it, description: "Language, tool or file type. Concrete use cases decide priority." }
+    validations: { required: true }
+  - type: textarea
+    id: refs
+    attributes: { label: References, description: "How other fonts solve it (links or screenshots). Outlines are never copied." }

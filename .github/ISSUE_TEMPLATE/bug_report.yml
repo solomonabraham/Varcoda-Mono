@@ -1,0 +1,18 @@
+name: Bug report
+description: A problem with the font files, the build scripts or the tests
+labels: ["bug"]
+body:
+  - type: input
+    id: version
+    attributes: { label: Version or commit }
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes: { label: What happened, description: "Include the command you ran and the full output." }
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: What you expected }
+  - type: input
+    id: env
+    attributes: { label: Environment, placeholder: "OS, Python version, output of pip freeze if build-related" }

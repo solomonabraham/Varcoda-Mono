@@ -1,0 +1,34 @@
+name: Rendering issue
+description: A glyph looks wrong, blurry, clipped or misaligned in an application
+labels: ["rendering"]
+body:
+  - type: markdown
+    attributes:
+      value: Screenshots at 100 % zoom are essential. Photos of a screen cannot be analysed.
+  - type: input
+    id: version
+    attributes: { label: Varcoda Mono version and format, placeholder: "1.2.0, TTF" }
+    validations: { required: true }
+  - type: input
+    id: os
+    attributes: { label: Operating system and version, placeholder: "Windows 11 23H2" }
+    validations: { required: true }
+  - type: input
+    id: app
+    attributes: { label: Application and version, placeholder: "VS Code 1.95, Windows Terminal 1.21" }
+    validations: { required: true }
+  - type: input
+    id: size
+    attributes: { label: "Font size, weight, display scaling", placeholder: "13 px, Regular, 125 %" }
+    validations: { required: true }
+  - type: dropdown
+    id: ligatures
+    attributes: { label: Ligatures, options: ["on", "off", "not sure"] }
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes: { label: What is wrong, description: "Which characters, and what you expected. Attach the screenshot here." }
+    validations: { required: true }
+  - type: textarea
+    id: text
+    attributes: { label: Text to reproduce, render: text }

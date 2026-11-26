@@ -1,0 +1,39 @@
+# Runs the test-suite and the external validators against the committed fonts.
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: System packages (fontconfig for the installation test)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends fontconfig
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt afdko==5.0.1 fontbakery==1.1.0 ufolint
+      - name: Test-suite
+        run: python -m pytest tests -q
+      - name: Interpolation compatibility (informational)
+        run: python scripts/check-interpolation.py || true
+      - name: fontbakery and ufolint report
+        run: python tests/font-validation/validate.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-report
+          path: |
+            tests/font-validation/REPORT.md
+            tests/rendering-tests/proofs/
