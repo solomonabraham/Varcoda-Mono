@@ -231,6 +231,57 @@ pre > code {
   color: rgb(214 218 227 / 92%);
   tab-size: 4;
 }"""),
+    ("TypeScript", "typescript", """type Result<T> = { ok: true; value: T } | { ok: false; error: string };
+
+export function parse<T>(raw: string, guard: (v: unknown) => v is T): Result<T> {
+  try {
+    const value: unknown = JSON.parse(raw);
+    return guard(value) ? { ok: true, value } : { ok: false, error: "shape" };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+const ids = items?.map((item) => item.id ?? fallback) ?? [];
+"""),
+    ("Drupal (PHP)", "php", """<?php
+/**
+ * Implements hook_form_alter().
+ */
+function mymodule_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  if ($form_id !== 'node_article_edit_form' || !isset($form['field_tags'])) {
+    return;
+  }
+  $form['field_tags']['widget']['#description'] = t('Up to @max tags.', ['@max' => 5]);
+  $form['#validate'][] = 'mymodule_validate_tags';
+  $config = \\Drupal::config('mymodule.settings')->get('limits') ?? [];
+}
+"""),
+    ("YAML", "yaml", """services:
+  mymodule.importer:
+    class: Drupal\\mymodule\\Importer
+    arguments: ['@http_client', '@logger.channel.mymodule', '%app.root%']
+    tags:
+      - { name: event_subscriber, priority: 100 }
+retries: 3          # 0 disables
+timeout: 12.5
+enabled: true
+"""),
+    ("Bash", "bash", """#!/usr/bin/env bash
+set -euo pipefail
+for f in "${SRC_DIR:-src}"/*.ttf; do
+  name="$(basename "$f" .ttf)"
+  [[ -s "$f" && "$name" != *Italic* ]] || continue
+  printf '%-24s %6d bytes\\n' "$name" "$(stat -c %s "$f")" | tee -a build.log
+done 2>/dev/null || { echo "failed: $?" >&2; exit 1; }
+"""),
+    ("PowerShell", "powershell", """$fonts = Get-ChildItem -Path "$env:LOCALAPPDATA\\Microsoft\\Windows\\Fonts" -Filter 'Varcoda*.ttf'
+foreach ($font in $fonts) {
+    if ($font.Length -gt 0 -and $font.Name -notmatch 'Italic') {
+        Write-Host ("{0,-28} {1,8:N0} bytes" -f $font.Name, $font.Length)
+    }
+}
+$total = ($fonts | Measure-Object -Property Length -Sum).Sum
+"""),
     ("SQL", "sql", """SELECT u.id, u.email, COUNT(o.id) AS orders, SUM(o.total) AS revenue
 FROM users AS u
 LEFT JOIN orders AS o ON o.user_id = u.id AND o.status <> 'void'

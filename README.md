@@ -7,11 +7,11 @@ rounded-rectangle geometry of Saira and the reading comfort of JetBrains Mono, a
 blade-cut extenders, flat shoulders, softened square dots. Every glyph sits on one strict 600-unit cell,
 including the ligatures.
 
-Five weights, 645 glyphs, TTF + OTF + WOFF2, SIL Open Font License 1.1. An original design: other fonts
+Five weights, each with an italic; 647 glyphs; TTF + OTF + WOFF2; SIL Open Font License 1.1. An original design: other fonts
 were measured, never copied.
 
-> **Status: 1.2.0.** Everything listed under *Features* is built into the fonts in this repository and
-> covered by the test-suite. Italics, a variable font and a Nerd Font build do **not** exist yet (see
+> **Status: 1.3.0.** Everything listed under *Features* is built into the fonts in this repository and
+> covered by the test-suite. A variable font and a Nerd Font build do **not** exist yet (see
 > [Known limitations](#known-limitations) and [ROADMAP.md](ROADMAP.md)).
 > Formerly "Vector Mono"; see [docs/BRANDING.md](docs/BRANDING.md) for the name and the design direction.
 
@@ -19,27 +19,32 @@ were measured, never copied.
 
 - **Squared bowls.** `o O 0 a b d e g p q` are rounded rectangles (squareness 0.89, between a classic
   coding font at 0.86 and Saira at 0.91), with square dots and tall ascenders to match.
-- **Its own details.** The ends of `b d h k t p q` are sliced at an angle; arches leave their stems flat,
+- **Its own details.** `q` ends in a short tail so it is not the mirror image of `p`; the middle leg of `m`
+  stops short of the baseline; the ends of `b d h k t p` are sliced at an angle; arches leave their stems flat,
   without a notch; `D` is squarer than `O`.
 - **Strictly monospaced.** Every glyph advances 600 units. No kerning, no positioning features.
 - **Characters you cannot mix up.** Slashed `0`; `1`, `l`, `I` and `|` all differ in structure; `5`/`S`,
   `8`/`B`, `2`/`Z`, `{`/`(` and `'`/`` ` `` are checked against each other at 12–16 px by the tests.
 - **Punctuation sized for code.** Dots, quotes, the asterisk, parentheses and braces were measured against
-  other coding fonts and enlarged where they fell short ([AUDIT.md](AUDIT.md)).
+  other coding fonts and enlarged where they fell short ([docs/AUDIT-1.000.md](docs/AUDIT-1.000.md)).
 - **One operator axis.** `+ - = < > ~ | /` and all brackets are centred on the same line.
 - **27 optional ligatures** that keep one cell per character, so columns and cursors never shift.
-- **Five stylistic sets:** dotted zero, single-storey a, plain zero, flat-foot l, squared y.
+- **Seven stylistic sets:** dotted zero, single-storey a, plain zero, flat-foot l, squared y, plain q,
+  long-leg m.
 - **Terminal-ready.** Complete box drawing and block elements that join without seams, plus the Powerline
   separators and symbols.
-- **Five weights:** Light 300, Regular 400, Medium 500, SemiBold 600, Bold 700.
+- **Five weights, ten styles:** Light 300, Regular 400, Medium 500, SemiBold 600, Bold 700, each with an
+  italic.
+- **Italics made for comments.** Slanted 9.5°, with a single-storey `a`, a hooked `y` and a descending `f`;
+  box drawing, arrows and Powerline symbols stay upright so tables look the same inside a comment.
 - **Dense by default.** Line height 1.23 em, the tightest of the fonts it was compared with.
-- **Open build.** Parametric Python sources, editable UFOs, byte-reproducible fonts, 490 automated tests.
+- **Open build.** Parametric Python sources, editable UFOs, byte-reproducible fonts, 570 automated tests.
 
 ## Preview
 
 ![Specimen](assets/specimen-dark.png)
 
-More: [light theme](assets/specimen-light.png) · [weights](assets/weights.png) ·
+More: [typography test sheet](assets/test-sheet-dark.png) · [light theme](assets/specimen-light.png) · [weights](assets/weights.png) ·
 [all glyphs](assets/glyph-overview.png) · [compared with JetBrains Mono, Fira Code and Iosevka](assets/comparison.png) ·
 [before/after 1.000](tests/visual-regression/before-after-dark.png) · [SPECIMEN.md](SPECIMEN.md)
 
@@ -48,11 +53,11 @@ All images are rendered from the font files in `fonts/` by `scripts/make-assets.
 ## Installation
 
 Download the release ZIP (or use the files in `fonts/`). Use the **TTF** files on Windows; TTF or OTF
-elsewhere. Install all five weights so that applications can find Bold.
+elsewhere. Install all ten files so that applications can find Bold and Italic.
 
 | System | Steps |
 | --- | --- |
-| **Windows 10/11** | Select the five `.ttf` files in `fonts/`, right-click, **Install** (or *Install for all users*). Restart the applications that should see the font. |
+| **Windows 10/11** | Select the ten `.ttf` files in `fonts/`, right-click, **Install** (or *Install for all users*). Restart the applications that should see the font. |
 | **macOS** | Double-click the files and press **Install Font** in Font Book, or copy them to `~/Library/Fonts`. |
 | **Linux** | `mkdir -p ~/.local/share/fonts/varcoda-mono && cp fonts/*.ttf ~/.local/share/fonts/varcoda-mono/ && fc-cache -f` then check with `fc-list "Varcoda Mono"`. |
 | **Web** | Copy `fonts/webfonts/` and include `varcoda-mono.css`; then `font-family: "Varcoda Mono", monospace`. |
@@ -142,12 +147,17 @@ Details and the untested patching recipe are in [docs/NERD-FONTS.md](docs/NERD-F
 | `ss03` | plain zero | for prose or data where the slash distracts; `0` and `O` then differ only in width |
 | `ss04` | `l` with a flat foot instead of the curved tail | closer to a typewriter `l` (plain `l` only, not `ĺ ľ ļ ŀ ł`) |
 | `ss05` | squared `y`: built like `u` with a hooked descender (also `ý ÿ ŷ`) | the most Saira-like form; opt-in because at 12–14 px it is closer to `g` and `u` than the default |
+| `ss06` | plain `q`: the mirror image of `p`, without the tail | a more conventional `q` |
+| `ss07` | `m` with all three legs on the baseline | a more conventional `m` |
 
 The sets suggested during planning for `I`, `g`, punctuation size, braces and operators were not added:
 no alternative for them improved on the default in the measurements, and an empty or cosmetic set would
-only clutter font menus. `cvNN` duplicates of the five sets were left out for the same reason.
+only clutter font menus. `cvNN` duplicates of the seven sets were left out for the same reason.
 
 ## Building from source
+
+Short version below; details in [BUILD.md](BUILD.md) and [TESTING.md](TESTING.md). Every OpenType feature
+is documented with examples in [FEATURES.md](FEATURES.md), the design in [DESIGN.md](DESIGN.md).
 
 Requires Python 3.10 or later (developed and tested with 3.13).
 
@@ -155,14 +165,14 @@ Requires Python 3.10 or later (developed and tested with 3.13).
 python -m venv .venv && . .venv/bin/activate
 pip install -r requirements-dev.txt        # build + test dependencies
 python scripts/build-fonts.py              # sources/*.ufo, fonts/*.ttf, fonts/otf, fonts/webfonts
-python -m pytest tests                     # 490 tests
+python -m pytest tests                     # 570 tests
 python tests/font-validation/validate.py   # optional: fontbakery + ufolint report
 python scripts/make-assets.py              # images in assets/
-python scripts/make-release.py             # releases/VarcodaMono-1.2.0.zip
+python scripts/make-release.py             # releases/VarcodaMono-1.3.0.zip
 ```
 
 The design lives in `scripts/fontsrc/`: `params.py` holds the grid and the pens of each weight, the
-`glyphs_*.py` modules draw the glyphs. Change a number, rebuild, and all five weights follow. The UFOs in
+`glyphs_*.py` modules draw the glyphs. Change a number, rebuild, and all ten styles follow. The UFOs in
 `sources/` are regenerated on each build; to compile hand-edited UFOs instead use
 `python scripts/build-fonts.py --from-ufo`. Two builds of the same sources on one machine are byte-identical.
 
@@ -174,7 +184,7 @@ Other tools: `scripts/compare-fonts.py` (measure any fonts side by side), `scrip
 
 ```
 assets/                  images used by the documentation (generated)
-docs/                    design specification, naming, comparison method, Nerd Fonts, release notes
+docs/                    naming and identity, comparison method, Nerd Fonts, release notes, the 1.000 audit
 fonts/                   VarcodaMono-*.ttf, otf/*.otf, webfonts/*.woff2 + varcoda-mono.css
 sources/                 VarcodaMono-*.ufo (UFO 3, generated, editable)
 scripts/fontsrc/         the parametric design: params, geometry kit, glyph modules, build
@@ -188,9 +198,12 @@ tests/baseline/v1.000/   the original 1.000 fonts, kept for comparison
 
 ## Known limitations
 
-- **No italics.** Only upright styles exist. A sheared roman was deliberately not shipped.
-- **No variable font.** The weights are static files. 553 of 645 glyphs are interpolation-compatible;
-  the remaining 92 change their point structure between weights.
+- **The italics are derived, not redrawn.** They have their own `a`, `f` and `y`, but all other letters are
+  the upright forms slanted by the build, so curve weights are not optically corrected (the error is below
+  3 % of the stem). The tops of wide capitals lean up to 52 units over the right cell edge; a terminal that
+  clips every cell may shave about half a pixel.
+- **No variable font.** The weights are static files. 550 of 647 glyphs are interpolation-compatible;
+  the remaining 97 change their point structure between weights.
 - **No Nerd Font build.** Only the seven core Powerline glyphs are included.
 - **Tested on Linux only.** FreeType, HarfBuzz, fontconfig and headless Chromium. Rendering under
   DirectWrite/ClearType (VS Code on Windows, Windows Terminal, PowerShell) and on macOS has **not** been
@@ -205,8 +218,8 @@ tests/baseline/v1.000/   the original 1.000 fonts, kept for comparison
 
 ## Roadmap
 
-1.2.0 is this release. Next: rendering checks on Windows and macOS (1.2.x), interpolation-compatible
-outlines and a variable font (1.3), a drawn italic (1.4), a Nerd Font build (1.5). Details, and what
+1.3.0 is this release. Next: rendering checks on Windows and macOS (1.3.x), interpolation-compatible
+outlines and a variable font (1.4), a Nerd Font build (1.5). Details, and what
 "planned" means, are in [ROADMAP.md](ROADMAP.md).
 
 ## Contributing

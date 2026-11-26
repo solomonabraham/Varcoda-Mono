@@ -23,7 +23,8 @@ sys.path.insert(0, HERE)
 
 from fontsrc import build  # noqa: E402
 
-STYLES = ["Light", "Regular", "Medium", "SemiBold", "Bold"]
+STYLES = ["Light", "Regular", "Medium", "SemiBold", "Bold",
+          "LightItalic", "Italic", "MediumItalic", "SemiBoldItalic", "BoldItalic"]
 PACKAGE = "VarcodaMono-%s.zip" % build.RELEASE
 PROJECT = "varcoda-mono-%s-project.zip" % build.RELEASE
 

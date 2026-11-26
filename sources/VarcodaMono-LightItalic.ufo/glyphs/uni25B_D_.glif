@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni25BD" format="2">
+  <advance width="600"/>
+  <unicode hex="25BD"/>
+  <outline>
+    <contour>
+      <point x="558.0" y="618.0" type="line"/>
+      <point x="42.0" y="618.0" type="line"/>
+      <point x="300.0" y="102.0" type="line"/>
+    </contour>
+    <contour>
+      <point x="118.0" y="571.0" type="line"/>
+      <point x="482.0" y="571.0" type="line"/>
+      <point x="300.0" y="208.0" type="line"/>
+    </contour>
+  </outline>
+</glyph>

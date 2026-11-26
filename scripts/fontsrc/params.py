@@ -47,6 +47,18 @@ WEIGHTS = [("Light", 300, 60),
            ("SemiBold", 600, 110),
            ("Bold", 700, 124)]
 
+ITALIC_ANGLE = 9.5                     # degrees, clockwise
+
+
+def italic_style(weight_name: str) -> str:
+    """file / PostScript style name of the italic of a weight"""
+    return "Italic" if weight_name == "Regular" else weight_name + "Italic"
+
+
+# (style, weight name, usWeightClass, stem)
+ITALICS = [(italic_style(w[0]),) + tuple(w) for w in WEIGHTS]
+
+
 
 class Master:
     """Every measurement a glyph function may use."""

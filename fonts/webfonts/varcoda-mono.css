@@ -1,4 +1,4 @@
-/* Varcoda Mono 1.200 - SIL Open Font License 1.1 */
+/* Varcoda Mono 1.300 - SIL Open Font License 1.1 */
 
 @font-face {
   font-family: "Varcoda Mono";
@@ -6,6 +6,14 @@
   font-weight: 300;
   font-display: swap;
   src: url("VarcodaMono-Light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Varcoda Mono";
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("VarcodaMono-LightItalic.woff2") format("woff2");
 }
 
 @font-face {
@@ -18,10 +26,26 @@
 
 @font-face {
   font-family: "Varcoda Mono";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("VarcodaMono-Italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Varcoda Mono";
   font-style: normal;
   font-weight: 500;
   font-display: swap;
   src: url("VarcodaMono-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Varcoda Mono";
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url("VarcodaMono-MediumItalic.woff2") format("woff2");
 }
 
 @font-face {
@@ -34,8 +58,24 @@
 
 @font-face {
   font-family: "Varcoda Mono";
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url("VarcodaMono-SemiBoldItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Varcoda Mono";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
   src: url("VarcodaMono-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Varcoda Mono";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("VarcodaMono-BoldItalic.woff2") format("woff2");
 }

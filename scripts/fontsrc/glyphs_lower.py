@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from .geom import BIG, diag, diag_edge, diag_hw, halfplane, rect, round_path, slash, slash_in, stroke
-from .kit import arch, bowl, dot, ess, g, kay, opath, ring, srad, vstem, blade
+from .kit import arch, bowl, dot, ess, g, kay, opath, ring, srad, vstem, blade, cut_below
 
 
 def _lc(m):
@@ -115,8 +115,8 @@ def l_(m):
     return s | rect(L + 0.03 * m.W, m.asc - hw, xsc, m.asc)
 
 
-@g("m")
-def m_(m):
+def m_full_(m):
+    """m with all three legs on the baseline (m.ss07)"""
     sw, hw, a, b, L, R, xc = _lc(m)
     msw, mhw = sw * m.lerp(0.95, 0.80), hw * m.lerp(0.97, 0.88)
     ML = L - m.lerp(0.034, 0.046) * m.W
@@ -128,6 +128,27 @@ def m_(m):
     s = s | arch(m, cl, MR, m.xh, 0, msw, mhw, rx, ry)
     # one level top: the valley above the middle stem is filled
     return s | rect(cl - rx, m.xh - mhw, cl + msw, m.xh)
+
+
+@g("m")
+def m_(m):
+    """the middle leg stops short of the baseline: more air in the most
+    crowded letter of a fixed-width alphabet"""
+    sw, hw, a, b, L, R, xc = _lc(m)
+    msw = sw * m.lerp(0.95, 0.80)
+    cl = xc - msw / 2
+    return m_full_(m) - rect(cl - 2, -BIG, cl + msw + 2, m.xh * 0.30)
+
+
+@g("q")
+def q_(m):
+    """a short tail turns right at the foot, so that q is not the mirror
+    image of p"""
+    sw, hw, a, b, L, R, xc = _lc(m)
+    xr = m.W - L - a
+    top = cut_below(_p_plain(m).flip_x(m.xc), m.desc * 0.45)
+    tail = opath(m, [(xr, 0), (xr, m.desc + b), (m.W - L + 0.078 * m.W, m.desc + b)], sw, hw, 0.105 * m.W, 0.10 * m.xh)
+    return top | tail
 
 
 @g("n")
@@ -153,8 +174,8 @@ def _p_plain(m):
     return vstem(L, m.desc, m.xh, sw) | bowl(m, L, R + m.rnd, 0, m.xh, sw, hw)
 
 
-@g("q")
-def q_(m):
+def q_plain_(m):
+    """the mirror image of p, with the blade cut at the foot (q.ss06)"""
     sw, hw, a, b, L, R, xc = _lc(m)
     return blade(m, _p_plain(m).flip_x(m.xc), m.W - L - sw, sw, m.desc, up=False)
 

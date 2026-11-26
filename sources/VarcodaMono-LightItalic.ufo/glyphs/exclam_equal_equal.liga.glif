@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="exclam_equal_equal.liga" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="-443" y="26" type="line"/>
+      <point x="-389" y="26" type="line"/>
+      <point x="-334" y="154" type="line"/>
+      <point x="494" y="154" type="line"/>
+      <point x="502" y="206" type="line"/>
+      <point x="-313" y="206" type="line"/>
+      <point x="-276" y="294" type="line"/>
+      <point x="517" y="294" type="line"/>
+      <point x="526" y="346" type="line"/>
+      <point x="-253" y="346" type="line"/>
+      <point x="-217" y="434" type="line"/>
+      <point x="540" y="434" type="line"/>
+      <point x="549" y="486" type="line"/>
+      <point x="-195" y="486" type="line"/>
+      <point x="-140" y="614" type="line"/>
+      <point x="-194" y="614" type="line"/>
+      <point x="-249" y="486" type="line"/>
+      <point x="-1077" y="486" type="line"/>
+      <point x="-1086" y="434" type="line"/>
+      <point x="-271" y="434" type="line"/>
+      <point x="-307" y="346" type="line"/>
+      <point x="-1100" y="346" type="line"/>
+      <point x="-1109" y="294" type="line"/>
+      <point x="-330" y="294" type="line"/>
+      <point x="-367" y="206" type="line"/>
+      <point x="-1124" y="206" type="line"/>
+      <point x="-1132" y="154" type="line"/>
+      <point x="-388" y="154" type="line"/>
+    </contour>
+  </outline>
+</glyph>

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="Lambda" format="2">
+  <advance width="600"/>
+  <unicode hex="039B"/>
+  <outline>
+    <contour>
+      <point x="11" y="0" type="line"/>
+      <point x="76" y="0" type="line"/>
+      <point x="360" y="628" type="line"/>
+      <point x="434" y="0" type="line"/>
+      <point x="499" y="0" type="line"/>
+      <point x="413" y="720" type="line"/>
+      <point x="337" y="720" type="line"/>
+    </contour>
+  </outline>
+</glyph>

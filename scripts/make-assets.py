@@ -131,9 +131,18 @@ class Sheet:
             setattr(S, k, v)
         lines = S.colourise(code, lexer)
         self.panel(round(px * lead) * len(lines))
+        comment = tuple(self.t["syntax"]["C_COMMENT"])
+        feats = features if features is not None else {"calt": True}
         for text, cols in lines:
-            self.line(text, style, px, colors=cols, features=features if features is not None else {"calt": True},
-                      lead=lead, hinting=hinting)
+            # comments are set in the italic of the same weight, everything else upright
+            is_c = [tuple(c) == comment for c in cols]
+            plain = "".join(" " if c else ch for ch, c in zip(text, is_c))
+            ital = "".join(ch if c else " " for ch, c in zip(text, is_c))
+            y0 = self.y
+            self.line(plain, style, px, colors=cols, features=feats, lead=lead, hinting=hinting)
+            if ital.strip():
+                self.y = y0
+                self.line(ital, params.italic_style(style), px, colors=cols, features=feats, lead=lead, hinting=hinting)
         self.gap(22)
 
     def save(self, name):
@@ -157,7 +166,7 @@ def specimen(theme):
     p.line(build.FAMILY, "Bold", 128, lead=1.1)
     p.line("Squared for code.", "Regular", 34, theme["muted"])
     p.gap(8)
-    p.line("%d weights · %d glyphs · one 600-unit cell · version %s · SIL OFL 1.1" % (len(STYLES), glyphs, build.VERSION),
+    p.line("%d weights with italics · %d glyphs · one 600-unit cell · version %s · SIL OFL 1.1" % (len(STYLES), glyphs, build.VERSION),
            "Regular", 22, theme["muted"])
     p.label("Characters")
     for s in ("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "0123456789  ⁰¹²³⁴⁵⁶⁷⁸⁹ ₀₁₂₃₄₅₆₇₈₉",
@@ -175,6 +184,9 @@ def specimen(theme):
     p.label("Weights")
     for st, wc, _stem in params.WEIGHTS:
         p.line("%-8s %d  for (const [key, value] of Object.entries(map)) {}" % (st, wc), st, 34, lead=1.4)
+    p.label("Italics: five weights, with their own a, f and y")
+    p.line("The quick brown fox jumps over a lazy dog. /* fluffy, safe, every day */", "Italic", 34, lead=1.4)
+    p.line("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789", "Italic", 22, theme["muted"], lead=1.6)
     p.label("Box drawing and Powerline")
     for s in ("┌──────────┬──────────┐  ╭────────╮  ░▒▓█▇▆▅▄▃▂▁", "│ build    │ passing  │  │  main │       ",
               "└──────────┴──────────┘  ╰────────╯  ← ↑ → ↓ ↔ ⇒ ✓ ✗"):
@@ -187,6 +199,7 @@ def weights():
     for st, wc, stem in params.WEIGHTS:
         p.line("%s %d" % (st, wc), "Medium", 20, DARK["accent"], lead=1.5)
         p.line("Varcoda Mono  const fn = (a, b) => a !== b && a >= 0;", st, 46, features={"calt": True}, lead=1.3)
+        p.line("Varcoda Mono  // every file, safely: a quick fix", params.italic_style(st), 46, features={"calt": True}, lead=1.3)
         p.line("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789", st, 22, DARK["muted"], lead=1.5)
         p.gap(18)
     p.save("weights.png")
@@ -219,7 +232,8 @@ def ligatures():
     p.label("Stylistic sets")
     for tag, label, subs in STYLISTIC_SETS:
         sample = {"ss01": "0123 0x00FF 100%", "ss02": "data = alpha.max()", "ss03": "0123 0x00FF 100%",
-                  "ss04": "all null: illegal", "ss05": "every key: yes"}[tag]
+                  "ss04": "all null: illegal", "ss05": "every key: yes", "ss06": "quick pq queue",
+                  "ss07": "maximum memory"}[tag]
         p.line("%s  %s" % (tag, label), "Regular", 30, DARK["accent"], lead=1.5)
         p.y -= round(30 * 1.5)
         p.line(" " * 26 + sample, "Regular", 30, DARK["muted"], lead=1.5)
@@ -280,6 +294,27 @@ def comparison(refs):
             p.cv[p.y:p.y + arr.shape[0], MARGIN:MARGIN + arr.shape[1]] = arr
             p.y += arr.shape[0] + 10
     p.save("comparison.png")
+
+
+TEST_LINES = ["0O0o 1lI|i 5S 8B 2Z rn/m cl/d", "illinois immune millimeter minimum",
+              "$variable = $object->method($argument);", "if ($value !== null && $enabled === true) {}",
+              "const result = items?.map(item => item ?? fallback);", "{[(<>)]} ; : , . ' \" ` ~ ! @ # $ % ^ & * += -= *= /= %="]
+TEST_SIZES = [10, 11, 12, 13, 14, 16, 18]
+
+
+def test_sheet(theme):
+    """the fixed typography test: same lines, sizes, leading and colours every time"""
+    p = Sheet(theme)
+    p.line("Typography test sheet", "Bold", 44, lead=1.3)
+    p.line("Regular with an italic comment, hinted greyscale, pixel for pixel, ligatures on. Regenerate: make-assets.py", "Regular", 18,
+           theme["muted"])
+    for px in TEST_SIZES:
+        p.label("%d px" % px)
+        for text in TEST_LINES:
+            p.line(text, "Regular", px, features={"calt": True}, lead=1.5)
+        p.line("// italic comment: a quick fix for every file, safely (0O 1lI)", "Italic", px, theme["muted"], lead=1.5)
+        p.line("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789 ÀÉÎõüçñß ┌─┬─┐ ░▒▓█", "Regular", px, lead=1.5)
+    p.save("test-sheet-%s.png" % theme["name"])
 
 
 # --------------------------------------------------------------------------
@@ -356,7 +391,7 @@ def banner():
                      (">= ", syn["C_OP"]), ("0.89 ", syn["C_NUMBER"]), ("&& ", syn["C_OP"]), ('"code"', syn["C_STRING"]), (";", syn["C_OP"])):
         p, x = reg.text(seg, x, y, size, HEX(col), {"calt": True})
         parts.append(p)
-    parts.append(reg.text(" · ".join(STYLES) + "   ·   ligatures   ·   OFL 1.1", 138, 548, 22, HEX(t["muted"]))[0])
+    parts.append(reg.text(" · ".join(STYLES) + "   ·   italics   ·   ligatures   ·   OFL 1.1", 138, 548, 22, HEX(t["muted"]))[0])
     svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" '
            'aria-label="Varcoda Mono - Squared for code."><title>Varcoda Mono</title>%s</svg>\n' % "".join(parts))
     path = os.path.join(ASSETS, "banner.svg")
@@ -373,7 +408,8 @@ def main():
     args = ap.parse_args()
     os.makedirs(ASSETS, exist_ok=True)
     jobs = {"specimen-dark": lambda: specimen(DARK), "specimen-light": lambda: specimen(LIGHT), "weights": weights,
-            "ligatures": ligatures, "glyph-overview": glyph_overview, "logo": logo, "banner": banner}
+            "ligatures": ligatures, "glyph-overview": glyph_overview, "logo": logo, "banner": banner,
+            "test-sheet-dark": lambda: test_sheet(DARK), "test-sheet-light": lambda: test_sheet(LIGHT)}
     if args.refs:
         jobs["comparison"] = lambda: comparison(args.refs)
     for name, job in jobs.items():

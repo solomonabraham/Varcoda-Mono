@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="asterisk_slash.liga" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="-101" y="205" type="line"/>
+      <point x="-66" y="251" type="line"/>
+      <point x="-198" y="334" type="line"/>
+      <point x="-38" y="418" type="line"/>
+      <point x="-58" y="464" type="line"/>
+      <point x="-217" y="380" type="line"/>
+      <point x="-189" y="547" type="line"/>
+      <point x="-241" y="547" type="line"/>
+      <point x="-269" y="380" type="line"/>
+      <point x="-400" y="464" type="line"/>
+      <point x="-434" y="418" type="line"/>
+      <point x="-302" y="334" type="line"/>
+      <point x="-462" y="251" type="line"/>
+      <point x="-443" y="205" type="line"/>
+      <point x="-284" y="289" type="line"/>
+      <point x="-312" y="121" type="line"/>
+      <point x="-260" y="121" type="line"/>
+      <point x="-232" y="289" type="line"/>
+    </contour>
+    <contour>
+      <point x="-30" y="-160" type="line"/>
+      <point x="31" y="-160" type="line"/>
+      <point x="569" y="800" type="line"/>
+      <point x="508" y="800" type="line"/>
+    </contour>
+  </outline>
+</glyph>

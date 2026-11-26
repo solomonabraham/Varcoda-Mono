@@ -8,24 +8,25 @@ Medium, SemiBold and Bold, the license, and a browser test page. Install all fiv
 
 ## What is in the fonts
 
-- 645 glyphs: Basic Latin, Latin-1, Latin Extended-A, box drawing, block elements, arrows, math,
+- 647 glyphs: Basic Latin, Latin-1, Latin Extended-A, box drawing, block elements, arrows, math,
   superscript and subscript figures, Powerline symbols
 - every glyph 600 units wide; no kerning; line height 1.23
-- slashed zero; structurally different `1 l I |`
+- slashed zero; structurally different `1 l I |`; a tailed `q` that is not the mirror image of `p`; an `m` with a
+  short middle leg
 - 27 optional ligatures in `calt` that keep one cell per character:
   `=== !== <=> <-> != == => -> <- <= >= && || ?? ++ -- :: // /* */ |> <| := ** ?. += -=`
 - stylistic sets: `ss01` dotted zero, `ss02` single-storey a, `ss03` plain zero, `ss04` flat-foot l,
-  `ss05` squared y
+  `ss05` squared y, `ss06` plain q, `ss07` long-leg m
 
 ## Changes since 1.000 (Vector Mono, unpublished)
 
 - New name; new SemiBold; Regular and Light slightly heavier
-- Squarer bowls and square dots in the direction of Saira, taller ascenders, blade-cut ends on `b d h k t p q`
+- Squarer bowls and square dots in the direction of Saira, taller ascenders, blade-cut ends on `b d h k t p`
 - Larger punctuation, asterisk, parentheses, brackets and braces, sized against measurements
 - Better placement of `j` and `r`
-- Five new ligatures, three new stylistic sets, Powerline symbols, small figures, web fonts
+- Five new ligatures, five new stylistic sets, Powerline symbols, small figures, web fonts
 
-Full list: `CHANGELOG.md`. Evidence: `AUDIT.md`, `QUALITY_REPORT.md`.
+Full list: `CHANGELOG.md`. Evidence: `docs/AUDIT-1.000.md`, `QUALITY_REPORT.md`.
 
 ## Known limitations
 

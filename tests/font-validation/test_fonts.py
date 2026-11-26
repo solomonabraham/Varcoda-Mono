@@ -471,7 +471,7 @@ def _raster(path, ch, px=48):
 LOOKALIKES = [("0", "O"), ("0", "o"), ("0", "8"), ("1", "l"), ("1", "I"), ("l", "I"), ("l", "|"), ("I", "|"), ("1", "|"),
               ("1", "7"), ("5", "S"), ("8", "B"), ("2", "Z"), ("6", "b"), ("g", "9"), ("g", "q"), ("c", "e"), ("u", "v"),
               ("`", "'"), (".", ","), (":", ";"), ("-", "_"), ("{", "("), ("[", "("), ("D", "O"),
-              ("y", "g"), ("y", "v"), ("b", "h"), ("o", "a")]
+              ("y", "g"), ("y", "v"), ("b", "h"), ("o", "a"), ("q", "g"), ("m", "n"), ("p", "q")]
 
 
 @pytest.mark.parametrize("path", TTFS, ids=ids(TTFS))
@@ -518,7 +518,7 @@ INV.setdefault("period", ".")
 def test_feature_list(path):
     gsub = font(path)["GSUB"].table
     tags = {fr.FeatureTag for fr in gsub.FeatureList.FeatureRecord}
-    assert tags == {"calt", "ss01", "ss02", "ss03", "ss04", "ss05"}
+    assert tags == {"calt", "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07"}
     # ligatures must be switchable: nothing may hide in always-on features
     assert not tags & {"ccmp", "rlig", "locl", "liga"}
 
@@ -573,6 +573,22 @@ def test_stylistic_sets(path):
     assert shape(path, "0Ol", {"ss03": True})[0] == ["zero.ss03", "O", "l"]
     assert shape(path, "0l1", {"ss04": True})[0] == ["zero", "l.ss04", "one"]
     assert shape(path, "vyý", {"ss05": True})[0] == ["v", "y.ss05", "yacute.ss05"]
+    assert shape(path, "pqm", {"ss06": True})[0] == ["p", "q.ss06", "m"]
+    assert shape(path, "pqm", {"ss07": True})[0] == ["p", "q", "m.ss07"]
+    # the defaults really differ from the alternates: the tail of q reaches right of the stem, the middle leg of m is cut
+    f = font(path)
+    gs = f.getGlyphSet()
+
+    def box_area(name):
+        bp, ap = BoundsPen(gs), AreaPen(gs)
+        gs[name].draw(bp)
+        gs[name].draw(ap)
+        return bp.bounds, abs(ap.value)
+
+    (qb, _), (tb, _) = box_area("q.ss06"), box_area("q")
+    assert tb[2] >= qb[2] + 30 and tb[2] <= WIDTH and tb[1] == qb[1]
+    (mb, ma), (sb, sa) = box_area("m.ss07"), box_area("m")
+    assert sb == mb and sa < ma * 0.97
     assert shape(path, "0al", {})[0] == ["zero", "a", "l"]          # nothing is on by default
 
 
@@ -585,7 +601,7 @@ def test_feature_names(path):
         prm = fr.Feature.FeatureParams
         if prm is not None and hasattr(prm, "UINameID"):
             labels[fr.FeatureTag] = f["name"].getDebugName(prm.UINameID)
-    assert labels == {"ss01": "Dotted zero", "ss02": "Single-storey a", "ss03": "Plain zero", "ss04": "Flat-foot l", "ss05": "Squared y"}
+    assert labels == {"ss01": "Dotted zero", "ss02": "Single-storey a", "ss03": "Plain zero", "ss04": "Flat-foot l", "ss05": "Squared y", "ss06": "Plain q", "ss07": "Long-leg m"}
 
 
 # --------------------------------------------------------------------------
@@ -680,8 +696,8 @@ def test_sources_have_no_outline_debris(style):
 def test_build_is_reproducible(tmp_path):
     """generating everything again from the Python sources gives identical fonts"""
     subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "build-fonts.py"), "--root", str(tmp_path),
-                    "-w", "Regular", "Bold"], check=True, capture_output=True)
-    for style in ("Regular", "Bold"):
+                    "-w", "Regular", "Bold", "Italic", "BoldItalic"], check=True, capture_output=True)
+    for style in ("Regular", "Bold", "Italic", "BoldItalic"):
         for rel in ("fonts/VarcodaMono-%s.ttf" % style, "fonts/otf/VarcodaMono-%s.otf" % style,
                     "fonts/webfonts/VarcodaMono-%s.woff2" % style):
             a = hashlib.sha256(open(os.path.join(ROOT, rel), "rb").read()).hexdigest()

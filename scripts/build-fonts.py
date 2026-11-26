@@ -26,12 +26,13 @@ import ufoLib2  # noqa: E402
 
 from fontsrc import build, params  # noqa: E402
 from fontsrc.draw import draw_master  # noqa: E402
+from fontsrc.italic import italicize  # noqa: E402
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("-w", "--weights", nargs="+", default=[w[0] for w in params.WEIGHTS],
-                    help="styles to build (default: all)")
+    ap.add_argument("-w", "--weights", nargs="+", default=[w[0] for w in params.WEIGHTS] + [i[0] for i in params.ITALICS],
+                    help="styles to build, e.g. Regular BoldItalic (default: all uprights and italics)")
     ap.add_argument("--from-ufo", action="store_true",
                     help="do not regenerate the UFOs; compile the (possibly hand-edited) sources as they are")
     ap.add_argument("--no-otf", action="store_true", help="skip the OpenType/CFF fonts")
@@ -40,7 +41,8 @@ def main(argv=None):
     ap.add_argument("--root", default=ROOT, help="project directory (default: the parent of scripts/)")
     args = ap.parse_args(argv)
 
-    known = {w[0]: w for w in params.WEIGHTS}
+    known = {w[0]: (w, False) for w in params.WEIGHTS}
+    known.update({i[0]: (i[1:], True) for i in params.ITALICS})
     for style in args.weights:
         if style not in known:
             ap.error("unknown style %r (choose from %s)" % (style, ", ".join(known)))
@@ -48,7 +50,7 @@ def main(argv=None):
     t_all = time.time()
     for style in args.weights:
         t0 = time.time()
-        name, wclass, stem = known[style]
+        (name, wclass, stem), italic = known[style]
         src = build.ufo_path(args.root, style)
         if args.from_ufo:
             if not os.path.isdir(src):
@@ -57,13 +59,16 @@ def main(argv=None):
             n_glyphs = len(ufo)
         else:
             m = params.Master(name, wclass, stem)
+            m.italic = italic
             glyphs = draw_master(m)
+            if italic:
+                glyphs = italicize(m, glyphs)
             ufo = build.make_ufo(m, glyphs)
             build.write_ufo(ufo, src)
             n_glyphs = len(glyphs)
         ttf = os.path.join(args.root, "fonts", "%s-%s.ttf" % (build.PS_FAMILY, style))
         status = build.compile_ttf(ufo, ttf, hint=not args.no_hint)
-        msg = "%-8s %4d glyphs  ttf: %s" % (style, n_glyphs, status)
+        msg = "%-14s %4d glyphs  ttf: %s" % (style, n_glyphs, status)
         if not args.no_woff2:
             woff = os.path.join(args.root, "fonts", "webfonts", "%s-%s.woff2" % (build.PS_FAMILY, style))
             msg += "  woff2: %s" % build.compile_woff2(ttf, woff)

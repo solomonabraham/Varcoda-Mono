@@ -700,6 +700,8 @@
     <string>ltshade.glif</string>
     <key>m</key>
     <string>m.glif</string>
+    <key>m.ss07</key>
+    <string>m.ss07.glif</string>
     <key>macron</key>
     <string>macron.glif</string>
     <key>macroncomb</key>
@@ -790,6 +792,8 @@
     <string>product.glif</string>
     <key>q</key>
     <string>q.glif</string>
+    <key>q.ss06</key>
+    <string>q.ss06.glif</string>
     <key>question</key>
     <string>question.glif</string>
     <key>question_period.liga</key>

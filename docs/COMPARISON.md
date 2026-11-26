@@ -1,7 +1,7 @@
 # Comparing with other fonts
 
 Varcoda Mono was measured against JetBrains Mono, Fira Code and Iosevka to find out where it fell short
-(`AUDIT.md`, `QUALITY_REPORT.md`). Those fonts were **only measured and rendered**. No outline, metric table
+(`docs/AUDIT-1.000.md`, `QUALITY_REPORT.md`). Those fonts were **only measured and rendered**. No outline, metric table
 or feature code was copied from them.
 
 ## Getting the reference fonts

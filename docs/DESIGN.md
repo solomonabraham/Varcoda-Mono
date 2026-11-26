@@ -1,6 +1,6 @@
 # Varcoda Mono — design and engineering specification
 
-Version 1.200 · five styles · 645 glyphs · 579 characters · SIL Open Font License 1.1
+Version 1.200 · five styles · 647 glyphs · 579 characters · SIL Open Font License 1.1
 
 This document records what Varcoda Mono is, how it is constructed and why the
 main decisions were taken. Every number below is defined in
@@ -137,6 +137,8 @@ sources and that every glyph has the same number of contours in all weights.
 | `ss03` | plain zero without slash or dot (added in 1.200) |
 | `ss04` | l with a flat foot instead of the curved tail (added in 1.200; plain `l` only) |
 | `ss05` | squared y, built like u with a hooked descender (added in 1.200; also ý ÿ ŷ) |
+| `ss06` | plain q, the mirror image of p (the default q has a tail; added in 1.200) |
+| `ss07` | m with all three legs on the baseline (the default m has a short middle leg; added in 1.200) |
 
 There is no kerning and no positioning feature: nothing can move a glyph off
 the grid.
@@ -245,5 +247,5 @@ compares the files byte for byte.
 ## 11. Known limitations
 
 See the "Known limitations" section of the README, which is kept current: no italics, no variable font
-(92 of 645 glyphs are not yet interpolation-compatible), no Nerd Font build, automatic hinting only,
+(97 of 647 glyphs are not yet interpolation-compatible), no Nerd Font build, automatic hinting only,
 precomposed accents only, Latin only, and no testing on Windows or macOS so far.

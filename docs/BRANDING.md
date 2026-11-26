@@ -44,8 +44,10 @@ something else: the zero is slashed, `i` and `l` carry serifs and a tail, punctu
 
 ### Details that are Varcoda's own
 
-- **Blade cut.** The free ends of extenders are sliced at an angle: the tops of `b d h k t`, the feet of
-  `p q`. Top and bottom cuts are parallel. Capitals and figures stay square.
+- **A tailed `q` and a short-leg `m`.** `q` ends in a short tail turning right, so it is not the mirror
+  image of `p`; the middle leg of `m` stops a third of the way up. Both came from early user feedback.
+- **Blade cut.** The free ends of extenders are sliced at an angle: the tops of `b d h k t`, the foot of
+  `p`. Top and bottom cuts are parallel. Capitals and figures stay square.
 - **Flat shoulders.** Arches and bowls leave their stem level with the x-height, with one small eased
   corner inside, instead of the usual notch.
 - **Softened square dots.** Square enough to snap to pixels, with a small radius so they match the bowls.

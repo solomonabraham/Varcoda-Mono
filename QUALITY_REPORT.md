@@ -1,4 +1,4 @@
-# Quality report: Varcoda Mono 1.2.0
+# Quality report: Varcoda Mono 1.3.0
 
 What was checked, how, and with what result. Every feature the README claims has a row here. Checks ran on
 Linux (Python 3.13, FreeType, HarfBuzz, fontconfig, Chrome headless) on 26 November 2026.
@@ -8,14 +8,37 @@ Linux (Python 3.13, FreeType, HarfBuzz, fontconfig, Chrome headless) on 26 Novem
 
 | Area | Result |
 | --- | --- |
-| Project test-suite | **490 passed**, 0 failed (`python -m pytest tests`) |
-| fontbakery universal, 5 TTF | 0 FAIL · 15 WARN (3 checks, all reviewed) · 350 PASS |
-| fontbakery universal, 5 OTF | 0 FAIL · 5 WARN · 5 ERROR (one check that crashes inside fontbakery on CFF fonts) · 310 PASS |
-| OpenType Sanitizer | all 10 fonts pass |
-| ufolint | 5 of 5 UFO sources pass |
-| Reproducible build | two clean builds are byte-identical (TTF, OTF, WOFF2) |
-| Variable font | **not shipped**: 553 of 645 glyphs compatible |
+| Project test-suite | **570 passed**, 0 failed (`python -m pytest tests`) |
+| fontbakery universal, 10 TTF (upright and italic) | 0 FAIL · 30 WARN (3 checks, all reviewed) · 715 PASS |
+| fontbakery universal, 10 OTF | 0 FAIL · 10 WARN · 10 ERROR (one check that crashes inside fontbakery on CFF fonts) · 635 PASS |
+| OpenType Sanitizer | all 20 fonts pass (TTF and OTF of ten styles) |
+| ufolint | 10 of 10 UFO sources pass |
+| Reproducible build | a second build of Regular, Bold, Italic and Bold Italic is byte-identical (TTF, OTF, WOFF2) |
+| Italics | **shipped** for five weights; 65 dedicated tests pass |
+| Nerd Font builds | **not built** (no FontForge in this environment) |
+| Variable font | **not shipped**: 550 of 647 glyphs compatible |
 | Windows / macOS rendering | **not tested** |
+
+## Italics (new in 1.3.0)
+
+| Claim | Validated by (`test_italics.py`) | Result |
+| --- | --- | --- |
+| Five italic styles exist as TTF, OTF, WOFF2 and stay monospaced | `test_files_exist_and_stay_monospaced` | pass |
+| Italic angle −9.5°, caret slope, ITALIC/BOLD bits, style linking, STAT axes | `test_italic_metadata` | pass |
+| Same line box, x-height, character set and features as the upright | `test_italic_metadata`, `test_same_characters_and_features_as_the_upright` | pass |
+| Letters are slanted; box drawing, blocks, arrows, shapes, Powerline are identical to the upright | `test_letters_are_slanted_and_joining_glyphs_are_not` | pass |
+| `a` single-storey, `y` hooked, `f` descending | `test_italic_letterforms` | pass |
+| Ligatures and stylistic sets shape exactly as in the upright, all advances 600 | `test_ligatures_and_sets_shape_like_the_upright` (TTF, OTF) | pass |
+| One advance at 10–24 px hinted; fontconfig reports slant 100, spacing 100 | `test_hinted_advances_and_fontconfig` | pass |
+| OpenType Sanitizer | `test_opentype_sanitizer` | pass |
+| Ink stays close to the cell | `test_ink_stays_close_to_the_cell`: at most 52 units over the right edge (V, W in Bold Italic); ď ľ ť up to 79 | pass, with that stated tolerance |
+
+Viewed by eye in `assets/specimen-dark.png`, `assets/weights.png` and the test sheets at 10–18 px.
+**Not done for the italics:** the small-size look-alike bitmap tests of the upright were not repeated, and
+no italic was looked at on Windows or macOS.
+
+Known weakness: only `a`, `f`, `y` are redrawn; other curves are sheared, so their weight varies by up to
+about 3 % of the stem around the bowl.
 
 ## Claimed features and their validation
 
@@ -33,7 +56,7 @@ Linux (Python 3.13, FreeType, HarfBuzz, fontconfig, Chrome headless) on 26 Novem
 | Punctuation is no longer undersized | `test_punctuation_is_not_undersized`, measurements below | pass |
 | 27 ligatures substitute, keep the grid, and are optional | HarfBuzz shaping with `calt` on and off for every ligature, TTF and OTF; long runs; 400 random operator strings per font; ink stays inside the cells at 14/16/20 px | pass |
 | Ligatures work in a browser | headless Chromium: width of ligated text = width of plain text | pass |
-| `ss01`–`ss05` | HarfBuzz shaping, feature names in the name table; nothing is on by default | pass |
+| `ss01`–`ss07` | HarfBuzz shaping, outline checks that the default `q` and `m` differ from `q.ss06` and `m.ss07`, feature names in the name table; nothing is on by default | pass |
 | Box drawing and Powerline separators join | overshoot test on outlines, seam test on hinted bitmaps (box drawing) | pass |
 | WOFF2 equals the TTF | `test_webfont_matches_the_ttf` | pass |
 | Fonts install and resolve by family name | fontconfig scan + Chromium using the installed family (Linux) | pass |
@@ -58,7 +81,7 @@ Linux (Python 3.13, FreeType, HarfBuzz, fontconfig, Chrome headless) on 26 Novem
 | Single quote | 80×241 | **94×270** | 97×300 | 105×260 | 86×330 |
 | Asterisk | 344×360 | **404×426** | 530×516 | 503×480 | 424×400 |
 | Plus | 410×410 | **438×438** | 470×470 | 469×468 | 372×386 |
-| Parenthesis width | 180 | **274** | 300 | 302 | 295 |
+| Parenthesis width | 180 | **286** | 300 | 302 | 295 |
 | Bracket width | 213 | **240** | 245 | 250 | 276 |
 | Brace width | 285 | **336** | 430 | 334 | 316 |
 | j side bearings | 112 / 201 | **99 / 174** | 85 / 144 | 96 / 155 | 20 / 137 |
@@ -88,7 +111,12 @@ diagonal `y` stays the default and the squared form is `ss05`.
 **Side effect found and fixed:** with a squarer `O`, the outline difference between `D` and `O` fell to
 14 % in one weight (threshold 15 %). `D` now has tighter corners; all weights pass.
 
-**Blade cut:** the angled ends of `b d h k t p q` rise 32 % of the stem width (27 units in Regular, about a
+**`p` and `q`.** The default `q` now has a tail; `p`/`q` is part of the hinted look-alike test and passes
+at 12–16 px in all weights. One pair is knowingly below the project's 30 % bar and is not in the test:
+`q` and `g` differ by 21–24 % of their ink at 12–16 px (they share the bowl and differ only in the
+descender). This is not new: with the old mirror-image `q` it was 19–23 %.
+
+**Blade cut:** the angled ends of `b d h k t p` (and of `q.ss06`) rise 32 % of the stem width (27 units in Regular, about a
 third of a pixel at 14 px). The baseline, x-height and cap-height consistency tests at 12–16 px still pass;
 the cut is a display-size detail and is not visible in small text.
 
@@ -99,7 +127,7 @@ From `tests/visual-regression/density.md`.
 | | 10 px | 11 px | 12 px | 13 px | 14 px | 16 px | 18 px |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1.000 Regular | 12.3 | 10.5 | 12.1 | 10.8 | 12.4 | 11.1 | 11.1 |
-| **1.2.0 Regular** | 13.5 | 11.6 | 13.2 | 11.7 | 13.6 | 12.1 | 12.2 |
+| **1.2.0 Regular** | 13.5 | 11.5 | 13.2 | 11.7 | 13.6 | 12.1 | 12.2 |
 | 1.2.0 Medium | 15.2 | 13.1 | 15.0 | 13.2 | 15.4 | 13.8 | 13.8 |
 | JetBrains Mono | 13.2 | 12.4 | 13.6 | 12.9 | 13.9 | 12.7 | 13.0 |
 | Fira Code | 12.0 | 11.3 | 12.4 | 11.7 | 12.6 | 11.5 | 11.8 |
@@ -134,5 +162,7 @@ parentheses, wider braces, slightly darker text; no glyph became less distinct. 
 - **Powerline separators at small sizes:** outline overlap is tested; hinted seams were only tested for
   box drawing.
 - **GitHub Actions workflows:** parsed as YAML, never executed.
-- **Nerd Fonts patching:** not run (no FontForge).
+- **Nerd Fonts patching:** not run (no FontForge), so no Nerd Font build exists.
+- **VS Code, Windows Terminal, PowerShell:** not run. Windows was the stated priority of the upgrade brief and
+  remains the largest gap.
 - **Trademark and repository-name clearance:** see `docs/BRANDING.md`.

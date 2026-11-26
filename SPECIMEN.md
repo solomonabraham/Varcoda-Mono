@@ -8,7 +8,15 @@ All images are generated from the fonts in `fonts/` by `python scripts/make-asse
 
 ![Specimen, light](assets/specimen-light.png)
 
-## Weights
+## Typography test sheet
+
+The same lines at 10, 11, 12, 13, 14, 16 and 18 px, pixel for pixel, with an italic comment.
+
+![Test sheet, dark](assets/test-sheet-dark.png)
+
+![Test sheet, light](assets/test-sheet-light.png)
+
+## Weights and italics
 
 ![Weights](assets/weights.png)
 
@@ -34,5 +42,5 @@ are separate projects under their own licenses and are not distributed here. Met
 ## In your own environment
 
 Open `tests/rendering-tests/index.html` in a browser: a self-contained page (the fonts are embedded) with
-waterfalls, look-alike rows, ligature toggles and box drawing. `specimens/` holds the two long-form sheets
-from 1.000, regenerated with the current fonts (`python scripts/make-specimens.py`).
+waterfalls, look-alike rows, ligature toggles and box drawing. `specimens/code-samples.png` sets twelve languages
+(PHP, Drupal, JavaScript, TypeScript, Python, JSON, YAML, HTML, CSS, SQL, Bash, PowerShell); both sheets in `specimens/` are regenerated with the current fonts (`python scripts/make-specimens.py`).

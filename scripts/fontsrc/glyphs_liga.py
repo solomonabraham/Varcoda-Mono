@@ -11,7 +11,7 @@ from .glyphs_lower import _lc
 from .glyphs_marks import cedilla_shape, ogonek_shape
 from .glyphs_punct import (ampersand_, asterisk_, bar_, chevron, chevron_vx, colon_, eq_gap, greater_, less_, less_geom,
                            obar, question_, slash_, equal_, hyphen_, period_, plus_)
-from .glyphs_lower import l_, y_squared_
+from .glyphs_lower import l_, m_full_, q_plain_, y_squared_
 from .geom import rect as _rect
 from .glyphs_upper import zero_ring, _dg
 from .kit import GLYPHS, Composite, bowl, g, vstem
@@ -311,12 +311,19 @@ SS03 = [("zero", "zero.ss03")]
 SS05 = [("y", "y.ss05")] + [(n, n + ".ss05") for n in Y_ACCENTED]
 SS04 = [("l", "l.ss04")]
 
+g("q.ss06")(lambda m: q_plain_(m))
+g("m.ss07")(lambda m: m_full_(m))
+SS06 = [("q", "q.ss06")]
+SS07 = [("m", "m.ss07")]
+
 # tag, name shown by applications, substitutions.  ss01 and ss02 keep their 1.000 meaning.
 STYLISTIC_SETS = [("ss01", "Dotted zero", SS01),
                   ("ss02", "Single-storey a", SS02),
                   ("ss03", "Plain zero", SS03),
                   ("ss04", "Flat-foot l", SS04),
-                  ("ss05", "Squared y", SS05)]
+                  ("ss05", "Squared y", SS05),
+                  ("ss06", "Plain q", SS06),
+                  ("ss07", "Long-leg m", SS07)]
 
 
 # --------------------------------------------------------------------------

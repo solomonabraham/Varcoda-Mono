@@ -255,3 +255,13 @@ feature ss05 {
     sub ydieresis by ydieresis.ss05;
     sub ycircumflex by ycircumflex.ss05;
 } ss05;
+
+feature ss06 {
+    featureNames { name "Plain q"; };
+    sub q by q.ss06;
+} ss06;
+
+feature ss07 {
+    featureNames { name "Long-leg m"; };
+    sub m by m.ss07;
+} ss07;

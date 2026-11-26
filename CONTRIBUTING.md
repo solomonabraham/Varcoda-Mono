@@ -38,7 +38,7 @@ python -m pytest tests
 Rules that the tests enforce and reviews will ask for:
 
 - Every glyph is exactly 600 units wide and stays inside its cell (ligatures: inside their *n* cells).
-- A change must work in **all five weights**; look at Light and Bold, not just Regular.
+- A change must work in **all five weights and their italics**; look at Light and Bold, not just Regular.
 - Do not copy outlines from other typefaces. Measuring and comparing is fine (`scripts/compare-fonts.py`).
 - A new feature needs a test. A size or spacing change needs numbers: say what you measured.
 - Do not renumber or repurpose existing stylistic sets.

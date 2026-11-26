@@ -22,7 +22,8 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-STYLES = ["Light", "Regular", "Medium", "SemiBold", "Bold"]
+STYLES = ["Light", "Regular", "Medium", "SemiBold", "Bold",
+          "LightItalic", "Italic", "MediumItalic", "SemiBoldItalic", "BoldItalic"]
 
 # why the remaining fontbakery findings are accepted
 NOTES = {
@@ -131,7 +132,7 @@ def main():
             continue
         result, findings = res
         order = ["FATAL", "ERROR", "FAIL", "WARN", "INFO", "SKIP", "PASS"]
-        lines.append("Totals over the five fonts: " + ", ".join("%s %d" % (k, result[k]) for k in order if k in result))
+        lines.append("Totals over the ten fonts: " + ", ".join("%s %d" % (k, result[k]) for k in order if k in result))
         lines.append("")
         if findings:
             lines += ["| Result | Check | Fonts | Finding | Assessment |", "| --- | --- | --- | --- | --- |"]

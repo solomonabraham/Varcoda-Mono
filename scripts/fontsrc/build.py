@@ -31,9 +31,9 @@ from .kit import GLYPHS, ORDER, Composite
 
 FAMILY = "Varcoda Mono"
 PS_FAMILY = "VarcodaMono"
-VERSION_MAJOR, VERSION_MINOR = 1, 200
+VERSION_MAJOR, VERSION_MINOR = 1, 300
 VERSION = "%d.%03d" % (VERSION_MAJOR, VERSION_MINOR)   # OpenType version
-RELEASE = "1.2.0"                                           # release tag (v1.2.0)
+RELEASE = "1.3.0"                                           # release tag (v1.3.0)
 COPYRIGHT = "Copyright 2026 The Varcoda Mono Project Authors"
 LICENSE = ("This Font Software is licensed under the SIL Open Font License, Version 1.1. "
            "This license is available with a FAQ at: https://openfontlicense.org")
@@ -80,18 +80,21 @@ def _draw_shape(shape: Shape, pen):
 
 def set_info(font, m):
     info = font.info
-    style = m.name
-    ribbi = style in ("Regular", "Bold")
+    weight = m.name
+    italic = bool(getattr(m, "italic", False))
+    style = weight if not italic else ("Italic" if weight == "Regular" else weight + " Italic")
+    ribbi = weight in ("Regular", "Bold")
     info.familyName = FAMILY
     info.styleName = style
-    info.styleMapFamilyName = FAMILY if ribbi else "%s %s" % (FAMILY, style)
-    info.styleMapStyleName = "bold" if style == "Bold" else "regular"
+    info.styleMapFamilyName = FAMILY if ribbi else "%s %s" % (FAMILY, weight)
+    info.styleMapStyleName = (("bold italic" if italic else "bold") if weight == "Bold"
+                              else ("italic" if italic else "regular"))
     info.versionMajor, info.versionMinor = VERSION_MAJOR, VERSION_MINOR
     info.copyright = COPYRIGHT
     info.unitsPerEm = params.UPM
     info.ascender, info.descender = params.ASC, params.DESC
     info.xHeight, info.capHeight = params.XH, params.CAP
-    info.italicAngle = 0
+    info.italicAngle = -params.ITALIC_ANGLE if italic else 0
 
     info.openTypeHheaAscender = info.openTypeOS2TypoAscender = params.LINE_ASC
     info.openTypeHheaDescender = info.openTypeOS2TypoDescender = params.LINE_DESC
@@ -120,7 +123,7 @@ def set_info(font, m):
         info.openTypeNamePreferredFamilyName = FAMILY
         info.openTypeNamePreferredSubfamilyName = style
 
-    info.postscriptFontName = "%s-%s" % (PS_FAMILY, style)
+    info.postscriptFontName = "%s-%s" % (PS_FAMILY, style.replace(" ", ""))
     info.postscriptFullName = "%s %s" % (FAMILY, style)
     info.postscriptIsFixedPitch = True
     info.postscriptUnderlineThickness = 66          # one value for the whole family
@@ -199,8 +202,23 @@ class _MonoHmtx(table__h_m_t_x):
         return data + b"".join(struct.pack(">h", otRound(self.metrics[g][1])) for g in order[n:])
 
 
+def _add_stat(tt):
+    """STAT table: tells applications how the static styles relate (weight and
+    italic axes), which Windows and macOS use to group the family correctly"""
+    from fontTools.otlLib.builder import buildStatTable
+    wclass = tt["OS/2"].usWeightClass
+    italic = bool(tt["OS/2"].fsSelection & 1)
+    weight = dict(value=wclass, name={w[1]: w[0] for w in params.WEIGHTS}[wclass])
+    if wclass == 400:
+        weight.update(flags=0x2, linkedValue=700)               # "Regular" is elided from names, links to Bold
+    slope = dict(value=1, name="Italic") if italic else dict(value=0, name="Roman", flags=0x2, linkedValue=1)
+    buildStatTable(tt, [dict(tag="wght", name="Weight", values=[weight]),
+                        dict(tag="ital", name="Italic", values=[slope])], elidedFallbackName=2, macNames=False)
+
+
 def _finish(tt: TTFont, hinted=False):
     """table fixes shared by TTF and OTF"""
+    _add_stat(tt)
     from fontTools.misc.timeTools import epoch_diff
     stamp = _epoch() - epoch_diff
     tt["head"].created = tt["head"].modified = stamp
@@ -306,8 +324,9 @@ def write_webfont_css(root: str, weights) -> str:
     """fonts/webfonts/<family>.css: @font-face rules for the WOFF2 files"""
     rules = ["/* %s %s - SIL Open Font License 1.1 */" % (FAMILY, VERSION)]
     for name, wclass, _stem in weights:
-        rules.append('@font-face {\n  font-family: "%s";\n  font-style: normal;\n  font-weight: %d;\n  font-display: swap;\n'
-                     '  src: url("%s-%s.woff2") format("woff2");\n}' % (FAMILY, wclass, PS_FAMILY, name))
+        for slope, file_style in (("normal", name), ("italic", params.italic_style(name))):
+            rules.append('@font-face {\n  font-family: "%s";\n  font-style: %s;\n  font-weight: %d;\n  font-display: swap;\n'
+                         '  src: url("%s-%s.woff2") format("woff2");\n}' % (FAMILY, slope, wclass, PS_FAMILY, file_style))
     path = os.path.join(root, "fonts", "webfonts", FAMILY.lower().replace(" ", "-") + ".css")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
