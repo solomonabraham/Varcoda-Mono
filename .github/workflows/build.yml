@@ -1,5 +1,5 @@
-# Builds the fonts from source on every push and pull request and checks that
-# the committed fonts are what the sources produce.
+# Builds the fonts from source on every push and pull request and fails when the
+# committed fonts and sources are not what the program produces.
 name: Build
 
 on:
@@ -25,13 +25,17 @@ jobs:
           pip install -r requirements.txt afdko==5.0.1
       - name: Build into a scratch directory
         run: python scripts/build-fonts.py --root "$RUNNER_TEMP/out"
-      - name: Compare committed fonts with the fresh build
+      - name: Committed fonts and sources are what the program builds
         run: |
-          # A warning, not a failure: byte-identical output is verified on one machine only so far.
-          for f in fonts/*.ttf fonts/otf/*.otf fonts/webfonts/*.woff2; do
-            cmp -s "$f" "$RUNNER_TEMP/out/$f" || echo "::warning file=$f::differs from a fresh build"
+          # Builds are byte-reproducible with the pinned packages (docs/BUILDING.md).
+          status=0
+          for f in fonts/ttf/*.ttf fonts/otf/*.otf fonts/webfonts/*; do
+            cmp -s "$f" "$RUNNER_TEMP/out/$f" || { echo "::error file=$f::differs from a fresh build"; status=1; }
           done
+          diff -rq sources "$RUNNER_TEMP/out/sources" || status=1
+          exit $status
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: varcoda-mono-fonts
           path: ${{ runner.temp }}/out/fonts

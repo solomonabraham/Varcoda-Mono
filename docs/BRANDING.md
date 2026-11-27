@@ -13,10 +13,9 @@ interim working name, "Kerf Mono", was used for one local build and never publis
 
 - **Web search, 26 November 2026:** no typeface, font project or brand named "Varcoda" turned up. The nearest
   names found were "Varoca" and "Varo" (display fonts) and "Codda"; none is the same word.
-- **GitHub repository names could not be checked from the build environment** (the GitHub search API and
-  search pages were not reachable). Repository names are scoped to the owning account, so
-  `<your-account>/varcoda-mono` is free by definition; before publishing, search GitHub, npm and Homebrew for
-  `varcoda` by hand.
+- **Package names were not checked.** The repository is `solomonabraham/Varcoda-Mono` on GitHub. Whether
+  `varcoda-mono` is free on npm, Homebrew, the AUR and other registries was not looked up; do that before
+  submitting a package.
 - **No trademark search was performed.** A web search is not a clearance. Check the relevant registers
   (USPTO, EUIPO) if that matters to you.
 
@@ -64,15 +63,27 @@ something else: the zero has a dot, `i` and `l` carry serifs and a tail, punctua
 | Family name | Varcoda Mono |
 | Short description | A squared, technical monospaced typeface for code and terminals, on one strict 600-unit cell. |
 | Tagline | Squared for code. |
-| Repository name | `varcoda-mono` |
+| Repository | <https://github.com/solomonabraham/Varcoda-Mono> |
 | Font files | `VarcodaMono-<Style>.ttf`, `.otf`, `.woff2` |
 | PostScript names | `VarcodaMono-Light`, `-Regular`, `-Medium`, `-SemiBold`, `-Bold` |
 | Suggested package names | npm `varcoda-mono`, Homebrew cask `font-varcoda-mono`, AUR `ttf-varcoda-mono` (none of these exist yet) |
 
-### Logo
+### Logo and banner
 
 `assets/logo.svg`: a capital V from the Bold next to an amber vertical bar, the family's own `|` glyph,
 which reads as a text cursor. Both shapes are the actual glyph outlines.
+
+`assets/banner.svg` and `banner.png` (1280 × 640): the name in Bold behind the same amber bar, the tagline, one line
+of code with ligatures, and the facts in one line. It opens the README and is the picture to upload as the
+repository's social preview. Both are written by `scripts/make-assets.py` from the font files, so they follow
+every change to the letters.
+
+### Pictures
+
+One look for everything that shows the font: the dark background below, text in the light grey, labels in teal,
+amber for the cursor bar and numbers, generous margins, and no decoration that is not type. The font is the
+subject of every picture; the name appears once, in the banner. Every picture is rendered from the compiled
+fonts and never retouched.
 
 ### Colours
 

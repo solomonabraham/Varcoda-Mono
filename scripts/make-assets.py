@@ -3,7 +3,7 @@
 
     python scripts/make-assets.py [--refs DIR] [--only NAME ...]
 
-Every picture is made from the real font files in fonts/: PNGs are rasterised
+Every picture is made from the real font files in fonts/ttf/: PNGs are rasterised
 with FreeType (hinted, like a Linux desktop) after HarfBuzz shaping, the SVGs
 contain the glyph outlines themselves.  Nothing is mocked up.
 
@@ -76,7 +76,7 @@ _fonts = {}
 
 
 def font_path(style):
-    return os.path.join(ROOT, "fonts", "%s-%s.ttf" % (build.PS_FAMILY, style))
+    return os.path.join(ROOT, "fonts", "ttf", "%s-%s.ttf" % (build.PS_FAMILY, style))
 
 
 def R(style_or_path, px, hinting=True) -> FontRenderer:
@@ -319,6 +319,56 @@ def test_sheet(theme):
     p.save("test-sheet-%s.png" % theme["name"])
 
 
+SHOWCASE = '''// Retry a request with exponential backoff: 100, 200, 400, 800 ms.
+export async function retry<T>(task: () => Promise<T>, limit = 5) {
+  let delay = 100;
+  for (let attempt = 1; attempt <= limit; attempt++) {
+    try {
+      return await task();
+    } catch (error) {
+      if (attempt === limit || error?.status !== 503) throw error;
+      console.warn(`attempt ${attempt}/${limit} failed, wait ${delay} ms`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      delay *= 2;
+    }
+  }
+  throw new Error("unreachable");
+}'''
+
+
+def code():
+    """the first picture of the README: one screen of code, comments and keywords in the italic"""
+    for k, v in DARK["syntax"].items():
+        setattr(S, k, v)
+    page = S.Page(height=1400)
+    S.code_block(page, "TypeScript", "typescript", SHOWCASE, px=30, features={"calt": True},
+                 note="Regular with Italic comments and keywords, ligatures on")
+    page.gap(-30)
+    print("  assets/code.png  %dx%d" % page.save(os.path.join(ASSETS, "code.png")))
+
+
+LOOKALIKES = ["0O 1lI| 5S 8B 2Z $S GC", "pq rn m cl d {( '\"` .,:;"]
+
+
+def lookalikes():
+    """the pairs that must not be confused: at display size, and at 13 px enlarged so that every pixel shows"""
+    p = Sheet(DARK)
+    for s in LOOKALIKES:
+        p.line(s, "Regular", 96, lead=1.3)
+    p.label("The same at 13 px, hinted, enlarged 4× (nearest neighbour)")
+    r = R("Regular", 13)
+    lh = round(13 * 1.6)
+    cv = np.empty((lh * len(LOOKALIKES), r.cell * max(len(s) for s in LOOKALIKES) + 2, 3), dtype=np.float32)
+    cv[:] = np.array(DARK["bg"], dtype=np.float32)
+    for i, s in enumerate(LOOKALIKES):
+        r.draw(cv, 1, i * lh + (lh - (r.ascent + r.descent)) // 2 + r.ascent, s, DARK["fg"], {"calt": False})
+    img = to_image(cv)
+    arr = np.asarray(img.resize((img.width * 4, img.height * 4), Image.NEAREST), dtype=np.float32)
+    p.cv[p.y:p.y + arr.shape[0], MARGIN:MARGIN + arr.shape[1]] = arr
+    p.y += arr.shape[0]
+    p.save("lookalikes.png")
+
+
 # --------------------------------------------------------------------------
 # SVG (outlines of the real glyphs) and PNG copies made by headless Chrome
 # --------------------------------------------------------------------------
@@ -389,7 +439,7 @@ def banner():
     t = DARK
     parts = ['<rect width="1280" height="640" fill="%s"/>' % HEX(t["bg"]),
              '<rect x="88" y="150" width="10" height="346" fill="%s"/>' % HEX(t["amber"])]
-    parts.append(bold.text(build.FAMILY, 136, 286, 156, HEX(t["fg"]))[0])
+    parts.append(bold.text(build.FAMILY, 136, 286, 144, HEX(t["fg"]))[0])     # 144: the name ends 100 px before the edge
     parts.append(reg.text("Squared for code.", 138, 356, 40, HEX(t["muted"]))[0])
     x, y, size = 138, 452, 31
     syn = t["syntax"]
@@ -398,7 +448,8 @@ def banner():
                      (">= ", syn["C_OP"]), ("0.89 ", syn["C_NUMBER"]), ("&& ", syn["C_OP"]), ('"code"', syn["C_STRING"]), (";", syn["C_OP"])):
         p, x = reg.text(seg, x, y, size, HEX(col), {"calt": True})
         parts.append(p)
-    parts.append(reg.text(" · ".join(STYLES) + "   ·   italics   ·   ligatures   ·   OFL 1.1", 138, 548, 22, HEX(t["muted"]))[0])
+    parts.append(reg.text("%d weights · written italics · %d ligatures · TTF OTF WOFF2 · OFL 1.1" % (len(STYLES), len(LIGATURES)),
+                          138, 548, 22, HEX(t["muted"]))[0])
     svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" '
            'aria-label="Varcoda Mono - Squared for code."><title>Varcoda Mono</title>%s</svg>\n' % "".join(parts))
     path = os.path.join(ASSETS, "banner.svg")
@@ -415,7 +466,8 @@ def main():
     args = ap.parse_args()
     os.makedirs(ASSETS, exist_ok=True)
     jobs = {"specimen-dark": lambda: specimen(DARK), "specimen-light": lambda: specimen(LIGHT), "weights": weights,
-            "ligatures": ligatures, "glyph-overview": glyph_overview, "logo": logo, "banner": banner,
+            "ligatures": ligatures, "glyph-overview": glyph_overview, "code": code, "lookalikes": lookalikes,
+            "logo": logo, "banner": banner,
             "test-sheet-dark": lambda: test_sheet(DARK), "test-sheet-light": lambda: test_sheet(LIGHT)}
     if args.refs:
         jobs["comparison"] = lambda: comparison(args.refs)

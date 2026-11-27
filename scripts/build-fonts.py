@@ -8,7 +8,7 @@
 
 Outputs
     sources/VarcodaMono-<Style>.ufo    editable sources (UFO 3)
-    fonts/VarcodaMono-<Style>.ttf      TrueType, hinted with ttfautohint
+    fonts/ttf/VarcodaMono-<Style>.ttf  TrueType, hinted with ttfautohint
     fonts/otf/VarcodaMono-<Style>.otf  OpenType/CFF, hinted with AFDKO otfautohint when it is installed
 """
 from __future__ import annotations
@@ -65,7 +65,7 @@ def main(argv=None):
             ufo = build.make_ufo(m, glyphs)
             build.write_ufo(ufo, src)
             n_glyphs = len(glyphs)
-        ttf = os.path.join(args.root, "fonts", "%s-%s.ttf" % (build.PS_FAMILY, style))
+        ttf = os.path.join(args.root, "fonts", "ttf", "%s-%s.ttf" % (build.PS_FAMILY, style))
         status = build.compile_ttf(ufo, ttf, hint=not args.no_hint)
         msg = "%-14s %4d glyphs  ttf: %s" % (style, n_glyphs, status)
         if not args.no_woff2:

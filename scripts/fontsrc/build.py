@@ -2,7 +2,7 @@
 
     draw_master()      Python glyph programs  ->  outlines
     make_ufo()         outlines               ->  sources/VarcodaMono-<Style>.ufo
-    compile_ttf()      UFO                    ->  fonts/VarcodaMono-<Style>.ttf (hinted)
+    compile_ttf()      UFO                    ->  fonts/ttf/VarcodaMono-<Style>.ttf (hinted)
     compile_otf()      UFO                    ->  fonts/otf/VarcodaMono-<Style>.otf
 
 The UFOs are complete, ordinary sources: they can be opened and edited in
@@ -31,10 +31,11 @@ from .kit import GLYPHS, ORDER, Composite
 
 FAMILY = "Varcoda Mono"
 PS_FAMILY = "VarcodaMono"
-VERSION_MAJOR, VERSION_MINOR = 1, 400
+URL = "https://github.com/solomonabraham/Varcoda-Mono"      # project home: name IDs 11 and 12, copyright line
+VERSION_MAJOR, VERSION_MINOR = 1, 500
 VERSION = "%d.%03d" % (VERSION_MAJOR, VERSION_MINOR)   # OpenType version
-RELEASE = "1.4.0"                                           # release tag (v1.4.0)
-COPYRIGHT = "Copyright 2026 The Varcoda Mono Project Authors"
+RELEASE = "1.5.0"                                           # release tag (1.5.0)
+COPYRIGHT = "Copyright 2026 The Varcoda Mono Project Authors (%s)" % URL
 LICENSE = ("This Font Software is licensed under the SIL Open Font License, Version 1.1. "
            "This license is available with a FAQ at: https://openfontlicense.org")
 LICENSE_URL = "https://openfontlicense.org"
@@ -115,6 +116,7 @@ def set_info(font, m):
 
     info.openTypeNameDesigner = DESIGNER
     info.openTypeNameManufacturer = DESIGNER
+    info.openTypeNameManufacturerURL = info.openTypeNameDesignerURL = URL
     info.openTypeNameLicense = LICENSE
     info.openTypeNameLicenseURL = LICENSE_URL
     info.openTypeNameDescription = DESCRIPTION
@@ -322,7 +324,7 @@ def compile_woff2(ttf_path: str, out_path: str) -> str:
 
 def write_webfont_css(root: str, weights) -> str:
     """fonts/webfonts/<family>.css: @font-face rules for the WOFF2 files"""
-    rules = ["/* %s %s - SIL Open Font License 1.1 */" % (FAMILY, VERSION)]
+    rules = ["/* %s %s - SIL Open Font License 1.1 - %s */" % (FAMILY, VERSION, URL)]
     for name, wclass, _stem in weights:
         for slope, file_style in (("normal", name), ("italic", params.italic_style(name))):
             rules.append('@font-face {\n  font-family: "%s";\n  font-style: %s;\n  font-weight: %d;\n  font-display: swap;\n'

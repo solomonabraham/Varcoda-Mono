@@ -32,7 +32,7 @@ WIDTH = params.WIDTH
 
 
 def ttf_path(style):
-    return os.path.join(ROOT, "fonts", "VarcodaMono-%s.ttf" % style)
+    return os.path.join(ROOT, "fonts", "ttf", "VarcodaMono-%s.ttf" % style)
 
 
 def otf_path(style):
@@ -471,7 +471,8 @@ def _raster(path, ch, px=48):
 LOOKALIKES = [("0", "O"), ("0", "o"), ("0", "8"), ("0", "Ø"), ("1", "l"), ("1", "I"), ("l", "I"), ("l", "|"), ("I", "|"), ("1", "|"),
               ("1", "7"), ("5", "S"), ("8", "B"), ("2", "Z"), ("6", "b"), ("g", "9"), ("g", "q"), ("c", "e"), ("u", "v"),
               ("`", "'"), (".", ","), (":", ";"), ("-", "_"), ("{", "("), ("[", "("), ("D", "O"),
-              ("y", "g"), ("y", "v"), ("b", "h"), ("o", "a"), ("q", "g"), ("m", "n"), ("p", "q")]
+              ("y", "g"), ("y", "v"), ("b", "h"), ("o", "a"), ("q", "g"), ("m", "n"), ("p", "q"),
+              ("$", "S"), ("G", "C"), ("G", "6")]     # $~S scored 0.14-0.16 until 1.400
 
 
 @pytest.mark.parametrize("path", TTFS, ids=ids(TTFS))
@@ -546,7 +547,7 @@ def test_ligatures_substitute_and_keep_the_grid(path):
 def test_everyday_operators_have_their_ligature(path):
     """the operators the 1.400 brief lists; the nullsafe ?-> is the question mark followed by the arrow"""
     for op in ["->", "=>", "==", "===", "!=", "!==", "<=", ">=", "&&", "||", "??", "?.", "::", "+=", "-=", "*=", "**",
-               "//", "/*", "*/"]:
+               "//", "/*", "*/", "|="]:
         lig = "_".join(AGL.get(c, "period") for c in op) + ".liga"
         assert shape(path, "a %s b" % op, {"calt": True})[0] == ["a", "space"] + ["LIG"] * (len(op) - 1) + [lig, "space", "b"], op
     assert shape(path, "$a?->b", {"calt": True})[0] == ["dollar", "a", "question", "LIG", "hyphen_greater.liga", "b"]
@@ -554,6 +555,11 @@ def test_everyday_operators_have_their_ligature(path):
     assert shape(path, "a**=2", {"calt": True})[0] == ["a", "LIG", "asterisk_asterisk.liga", "equal", "two"]
     assert shape(path, "a??=b", {"calt": True})[0] == ["a", "LIG", "question_question.liga", "equal", "b"]
     assert shape(path, "/*=*/", {"calt": True})[0] == ["LIG", "slash_asterisk.liga", "equal", "LIG", "asterisk_slash.liga"]
+    assert shape(path, "a||=b", {"calt": True})[0] == ["a", "LIG", "bar_bar.liga", "equal", "b"]
+    # the other sequences of the 1.500 brief have no ligature: they must stay exactly what was typed
+    plain = dict(AGL, **{".": "period", "%": "percent", "^": "asciicircum"})
+    for op in ["<<", ">>", "<<=", ">>=", ">>>", "..", "...", "..=", "%=", "&=", "^=", "/="]:
+        assert shape(path, "a%sb" % op, {"calt": True})[0] == ["a"] + [plain[c] for c in op] + ["b"], op
 
 
 @pytest.mark.parametrize("path", TTFS, ids=ids(TTFS))
@@ -734,7 +740,7 @@ def test_build_is_reproducible(tmp_path):
     subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "build-fonts.py"), "--root", str(tmp_path),
                     "-w", "Regular", "Bold", "Italic", "BoldItalic"], check=True, capture_output=True)
     for style in ("Regular", "Bold", "Italic", "BoldItalic"):
-        for rel in ("fonts/VarcodaMono-%s.ttf" % style, "fonts/otf/VarcodaMono-%s.otf" % style,
+        for rel in ("fonts/ttf/VarcodaMono-%s.ttf" % style, "fonts/otf/VarcodaMono-%s.otf" % style,
                     "fonts/webfonts/VarcodaMono-%s.woff2" % style):
             a = hashlib.sha256(open(os.path.join(ROOT, rel), "rb").read()).hexdigest()
             b = hashlib.sha256(open(os.path.join(str(tmp_path), rel), "rb").read()).hexdigest()

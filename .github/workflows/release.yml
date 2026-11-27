@@ -1,10 +1,11 @@
-# On a version tag: rebuild from source, test, package, and attach the ZIP to
-# a draft GitHub release.  A maintainer reviews and publishes the draft.
+# On a version tag (1.5.0, without a "v"): rebuild from source, test, package, and attach the
+# archives to a draft GitHub release.  A maintainer reads the draft, attaches the Nerd Font
+# archive and publishes it (docs/RELEASING.md).
 name: Release
 
 on:
   push:
-    tags: ["v*.*.*"]
+    tags: ["[0-9]+.[0-9]+.[0-9]+"]
 
 permissions:
   contents: write
@@ -26,17 +27,16 @@ jobs:
           pip install -r requirements-dev.txt afdko==5.0.1
       - name: Tag matches the version in the sources
         run: |
-          want="v$(python -c "import sys; sys.path.insert(0, 'scripts'); from fontsrc import build; print(build.RELEASE)")"
+          want="$(python -c "import sys; sys.path.insert(0, 'scripts'); from fontsrc import build; print(build.RELEASE)")"
           test "$GITHUB_REF_NAME" = "$want" || { echo "::error::tag $GITHUB_REF_NAME, sources say $want"; exit 1; }
       - name: Build, test, package
         run: |
           python scripts/build-fonts.py
           python -m pytest tests -q
           python scripts/make-release.py
-          cd releases && sha256sum VarcodaMono-*.zip > SHA256SUMS
       - name: Create draft release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" releases/VarcodaMono-*.zip releases/SHA256SUMS \
-            --draft --title "Varcoda Mono ${GITHUB_REF_NAME#v}" --notes-file "docs/RELEASE-NOTES-${GITHUB_REF_NAME#v}.md"
+            --draft --title "Varcoda Mono $GITHUB_REF_NAME" --notes-file "docs/history/RELEASE-NOTES-$GITHUB_REF_NAME.md"

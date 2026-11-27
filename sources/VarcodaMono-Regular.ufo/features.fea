@@ -223,6 +223,12 @@ feature calt {
         sub LIG equal' by asterisk_equal.liga;
         sub asterisk' equal by LIG;
     } lig_asterisk_equal;
+    lookup lig_bar_equal {
+        ignore sub bar bar' equal;
+        ignore sub bar' equal equal;
+        sub LIG equal' by bar_equal.liga;
+        sub bar' equal by LIG;
+    } lig_bar_equal;
 } calt;
 
 # Slashed zero: the registered feature for it (CSS font-variant-numeric: slashed-zero).

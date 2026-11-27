@@ -15,9 +15,9 @@ Its full text applies; this page is a summary and names the contact.
 
 ## Reporting
 
-Report unacceptable behaviour privately to the maintainers. **Contact address: to be added by the
-maintainers before the repository is made public** (see `docs/PUBLISHING.md`). Reports are handled
-confidentially.
+Report unacceptable behaviour privately to the maintainer, [@solomonabraham](https://github.com/solomonabraham),
+through the contact options on that profile. Content on GitHub itself can also be reported to GitHub with the
+*Report content* link next to every comment. Reports are handled confidentially.
 
 ## Enforcement
 

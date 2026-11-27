@@ -7,7 +7,7 @@
     <key>capHeight</key>
     <integer>720</integer>
     <key>copyright</key>
-    <string>Copyright 2026 The Varcoda Mono Project Authors</string>
+    <string>Copyright 2026 The Varcoda Mono Project Authors (https://github.com/solomonabraham/Varcoda-Mono)</string>
     <key>descender</key>
     <integer>-192</integer>
     <key>familyName</key>
@@ -40,18 +40,22 @@
     <string>Varcoda Mono is a monospaced typeface for programming: geometric, technical and built for long coding sessions. Dotted zero, clearly separated 1 l I, written italics, optional cell-preserving ligatures.</string>
     <key>openTypeNameDesigner</key>
     <string>The Varcoda Mono Project Authors</string>
+    <key>openTypeNameDesignerURL</key>
+    <string>https://github.com/solomonabraham/Varcoda-Mono</string>
     <key>openTypeNameLicense</key>
     <string>This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org</string>
     <key>openTypeNameLicenseURL</key>
     <string>https://openfontlicense.org</string>
     <key>openTypeNameManufacturer</key>
     <string>The Varcoda Mono Project Authors</string>
+    <key>openTypeNameManufacturerURL</key>
+    <string>https://github.com/solomonabraham/Varcoda-Mono</string>
     <key>openTypeNamePreferredFamilyName</key>
     <string>Varcoda Mono</string>
     <key>openTypeNamePreferredSubfamilyName</key>
     <string>SemiBold Italic</string>
     <key>openTypeNameVersion</key>
-    <string>Version 1.400</string>
+    <string>Version 1.500</string>
     <key>openTypeOS2Panose</key>
     <array>
       <integer>2</integer>
@@ -144,7 +148,7 @@
     <key>versionMajor</key>
     <integer>1</integer>
     <key>versionMinor</key>
-    <integer>400</integer>
+    <integer>500</integer>
     <key>xHeight</key>
     <integer>540</integer>
   </dict>

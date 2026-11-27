@@ -37,7 +37,7 @@ os.makedirs(OUT, exist_ok=True)
 
 
 def ttf(style):
-    return os.path.join(ROOT, "fonts", "VarcodaMono-%s.ttf" % style)
+    return os.path.join(ROOT, "fonts", "ttf", "VarcodaMono-%s.ttf" % style)
 
 
 def ink(style, px, text, features=None):
