@@ -26,9 +26,9 @@ def pdot(m, cx, y_bottom, d=None):
 def comma_tail(m, cx, y_bottom, d=None):
     d = m.pdot if d is None else d
     # a long, sturdy tail: at 12-14 px it is what separates , from . and ; from :
-    depth = max(0.235 * m.cap, 1.02 * d) * (d / m.pdot)
-    hw_ = max(d * 0.31, 0.058 * m.W * (d / m.pdot))
-    return diag((cx + d * 0.5 - hw_, y_bottom + d * 0.3), (cx - d * 0.40, y_bottom - depth), hw_, hw_)
+    depth = max(0.235 * m.cap, 1.14 * d) * (d / m.pdot)
+    hw_ = max(d * 0.32, 0.058 * m.W * (d / m.pdot))
+    return diag((cx + d * 0.5 - hw_, y_bottom + d * 0.3), (cx - d * 0.52, y_bottom - depth), hw_, hw_)
 
 
 @g(".")
@@ -82,7 +82,7 @@ def question_(m):
 # -- quotes ----------------------------------------------------------------
 def tick(m, cx):
     w = m.sw * 1.12
-    return rect(cx - w / 2, m.asc - 0.375 * m.cap, cx + w / 2, m.asc)
+    return rect(cx - w / 2, m.asc - 0.40 * m.cap, cx + w / 2, m.asc)
 
 
 @g("'")
@@ -284,7 +284,7 @@ def asterisk_shape(m, cx, cy, r, t):
 
 @g("*")
 def asterisk_(m):
-    return asterisk_shape(m, m.xc, m.axis + 0.02 * m.cap, 0.355 * m.W, m.hw * 1.0)
+    return asterisk_shape(m, m.xc, m.axis + 0.02 * m.cap, 0.365 * m.W, m.hw * 1.06)
 
 
 @g("#")
@@ -318,12 +318,12 @@ def small_ring(m, x0, y0, x1, y1, sw, hw):
 @g("%")
 def percent_(m):
     sw, hw, a, b, xc, H = _p(m)
-    psw, phw = sw * m.lerp(0.86, 0.62), hw * m.lerp(0.90, 0.70)
+    psw, phw = sw * m.lerp(0.90, 0.66), hw * m.lerp(0.93, 0.72)
     rw, rh = 0.37 * m.W, 0.415 * H
     x0 = 0.045 * m.W
     r1 = small_ring(m, x0, H + m.os * 0.5 - rh, x0 + rw, H + m.os * 0.5, psw, phw)
     r2 = small_ring(m, m.W - x0 - rw, -m.os * 0.5, m.W - x0, rh - m.os * 0.5, psw, phw)
-    sl = slash(0.15 * m.W, 0, 0.85 * m.W, H, a * m.lerp(0.84, 0.66), b * 0.8)
+    sl = slash(0.15 * m.W, 0, 0.85 * m.W, H, a * m.lerp(0.88, 0.68), b * 0.8)
     return r1 | r2 | sl
 
 

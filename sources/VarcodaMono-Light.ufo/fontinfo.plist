@@ -55,7 +55,7 @@
     <key>openTypeNamePreferredSubfamilyName</key>
     <string>Light</string>
     <key>openTypeNameVersion</key>
-    <string>Version 1.500</string>
+    <string>Version 1.600</string>
     <key>openTypeOS2Panose</key>
     <array>
       <integer>2</integer>
@@ -148,7 +148,7 @@
     <key>versionMajor</key>
     <integer>1</integer>
     <key>versionMinor</key>
-    <integer>500</integer>
+    <integer>600</integer>
     <key>xHeight</key>
     <integer>540</integer>
   </dict>

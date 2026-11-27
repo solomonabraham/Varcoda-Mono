@@ -4,7 +4,7 @@
 
 ```sh
 pip install -r requirements-dev.txt afdko==5.0.1
-python -m pytest tests                       # 605 tests, under a minute
+python -m pytest tests                       # 635 tests, under a minute
 python tests/font-validation/validate.py     # + fontbakery and ufolint, writes tests/font-validation/REPORT.md
 ```
 
@@ -19,7 +19,7 @@ there instead.
 | --- | --- |
 | `tests/font-validation/test_fonts.py` | upright fonts: tables, advance widths, vertical metrics, alignment zones, cell bounds, box-drawing joins, Unicode coverage, glyph names, duplicate and unreachable glyphs, contour direction, outline debris, names and style linking, weight order, look-alike outlines, operator alignment, punctuation size, every ligature on and off, long runs, random operator strings, stylistic sets, web fonts, OpenType Sanitizer, hinted advances 8–32 ppem, fontconfig, UFO sources vs binaries, reproducible build |
 | `tests/font-validation/test_italics.py` | italic fonts: monospacing, italic angle, caret slope, style bits, style linking, STAT, same line box and character set as the upright, slant applied to letters and not to box drawing / arrows / Powerline, the written letterforms (exit strokes, the descending `f`, alternates equal to the defaults), clean and consistent outlines in all five weights, cell overflow limits, ligatures and sets, hinted advances, fontconfig slant, OpenType Sanitizer |
-| `tests/rendering-tests/test_rendering.py` | FreeType hinted bitmaps at 12–16 px: grid alignment, baseline and x-height consistency, look-alike pairs, `rn`/`cl` not fusing, ligatures inside their cells, box-drawing seams; headless Chromium with the web fonts and with the fonts installed into a scratch directory |
+| `tests/rendering-tests/test_rendering.py` | FreeType hinted bitmaps at 12–16 px: grid alignment, baseline and x-height consistency, look-alike pairs, `rn`/`cl` not fusing, the dots of `i j ! : ;` staying clear of their stems (11–16 px), ligatures inside their cells, box-drawing seams; headless Chromium with the web fonts and with the fonts installed into a scratch directory |
 | `tests/test_project.py` | the repository around the fonts: every link, heading anchor and file name in the documentation resolves; JSON, JSONC and TOML examples parse and spell the family name correctly; the release archives contain exactly what the README lists, their stylesheet finds its files, and they are deterministic |
 
 ## In CI
@@ -38,7 +38,7 @@ there instead.
 | `specimens/specimen.png` | alphabets, Regular and Italic side by side, every ligature off and on, the italic before and after 1.4.0, small sizes |
 | `specimens/code-samples.png` | PHP, Drupal PHP, JavaScript, TypeScript, Python, JSON, YAML, HTML, CSS, SQL, Bash, PowerShell; comments and keywords in the italic |
 | `tests/visual-regression/before-after-*.png` | current Regular against the archived 1.000 at the same seven sizes |
-| `tests/visual-regression/compare-previous-*.png` | the previous release (`tests/baseline/v1.400`) against the current fonts, dark and light: `Il1 \| O0 \| pqpq \| $S$S \| B8B8 \| GCGC` and the operators, ligatures off and on, at 10, 11, 12, 13, 14, 16, 18 and 20 px; PHP, JavaScript and Python at 12, 14 and 16 px; one line in all ten styles |
+| `tests/visual-regression/compare-previous-*.png`, `testbench.html` | the test bench: the previous release (`tests/baseline/v1.500`) against the current fonts, dark and light. The confusable matrix `0O 1lI\| 38B 5S 2Z 6G 9gq OQ0D`, punctuation, brackets and symbols, words of narrow letters and the operators, ligatures off and on, at 10, 11, 12, 13, 14, 16, 18 and 20 px; PHP/Drupal, TypeScript, Python and regular expressions at 12, 14 and 16 px; one line in all ten styles. The PNGs are FreeType renderings. `testbench.html` has the matrix and the code with both versions embedded, for a real browser: Chrome and Edge on Windows rasterise with DirectWrite, as VS Code does |
 | `tests/rendering-tests/index.html` | self-contained page (all ten styles embedded) for a real browser: waterfalls, italics, look-alikes, feature toggles |
 | `assets/comparison.png` | next to JetBrains Mono, Fira Code and Iosevka (`COMPARISON.md`) |
 
@@ -46,7 +46,7 @@ Rendering conditions for the PNGs: HarfBuzz shaping, FreeType greyscale with the
 pixel sizes, no subpixel positioning. They show what a Linux desktop shows.
 
 `tests/baseline/` keeps the fonts of earlier versions that these comparisons need: the four weights of 1.000
-(still named Vector Mono), the italic of 1.300, and three styles of 1.400.
+(still named Vector Mono), the italic of 1.300, and three styles each of 1.400 and 1.500.
 
 ## Testing on your own machine
 

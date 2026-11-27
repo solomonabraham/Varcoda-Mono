@@ -51,7 +51,7 @@ checks every result against the font it came from, and writes `build/nerd/` and
 `releases/VarcodaMonoNerdFont-<version>.zip`. `--careful` keeps every glyph Varcoda Mono already has: its own
 Powerline symbols, box drawing and arrows are not replaced.
 
-### What was checked (1.5.0, patcher 3.5.1)
+### What was checked (1.5.0 and 1.6.0, patcher 3.5.1)
 
 All 20 files:
 

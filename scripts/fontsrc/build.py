@@ -32,9 +32,9 @@ from .kit import GLYPHS, ORDER, Composite
 FAMILY = "Varcoda Mono"
 PS_FAMILY = "VarcodaMono"
 URL = "https://github.com/solomonabraham/Varcoda-Mono"      # project home: name IDs 11 and 12, copyright line
-VERSION_MAJOR, VERSION_MINOR = 1, 500
+VERSION_MAJOR, VERSION_MINOR = 1, 600
 VERSION = "%d.%03d" % (VERSION_MAJOR, VERSION_MINOR)   # OpenType version
-RELEASE = "1.5.0"                                           # release tag (1.5.0)
+RELEASE = "1.6.0"                                           # release tag (1.6.0)
 COPYRIGHT = "Copyright 2026 The Varcoda Mono Project Authors (%s)" % URL
 LICENSE = ("This Font Software is licensed under the SIL Open Font License, Version 1.1. "
            "This license is available with a FAQ at: https://openfontlicense.org")
