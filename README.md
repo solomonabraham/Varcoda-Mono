@@ -7,10 +7,10 @@ rounded-rectangle geometry of Saira and the reading comfort of JetBrains Mono, a
 blade-cut extenders, flat shoulders, softened square dots. Every glyph sits on one strict 600-unit cell,
 including the ligatures.
 
-Five weights, each with an italic; 647 glyphs; TTF + OTF + WOFF2; SIL Open Font License 1.1. An original design: other fonts
+Five weights, each with a written italic; 648 glyphs; TTF + OTF + WOFF2; SIL Open Font License 1.1. An original design: other fonts
 were measured, never copied.
 
-> **Status: 1.3.0.** Everything listed under *Features* is built into the fonts in this repository and
+> **Status: 1.4.0.** Everything listed under *Features* is built into the fonts in this repository and
 > covered by the test-suite. A variable font and a Nerd Font build do **not** exist yet (see
 > [Known limitations](#known-limitations) and [ROADMAP.md](ROADMAP.md)).
 > Formerly "Vector Mono"; see [docs/BRANDING.md](docs/BRANDING.md) for the name and the design direction.
@@ -23,22 +23,24 @@ were measured, never copied.
   stops short of the baseline; the ends of `b d h k t p` are sliced at an angle; arches leave their stems flat,
   without a notch; `D` is squarer than `O`.
 - **Strictly monospaced.** Every glyph advances 600 units. No kerning, no positioning features.
-- **Characters you cannot mix up.** Slashed `0`; `1`, `l`, `I` and `|` all differ in structure; `5`/`S`,
+- **Characters you cannot mix up.** A dotted `0` that is neither `O` nor `Ø`; `1`, `l`, `I` and `|` all differ in
+  structure; `5`/`S`,
   `8`/`B`, `2`/`Z`, `{`/`(` and `'`/`` ` `` are checked against each other at 12–16 px by the tests.
 - **Punctuation sized for code.** Dots, quotes, the asterisk, parentheses and braces were measured against
   other coding fonts and enlarged where they fell short ([docs/AUDIT-1.000.md](docs/AUDIT-1.000.md)).
 - **One operator axis.** `+ - = < > ~ | /` and all brackets are centred on the same line.
-- **27 optional ligatures** that keep one cell per character, so columns and cursors never shift.
-- **Seven stylistic sets:** dotted zero, single-storey a, plain zero, flat-foot l, squared y, plain q,
+- **28 optional ligatures** that keep one cell per character, so columns and cursors never shift.
+- **A slashed zero and six stylistic sets:** single-storey a, plain zero, flat-foot l, squared y, plain q,
   long-leg m.
 - **Terminal-ready.** Complete box drawing and block elements that join without seams, plus the Powerline
   separators and symbols.
 - **Five weights, ten styles:** Light 300, Regular 400, Medium 500, SemiBold 600, Bold 700, each with an
   italic.
-- **Italics made for comments.** Slanted 9.5°, with a single-storey `a`, a hooked `y` and a descending `f`;
+- **A written italic.** The italic lowercase is drawn, not slanted: stems leave the baseline to the right,
+  arches branch out of their stem, bowls run back up into it, and `f` descends. Made for comments and keywords;
   box drawing, arrows and Powerline symbols stay upright so tables look the same inside a comment.
 - **Dense by default.** Line height 1.23 em, the tightest of the fonts it was compared with.
-- **Open build.** Parametric Python sources, editable UFOs, byte-reproducible fonts, 570 automated tests.
+- **Open build.** Parametric Python sources, editable UFOs, byte-reproducible fonts, 586 automated tests.
 
 ## Preview
 
@@ -46,9 +48,11 @@ were measured, never copied.
 
 More: [typography test sheet](assets/test-sheet-dark.png) · [light theme](assets/specimen-light.png) · [weights](assets/weights.png) ·
 [all glyphs](assets/glyph-overview.png) · [compared with JetBrains Mono, Fira Code and Iosevka](assets/comparison.png) ·
-[before/after 1.000](tests/visual-regression/before-after-dark.png) · [SPECIMEN.md](SPECIMEN.md)
+[before/after 1.000](tests/visual-regression/before-after-dark.png) · [the full specimen](specimens/specimen.png) ·
+[code in twelve languages, comments and keywords in the italic](specimens/code-samples.png) · [SPECIMEN.md](SPECIMEN.md)
 
-All images are rendered from the font files in `fonts/` by `scripts/make-assets.py`. None are mock-ups.
+All images are rendered from the font files in `fonts/` by `scripts/make-assets.py` and
+`scripts/make-specimens.py`. None are mock-ups.
 
 ## Installation
 
@@ -62,8 +66,9 @@ elsewhere. Install all ten files so that applications can find Bold and Italic.
 | **Linux** | `mkdir -p ~/.local/share/fonts/varcoda-mono && cp fonts/*.ttf ~/.local/share/fonts/varcoda-mono/ && fc-cache -f` then check with `fc-list "Varcoda Mono"`. |
 | **Web** | Copy `fonts/webfonts/` and include `varcoda-mono.css`; then `font-family: "Varcoda Mono", monospace`. |
 
-Only the Linux and web paths were exercised for this release (fontconfig and headless Chromium, as part of
-the tests). The Windows and macOS steps are the standard ones for any font and have not been run here.
+For this release the fonts were rendered as web fonts in Chrome on Windows 11; the Linux path (fontconfig,
+headless Chromium) was exercised for 1.3.0. Installing into Windows or macOS is the standard procedure for any
+font and has not been run here.
 
 ## VS Code
 
@@ -81,7 +86,7 @@ the tests). The Windows and macOS steps are the standard ones for any font and h
 To combine ligatures with stylistic sets, give `editor.fontLigatures` a feature string instead of `true`:
 
 ```jsonc
-"editor.fontLigatures": "'calt', 'ss01'"      // ligatures + dotted zero
+"editor.fontLigatures": "'calt', 'zero'"      // ligatures + slashed zero
 "editor.fontLigatures": "'calt' off, 'ss04'"  // no ligatures, flat-foot l
 ```
 
@@ -93,7 +98,7 @@ ligatures off.
 ```jsonc
 "profiles": { "defaults": { "font": {
   "face": "Varcoda Mono", "size": 11, "weight": "normal",
-  "features": { "calt": 1, "ss01": 0 }
+  "features": { "calt": 1, "zero": 0 }
 } } }
 ```
 
@@ -108,14 +113,14 @@ Terminal use the block above. In the classic console window, open *Properties �
 ```conf
 font_family      Varcoda Mono
 disable_ligatures never            # or: always
-font_features    VarcodaMono-Regular +ss01
+font_features    VarcodaMono-Regular +zero
 ```
 
 **WezTerm** (`wezterm.lua`):
 
 ```lua
 config.font = wezterm.font('Varcoda Mono', { weight = 'Regular' })
-config.harfbuzz_features = { 'calt=1', 'ss01=0' }
+config.harfbuzz_features = { 'calt=1', 'zero=0' }
 ```
 
 **Alacritty** and other terminals without OpenType shaping show the plain operators; nothing breaks.
@@ -129,7 +134,7 @@ Details and the untested patching recipe are in [docs/NERD-FONTS.md](docs/NERD-F
 ![Ligatures and stylistic sets](assets/ligatures.png)
 
 ```
-=== !== <=> <-> != == => -> <- <= >= && || ?? ++ -- :: // /* */ |> <| := ** ?. += -=
+=== !== <=> <-> != == => -> <- <= >= && || ?? ++ -- :: // /* */ |> <| := ** ?. += -= *=
 ```
 
 - They live in `calt`, the feature that editor and terminal ligature switches control. With it off, the font
@@ -138,13 +143,13 @@ Details and the untested patching recipe are in [docs/NERD-FONTS.md](docs/NERD-F
   alignment are unaffected. This is tested with 400 random operator strings per font.
 - Longer runs are left alone: `====`, `---`, `///`, `:::`, `>>=`, `-->` stay plain.
 
-## Stylistic sets
+## Slashed zero and stylistic sets
 
 | Tag | Effect | Why you might want it |
 | --- | --- | --- |
-| `ss01` | dotted zero | calmer than the slash, still distinct from `O` |
+| `zero` | slashed zero instead of the dotted one | the classic coding zero; leave it off if you read or write `Ø` |
 | `ss02` | single-storey `a` (and its accented forms) | a more geometric texture |
-| `ss03` | plain zero | for prose or data where the slash distracts; `0` and `O` then differ only in width |
+| `ss03` | plain zero | for prose or data where the dot distracts; `0` and `O` then differ only in width |
 | `ss04` | `l` with a flat foot instead of the curved tail | closer to a typewriter `l` (plain `l` only, not `ĺ ľ ļ ŀ ł`) |
 | `ss05` | squared `y`: built like `u` with a hooked descender (also `ý ÿ ŷ`) | the most Saira-like form; opt-in because at 12–14 px it is closer to `g` and `u` than the default |
 | `ss06` | plain `q`: the mirror image of `p`, without the tail | a more conventional `q` |
@@ -152,7 +157,10 @@ Details and the untested patching recipe are in [docs/NERD-FONTS.md](docs/NERD-F
 
 The sets suggested during planning for `I`, `g`, punctuation size, braces and operators were not added:
 no alternative for them improved on the default in the measurements, and an empty or cosmetic set would
-only clutter font menus. `cvNN` duplicates of the seven sets were left out for the same reason.
+only clutter font menus. `cvNN` duplicates of the six sets were left out for the same reason.
+
+`ss01` selected the dotted zero until 1.3.0. That zero is now the default, so the set is retired: a setting
+that still turns it on is ignored and shows the same zero as before. The number will not be reused.
 
 ## Building from source
 
@@ -165,14 +173,14 @@ Requires Python 3.10 or later (developed and tested with 3.13).
 python -m venv .venv && . .venv/bin/activate
 pip install -r requirements-dev.txt        # build + test dependencies
 python scripts/build-fonts.py              # sources/*.ufo, fonts/*.ttf, fonts/otf, fonts/webfonts
-python -m pytest tests                     # 570 tests
+python -m pytest tests                     # 586 tests
 python tests/font-validation/validate.py   # optional: fontbakery + ufolint report
 python scripts/make-assets.py              # images in assets/
-python scripts/make-release.py             # releases/VarcodaMono-1.3.0.zip
+python scripts/make-release.py             # releases/VarcodaMono-1.4.0.zip
 ```
 
 The design lives in `scripts/fontsrc/`: `params.py` holds the grid and the pens of each weight, the
-`glyphs_*.py` modules draw the glyphs. Change a number, rebuild, and all ten styles follow. The UFOs in
+`glyphs_*.py` modules draw the glyphs (`glyphs_italic.py` holds the written italic lowercase). Change a number, rebuild, and all ten styles follow. The UFOs in
 `sources/` are regenerated on each build; to compile hand-edited UFOs instead use
 `python scripts/build-fonts.py --from-ufo`. Two builds of the same sources on one machine are byte-identical.
 
@@ -184,7 +192,7 @@ Other tools: `scripts/compare-fonts.py` (measure any fonts side by side), `scrip
 
 ```
 assets/                  images used by the documentation (generated)
-docs/                    naming and identity, comparison method, Nerd Fonts, release notes, the 1.000 audit
+docs/                    naming and identity, comparison method, Nerd Fonts, release notes, earlier audits
 fonts/                   VarcodaMono-*.ttf, otf/*.otf, webfonts/*.woff2 + varcoda-mono.css
 sources/                 VarcodaMono-*.ufo (UFO 3, generated, editable)
 scripts/fontsrc/         the parametric design: params, geometry kit, glyph modules, build
@@ -192,22 +200,23 @@ scripts/*.py             build, assets, release, measurement and maintenance too
 tests/font-validation/   pytest suite for the binaries and sources; fontbakery report
 tests/rendering-tests/   hinted small-size rendering tests, Chromium tests, manual test page
 tests/visual-regression/ before/after renders against 1.000, ink-density table
-tests/baseline/v1.000/   the original 1.000 fonts, kept for comparison
+tests/baseline/          the 1.000 fonts and the 1.300 italic, kept for comparison
 .github/                 issue and pull-request templates, CI workflows
 ```
 
 ## Known limitations
 
-- **The italics are derived, not redrawn.** They have their own `a`, `f` and `y`, but all other letters are
-  the upright forms slanted by the build, so curve weights are not optically corrected (the error is below
-  3 % of the stem). The tops of wide capitals lean up to 52 units over the right cell edge; a terminal that
-  clips every cell may shave about half a pixel.
-- **No variable font.** The weights are static files. 550 of 647 glyphs are interpolation-compatible;
+- **The italic is sloped by a shear.** The lowercase is drawn for the italic, but the slant itself is applied
+  by the build, so curve weights are not optically corrected (the error is below 3 % of the stem), and capitals,
+  figures and signs are the upright forms, sloped. The tops of wide capitals lean up to 52 units over the right
+  cell edge; a terminal that clips every cell may shave about half a pixel.
+- **No variable font.** The weights are static files. 551 of 648 glyphs are interpolation-compatible;
   the remaining 97 change their point structure between weights.
 - **No Nerd Font build.** Only the seven core Powerline glyphs are included.
-- **Tested on Linux only.** FreeType, HarfBuzz, fontconfig and headless Chromium. Rendering under
-  DirectWrite/ClearType (VS Code on Windows, Windows Terminal, PowerShell) and on macOS has **not** been
-  observed. `tests/rendering-tests/index.html` is a self-contained page for checking a real machine.
+- **No editor or terminal was driven.** 1.4.0 was built, tested and validated on Windows 11 (FreeType, HarfBuzz)
+  and rendered in Chrome there, which shares its text stack with VS Code and Cursor. VS Code, Windows Terminal,
+  PowerShell and JetBrains IDEs themselves were not run, and macOS has **not** been looked at.
+  `tests/rendering-tests/index.html` is a self-contained page for checking a real machine.
 - **Automatic hinting.** ttfautohint and otfautohint, no hand-tuned hints.
 - **Latin only.** Basic Latin, Latin-1 and Latin Extended-A are complete; Greek is limited to Δ Λ Π λ π;
   there is no Cyrillic. Accents are precomposed; there are no combining marks.
@@ -218,8 +227,8 @@ tests/baseline/v1.000/   the original 1.000 fonts, kept for comparison
 
 ## Roadmap
 
-1.3.0 is this release. Next: rendering checks on Windows and macOS (1.3.x), interpolation-compatible
-outlines and a variable font (1.4), a Nerd Font build (1.5). Details, and what
+1.4.0 is this release. Next: checks in real editors and terminals on Windows and macOS (1.4.x),
+interpolation-compatible outlines and a variable font (1.5), a Nerd Font build (1.6). Details, and what
 "planned" means, are in [ROADMAP.md](ROADMAP.md).
 
 ## Contributing
@@ -239,7 +248,8 @@ Font Name is declared. The build scripts and tests are covered by the same licen
 Varcoda Mono is an original design; no outlines were copied from other typefaces. Its squared character
 is inspired by [Saira](https://github.com/Omnibus-Type/Saira) by Omnibus-Type, its priorities as a coding font
 by JetBrains Mono. Those two, Fira Code and Iosevka were measured and rendered side by side; nothing else
-was taken from them.
+was taken from them. The brief for 1.4.0 named Operator Mono, MonoLisa and Dank Mono as references for the
+direction of the italic, of readability and of the ligatures; none of their files was used.
 
 Built with [fontTools](https://github.com/fonttools/fonttools), [ufo2ft](https://github.com/googlefonts/ufo2ft),
 [ufoLib2](https://github.com/fonttools/ufoLib2), [skia-pathops](https://github.com/fonttools/skia-pathops),

@@ -63,8 +63,9 @@ ITALICS = [(italic_style(w[0]),) + tuple(w) for w in WEIGHTS]
 class Master:
     """Every measurement a glyph function may use."""
 
-    def __init__(self, name="Regular", weight_class=400, stem=84):
+    def __init__(self, name="Regular", weight_class=400, stem=84, italic=False):
         self.name = name
+        self.italic = italic              # glyph functions draw their written form (glyphs_italic.py)
         self.weight_class = weight_class
         t = (stem - LIGHT_STEM) / (BOLD_STEM - LIGHT_STEM)
         self.t = t

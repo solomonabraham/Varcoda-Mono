@@ -1,6 +1,7 @@
 """Tests for the italic styles (the upright styles are covered by test_fonts.py)."""
 import math
 import os
+import shutil
 import subprocess
 import sys
 
@@ -129,18 +130,47 @@ def test_letters_are_slanted_and_joining_glyphs_are_not(style, weight, wclass):
         assert bounds(f, cmap[cp]) == bounds(up, cmap[cp]), hex(cp)
 
 
+def upright_right_edge(f, name, y0, y1):
+    """rightmost point of a glyph between two heights, with the slant taken out"""
+    coords = f["glyf"][name].getCoordinates(f["glyf"])[0]
+    return max(x - (y - PIVOT) * TAN for x, y in coords if y0 <= y <= y1)
+
+
 @pytest.mark.parametrize("style,weight,wclass", PAIRS, ids=IDS)
 def test_italic_letterforms(style, weight, wclass):
+    """the italic lowercase is written, not a slanted roman (scripts/fontsrc/glyphs_italic.py)"""
     f, up = font(path(style)), font(path(weight))
-    gs_i, gs_u = f["glyf"], up["glyf"]
-    # a is single-storey (one counter), the upright a is double-storey with the same outline count but another shape
-    assert gs_i["a"].numberOfContours == up["glyf"]["a.ss02"].numberOfContours
-    assert bounds(f, "a")[3] == bounds(f, "a.ss02")[3]
-    # f descends, the upright f stands on the baseline
-    assert bounds(up, "f")[1] == 0 and bounds(f, "f")[1] <= params.DESC * 0.6
-    # y is the hooked, squared form
-    assert gs_i["y"].numberOfContours == gs_u["y.ss05"].numberOfContours
-    assert abs((bounds(f, "y")[2] - bounds(f, "y")[0]) - (bounds(f, "y.ss05")[2] - bounds(f, "y.ss05")[0])) <= 1
+    # a is single-storey and y is the hooked form, so ss02 and ss05 have nothing left to change
+    assert f["glyf"]["a"].numberOfContours == 2 and up["glyf"]["a"].numberOfContours == 2
+    assert bounds(f, "a") == bounds(f, "a.ss02") != bounds(up, "a.ss02")
+    assert bounds(f, "y") == bounds(f, "y.ss05")
+    assert bounds(f, "aogonek")[2] == bounds(f, "aogonek.ss02")[2]         # merged letters follow their base letter
+    # f descends to the descender line; the upright f stands on the baseline
+    assert bounds(up, "f")[1] == 0 and bounds(f, "f")[1] == params.DESC
+    # exit strokes: at the baseline these letters reach to the right of their own stem
+    for ch in "adhimnu":
+        foot = upright_right_edge(f, ch, 0, 0.15 * params.XH)
+        stem = upright_right_edge(f, ch, 0.30 * params.XH, params.ASC)
+        assert foot - stem >= 35, (ch, foot - stem)
+
+
+def test_italic_outlines_are_clean_and_consistent():
+    """the checks test_fonts.py runs on the uprights: the same number of contours in every weight,
+    no slivers, no micro-segments, integer coordinates"""
+    import ufoLib2
+    from fontTools.pens.areaPen import AreaPen
+    ufos = [ufoLib2.Font.open(os.path.join(ROOT, "sources", "%s-%s.ufo" % (build.PS_FAMILY, p[0]))) for p in PAIRS]
+    for name in ufos[0].keys():
+        assert len({len(u[name].contours) for u in ufos}) == 1, name
+    for ufo in ufos:
+        for glyph in ufo:
+            for contour in glyph.contours:
+                pen = AreaPen()
+                contour.draw(pen)
+                assert abs(pen.value) >= 60, "%s: sliver contour" % glyph.name
+                on = [(p.x, p.y) for p in contour.points if p.type is not None]
+                assert all(math.dist(p, on[i - 1]) >= 2.6 for i, p in enumerate(on)), "%s: micro-segment" % glyph.name
+                assert all(float(c).is_integer() for p in contour.points for c in (p.x, p.y)), glyph.name
 
 
 @pytest.mark.parametrize("style,weight,wclass", PAIRS, ids=IDS)
@@ -177,7 +207,7 @@ def test_ligatures_and_sets_shape_like_the_upright(style, weight, wclass, kind):
         gu, _ = shape(pu, text, {"calt": True})
         assert gi == gu and set(ai) == {W}, text
         assert shape(p, text, {"calt": False})[0] != gi
-    assert shape(p, "0", {"ss01": True})[0] == ["zero.ss01"]
+    assert shape(p, "0", {"zero": True})[0] == ["zero.zero"]
     assert shape(p, "qm", {"ss06": True, "ss07": True})[0] == ["q.ss06", "m.ss07"]
 
 
@@ -191,6 +221,8 @@ def test_hinted_advances_and_fontconfig(style, weight, wclass):
             face.load_char(ch, freetype.FT_LOAD_DEFAULT)
             advs.add(face.glyph.advance.x)
         assert len(advs) == 1, (px, advs)
+    if not shutil.which("fc-scan"):
+        pytest.skip("fontconfig not installed (the advances above were checked)")
     out = subprocess.run(["fc-scan", "--format", "%{family}|%{slant}|%{spacing}|%{weight}", path(style)],
                          capture_output=True, text=True).stdout
     fam, slant, spacing, _w = out.split("|")

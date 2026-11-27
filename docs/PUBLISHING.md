@@ -14,8 +14,8 @@ Nothing in this project has been committed, pushed or published. This is the lis
 - [ ] **Real machines.** Install the TTFs on Windows and macOS; open `tests/rendering-tests/index.html`; look
       at 12–14 px in VS Code and a terminal, light and dark. Record the result in `QUALITY_REPORT.md`.
 - [ ] `git init`, first commit, push; watch the *Build* and *Validate* workflows run for the first time.
-- [ ] Tag `v1.2.0`; the *Release* workflow creates a **draft** release with the ZIP and
-      `docs/RELEASE-NOTES-1.2.0.md`. Review it, then publish.
+- [ ] Tag `v1.4.0`; the *Release* workflow creates a **draft** release with the ZIP and
+      `docs/RELEASE-NOTES-1.4.0.md`. Review it, then publish.
 
 ## Repository settings
 

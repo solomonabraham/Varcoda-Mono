@@ -58,8 +58,7 @@ def main(argv=None):
             ufo = ufoLib2.Font.open(src)
             n_glyphs = len(ufo)
         else:
-            m = params.Master(name, wclass, stem)
-            m.italic = italic
+            m = params.Master(name, wclass, stem, italic)
             glyphs = draw_master(m)
             if italic:
                 glyphs = italicize(m, glyphs)

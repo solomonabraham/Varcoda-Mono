@@ -592,6 +592,7 @@
       <string>aogonek.ss02</string>
       <string>aring.ss02</string>
       <string>asterisk_asterisk.liga</string>
+      <string>asterisk_equal.liga</string>
       <string>asterisk_slash.liga</string>
       <string>atilde.ss02</string>
       <string>bar_bar.liga</string>
@@ -649,8 +650,8 @@
       <string>yacute.ss05</string>
       <string>ycircumflex.ss05</string>
       <string>ydieresis.ss05</string>
-      <string>zero.ss01</string>
       <string>zero.ss03</string>
+      <string>zero.zero</string>
     </array>
   </dict>
 </plist>

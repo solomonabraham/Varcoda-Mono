@@ -4,6 +4,50 @@ All notable changes to this project are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Release tags use semantic versioning
 (`v1.2.0`); the version inside the font files is the OpenType form of the same number (`1.200`).
 
+## [1.4.0] - unreleased
+
+### Added
+
+- **A written italic.** The italic lowercase is drawn instead of slanted: stems that reach the baseline leave it
+  to the right (`a d h i k m n u`), arches branch out of their stem and thin there (`h m n r`, the bowls of
+  `b p`), bowls run back up into their stem (`a d g q u y`), stems that start at the x-height begin with the
+  blade cut, and `f` descends to the descender line and ends in a hook. Fifteen letters are redrawn in all five
+  weights; `ı ŋ þ`, the accented letters and the alternates follow them (84 glyphs per italic differ from
+  1.3.0). `c e j l o s t v w x z`, the capitals, figures and signs keep their construction and are sloped by
+  9.5° as before. The drawings are in `scripts/fontsrc/glyphs_italic.py`; the reasons in `DESIGN.md` §13.
+- Ligature **`*=`**, drawn like `+=` and `-=` (28 in total). `**=`, `/*=` and `??=` keep their longer ligature
+  and a plain `=`.
+- Specimen: comments and keywords of the twelve code samples are set in the italic; new sections "Regular and
+  Italic" and "Before and after"; every ligature is listed. The Drupal sample covers namespaces, attributes,
+  constructor promotion and the nullsafe operator.
+- The browser test page embeds all ten styles and measures the italic.
+- `tests/baseline/v1.300/VarcodaMono-Italic.ttf`: the previous italic, for the before/after panel.
+- Tests for the italic letterforms, for clean and consistent italic outlines in all five weights, and for the
+  operators of the brief (586 in total).
+- `AUDIT.md` for this release (the previous one is now `docs/AUDIT-1.3.0.md`).
+
+### Changed
+
+- `scripts/fontsrc`: a glyph function chooses its italic form itself (`kit.ital`, `Master.italic`) instead of
+  being swapped afterwards, so letters that are built from other letters follow them.
+
+### Fixed
+
+- In the italic, `ą` and `ª` were two-storey while `a` was single-storey.
+- On Windows the headless Chrome test and the logo rasteriser built invalid `file://` URLs, and four scripts
+  wrote CRLF line endings. The Chrome page test is now skipped on Windows, where `chrome.exe` returns no DOM.
+
+### Unchanged
+
+- **The five upright styles.** Every outline is identical to 1.3.0; only the version, the new ligature glyph and
+  its lookup differ.
+
+### Evaluated, not added
+
+- A looped `k`, a script `s` and round `v` `w` in the italic; redrawn italic punctuation: see `AUDIT.md`.
+- Variable font (551 of 648 glyphs are interpolation-compatible), Nerd Font builds, more arrows and
+  mathematical operators: unchanged.
+
 ## [1.3.0] - unreleased
 
 ### Added
@@ -17,7 +61,19 @@ All notable changes to this project are recorded here. The format follows
 - `assets/test-sheet-dark.png` and `-light.png`: a fixed typography test at 10–18 px.
 - `FEATURES.md`, `BUILD.md`, `TESTING.md`; `DESIGN.md` moved to the top level; a new `AUDIT.md` for this
   release (the 1.000 audit is now `docs/AUDIT-1.000.md`).
-- 65 tests for the italics (570 in total).
+- 65 tests for the italics (580 in total).
+
+### Changed
+
+After feedback from readers:
+
+- **The default zero is dotted.** The slashed zero was too close to the Danish and Norwegian letter `Ø`. It is
+  still in the fonts as the registered `zero` feature (CSS `font-variant-numeric: slashed-zero`). `ss01`, which
+  used to select the dotted zero, is retired: a setting that turns it on is ignored and shows the same zero
+  as before. The number is not reused; `ss02`–`ss07` are unchanged.
+- **`<=` and `>=` are no longer stretched** over both cells. The ligatures are 720 units wide instead of
+  980 and centred on the border between the two cells, with white space on both sides; the chevron opens
+  by 33° instead of 17° and reads as `<` again. Both signs now sit exactly on the operator axis.
 
 ### Evaluated, not added
 

@@ -37,7 +37,8 @@ Style names for `-w`: `Light Regular Medium SemiBold Bold LightItalic Italic Med
 | Web fonts and stylesheet | `fonts/webfonts/VarcodaMono-<Style>.woff2`, `varcoda-mono.css` |
 
 Two builds of the same sources on one machine are byte-identical (the timestamp is fixed; set
-`SOURCE_DATE_EPOCH` to change it). Identity across operating systems has not been verified.
+`SOURCE_DATE_EPOCH` to change it). With the pinned packages a build on Windows 11 reproduced the Linux files of
+1.3.0 byte for byte; 1.4.0 was built on Windows 11 only; macOS has not been tried.
 
 ## Where the design lives
 
@@ -47,7 +48,8 @@ Two builds of the same sources on one machine are byte-identical (the timestamp 
 | `scripts/fontsrc/geom.py`, `kit.py` | geometry: pens, strokes, boolean operations, shared parts (stems, arches, bowls, the blade cut) |
 | `scripts/fontsrc/glyphs_*.py` | one function per glyph |
 | `scripts/fontsrc/glyphs_liga.py` | ligatures, alternates, generated feature code |
-| `scripts/fontsrc/italic.py` | how the italic is derived and which glyphs stay upright |
+| `scripts/fontsrc/glyphs_italic.py` | the written italic lowercase: exit strokes, branching arches, returning bowls |
+| `scripts/fontsrc/italic.py` | the slant, and which glyphs stay upright |
 | `scripts/fontsrc/build.py` | names, metrics, tables, compilation, hinting |
 
 Change the version in `build.py` (`VERSION_MINOR`, `RELEASE`). Rename the family with
@@ -64,7 +66,8 @@ python scripts/make-release.py --project      # releases/VarcodaMono-<version>.z
 ```
 
 `--refs DIR` points to reference fonts for the comparison images (`docs/COMPARISON.md`). The logo and banner
-PNGs are rasterised from their SVGs by headless Chrome or Chromium; without one they are skipped.
+PNGs are rasterised from their SVGs by headless Chrome or Chromium (`google-chrome` or `chromium` on `PATH`);
+without one they are skipped.
 
 ## Not built here
 

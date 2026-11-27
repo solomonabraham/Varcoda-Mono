@@ -217,12 +217,18 @@ feature calt {
         sub LIG equal' by hyphen_equal.liga;
         sub hyphen' equal by LIG;
     } lig_hyphen_equal;
+    lookup lig_asterisk_equal {
+        ignore sub asterisk asterisk' equal;
+        ignore sub asterisk' equal equal;
+        sub LIG equal' by asterisk_equal.liga;
+        sub asterisk' equal by LIG;
+    } lig_asterisk_equal;
 } calt;
 
-feature ss01 {
-    featureNames { name "Dotted zero"; };
-    sub zero by zero.ss01;
-} ss01;
+# Slashed zero: the registered feature for it (CSS font-variant-numeric: slashed-zero).
+feature zero {
+    sub zero by zero.zero;
+} zero;
 
 feature ss02 {
     featureNames { name "Single-storey a"; };

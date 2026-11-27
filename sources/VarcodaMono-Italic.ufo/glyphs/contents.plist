@@ -402,6 +402,8 @@
     <string>asterisk.glif</string>
     <key>asterisk_asterisk.liga</key>
     <string>asterisk_asterisk.liga.glif</string>
+    <key>asterisk_equal.liga</key>
+    <string>asterisk_equal.liga.glif</string>
     <key>asterisk_slash.liga</key>
     <string>asterisk_slash.liga.glif</string>
     <key>at</key>
@@ -1292,9 +1294,9 @@
     <string>zdotaccent.glif</string>
     <key>zero</key>
     <string>zero.glif</string>
-    <key>zero.ss01</key>
-    <string>zero.ss01.glif</string>
     <key>zero.ss03</key>
     <string>zero.ss03.glif</string>
+    <key>zero.zero</key>
+    <string>zero.zero.glif</string>
   </dict>
 </plist>

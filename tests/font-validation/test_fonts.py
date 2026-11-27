@@ -468,7 +468,7 @@ def _raster(path, ch, px=48):
     return canvas
 
 
-LOOKALIKES = [("0", "O"), ("0", "o"), ("0", "8"), ("1", "l"), ("1", "I"), ("l", "I"), ("l", "|"), ("I", "|"), ("1", "|"),
+LOOKALIKES = [("0", "O"), ("0", "o"), ("0", "8"), ("0", "Ø"), ("1", "l"), ("1", "I"), ("l", "I"), ("l", "|"), ("I", "|"), ("1", "|"),
               ("1", "7"), ("5", "S"), ("8", "B"), ("2", "Z"), ("6", "b"), ("g", "9"), ("g", "q"), ("c", "e"), ("u", "v"),
               ("`", "'"), (".", ","), (":", ";"), ("-", "_"), ("{", "("), ("[", "("), ("D", "O"),
               ("y", "g"), ("y", "v"), ("b", "h"), ("o", "a"), ("q", "g"), ("m", "n"), ("p", "q")]
@@ -518,7 +518,7 @@ INV.setdefault("period", ".")
 def test_feature_list(path):
     gsub = font(path)["GSUB"].table
     tags = {fr.FeatureTag for fr in gsub.FeatureList.FeatureRecord}
-    assert tags == {"calt", "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07"}
+    assert tags == {"calt", "zero", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07"}     # ss01 is retired, not reused
     # ligatures must be switchable: nothing may hide in always-on features
     assert not tags & {"ccmp", "rlig", "locl", "liga"}
 
@@ -540,6 +540,20 @@ def test_ligatures_substitute_and_keep_the_grid(path):
         names, adv = shape(path, text, {"calt": True})
         assert names == ["a"] + ["LIG"] * (len(seq) - 1) + [lig, "b"], (text, names)
         assert adv == [WIDTH] * len(text), "ligature %s changes the advance" % lig
+
+
+@pytest.mark.parametrize("path", TTFS, ids=ids(TTFS))
+def test_everyday_operators_have_their_ligature(path):
+    """the operators the 1.400 brief lists; the nullsafe ?-> is the question mark followed by the arrow"""
+    for op in ["->", "=>", "==", "===", "!=", "!==", "<=", ">=", "&&", "||", "??", "?.", "::", "+=", "-=", "*=", "**",
+               "//", "/*", "*/"]:
+        lig = "_".join(AGL.get(c, "period") for c in op) + ".liga"
+        assert shape(path, "a %s b" % op, {"calt": True})[0] == ["a", "space"] + ["LIG"] * (len(op) - 1) + [lig, "space", "b"], op
+    assert shape(path, "$a?->b", {"calt": True})[0] == ["dollar", "a", "question", "LIG", "hyphen_greater.liga", "b"]
+    # a longer operator keeps the ligature of its first two signs and a plain =
+    assert shape(path, "a**=2", {"calt": True})[0] == ["a", "LIG", "asterisk_asterisk.liga", "equal", "two"]
+    assert shape(path, "a??=b", {"calt": True})[0] == ["a", "LIG", "question_question.liga", "equal", "b"]
+    assert shape(path, "/*=*/", {"calt": True})[0] == ["LIG", "slash_asterisk.liga", "equal", "LIG", "asterisk_slash.liga"]
 
 
 @pytest.mark.parametrize("path", TTFS, ids=ids(TTFS))
@@ -565,10 +579,29 @@ def test_random_operator_strings_never_change_cell_count(path):
                 assert names[i + 1] == "LIG" or names[i + 1].endswith(".liga"), (text, names)
 
 
+@pytest.mark.parametrize("path", TTFS, ids=ids(TTFS))
+def test_comparison_ligatures_are_not_stretched(path):
+    """<= and >= are compact signs with white space around them.  Stretched over
+    both cells (±0.82 of the advance until 1.300) the chevron was too flat to read."""
+    gs = font(path).getGlyphSet()
+
+    def bounds(name):
+        pen = BoundsPen(gs)
+        gs[name].draw(pen)
+        return pen.bounds
+
+    le, ge = bounds("less_equal.liga"), bounds("greater_equal.liga")
+    assert -0.62 * WIDTH <= le[0] and le[2] <= 0.62 * WIDTH, le
+    assert (le[3] - le[1]) / (le[2] - le[0]) > 0.6, "<= is flatter than 5:3"
+    assert abs(le[0] + ge[2]) <= 1 and abs(le[2] + ge[0]) <= 1 and le[1::2] == ge[1::2]     # mirror images
+    assert abs((le[1] + le[3]) / 2 - params.AXIS) <= 6
+
+
 @pytest.mark.parametrize("path", ALL_FILES, ids=ids(ALL_FILES))
 def test_stylistic_sets(path):
     assert shape(path, "0a", {})[0] == ["zero", "a"]
-    assert shape(path, "0a", {"ss01": True})[0] == ["zero.ss01", "a"]
+    assert shape(path, "0a", {"zero": True})[0] == ["zero.zero", "a"]
+    assert shape(path, "0a", {"ss01": True})[0] == ["zero", "a"]    # the dotted zero of the old ss01 is the default
     assert shape(path, "0aá", {"ss02": True})[0] == ["zero", "a.ss02", "aacute.ss02"]
     assert shape(path, "0Ol", {"ss03": True})[0] == ["zero.ss03", "O", "l"]
     assert shape(path, "0l1", {"ss04": True})[0] == ["zero", "l.ss04", "one"]
@@ -589,6 +622,9 @@ def test_stylistic_sets(path):
     assert tb[2] >= qb[2] + 30 and tb[2] <= WIDTH and tb[1] == qb[1]
     (mb, ma), (sb, sa) = box_area("m.ss07"), box_area("m")
     assert sb == mb and sa < ma * 0.97
+    # the three zeros share one ring; the dot adds less ink to it than the slash
+    (pb, pa), (db, da), (zb, za) = box_area("zero.ss03"), box_area("zero"), box_area("zero.zero")
+    assert pb == db == zb and pa < da < za
     assert shape(path, "0al", {})[0] == ["zero", "a", "l"]          # nothing is on by default
 
 
@@ -601,7 +637,7 @@ def test_feature_names(path):
         prm = fr.Feature.FeatureParams
         if prm is not None and hasattr(prm, "UINameID"):
             labels[fr.FeatureTag] = f["name"].getDebugName(prm.UINameID)
-    assert labels == {"ss01": "Dotted zero", "ss02": "Single-storey a", "ss03": "Plain zero", "ss04": "Flat-foot l", "ss05": "Squared y", "ss06": "Plain q", "ss07": "Long-leg m"}
+    assert labels == {"ss02": "Single-storey a", "ss03": "Plain zero", "ss04": "Flat-foot l", "ss05": "Squared y", "ss06": "Plain q", "ss07": "Long-leg m"}
 
 
 # --------------------------------------------------------------------------

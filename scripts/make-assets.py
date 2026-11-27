@@ -17,9 +17,11 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import os
+import pathlib
 import shutil
 import subprocess
 import sys
+import time
 
 import numpy as np
 import uharfbuzz as hb
@@ -184,7 +186,7 @@ def specimen(theme):
     p.label("Weights")
     for st, wc, _stem in params.WEIGHTS:
         p.line("%-8s %d  for (const [key, value] of Object.entries(map)) {}" % (st, wc), st, 34, lead=1.4)
-    p.label("Italics: five weights, with their own a, f and y")
+    p.label("Italics: five weights, written rather than slanted")
     p.line("The quick brown fox jumps over a lazy dog. /* fluffy, safe, every day */", "Italic", 34, lead=1.4)
     p.line("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789", "Italic", 22, theme["muted"], lead=1.6)
     p.label("Box drawing and Powerline")
@@ -229,9 +231,9 @@ def ligatures():
     p.label("In context")
     p.code("if (a !== b && c >= d || e?.f ?? g) { x += y ** 2; n -= 1; }   // => -> <- <=> ::\n"
            "result := compute(a, b) |> filter(ok) /* walrus, pipe */", "javascript", 30)
-    p.label("Stylistic sets")
-    for tag, label, subs in STYLISTIC_SETS:
-        sample = {"ss01": "0123 0x00FF 100%", "ss02": "data = alpha.max()", "ss03": "0123 0x00FF 100%",
+    p.label("Alternates")
+    for tag, label, subs in [("zero", "Slashed zero", None)] + STYLISTIC_SETS:
+        sample = {"zero": "0123 0x00FF 100%", "ss02": "data = alpha.max()", "ss03": "0123 0x00FF 100%",
                   "ss04": "all null: illegal", "ss05": "every key: yes", "ss06": "quick pq queue",
                   "ss07": "maximum memory"}[tag]
         p.line("%s  %s" % (tag, label), "Regular", 30, DARK["accent"], lead=1.5)
@@ -353,7 +355,12 @@ def chrome_png(svg_path, png_path, w, h, transparent=False):
             "--window-size=%d,%d" % (w, h), "--screenshot=%s" % png_path]
     if transparent:
         args.append("--default-background-color=00000000")
-    subprocess.run(args + ["file://" + svg_path], capture_output=True, timeout=120)
+    before = os.path.getmtime(png_path) if os.path.isfile(png_path) else 0
+    subprocess.run(args + [pathlib.Path(svg_path).as_uri()], capture_output=True, timeout=120)
+    for _ in range(60):             # chrome.exe detaches on Windows and writes the file a moment later
+        if os.path.isfile(png_path) and os.path.getmtime(png_path) > before:
+            break
+        time.sleep(0.5)
     if os.path.isfile(png_path):
         im = Image.open(png_path)
         print("  assets/%s  %dx%d" % (os.path.basename(png_path), im.width, im.height))
@@ -371,7 +378,7 @@ def logo():
            'aria-label="Varcoda Mono"><title>Varcoda Mono</title><rect width="512" height="512" rx="104" fill="%s"/>%s%s</svg>\n'
            % (HEX(DARK["bg"]), k, bar))
     path = os.path.join(ASSETS, "logo.svg")
-    with open(path, "w", encoding="utf-8") as fh:
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(svg)
     print("  assets/logo.svg")
     chrome_png(path, os.path.join(ASSETS, "logo.png"), 512, 512, transparent=True)
@@ -395,7 +402,7 @@ def banner():
     svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" '
            'aria-label="Varcoda Mono - Squared for code."><title>Varcoda Mono</title>%s</svg>\n' % "".join(parts))
     path = os.path.join(ASSETS, "banner.svg")
-    with open(path, "w", encoding="utf-8") as fh:
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(svg)
     print("  assets/banner.svg")
     chrome_png(path, os.path.join(ASSETS, "banner.png"), 1280, 640)

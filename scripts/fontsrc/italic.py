@@ -1,20 +1,19 @@
 """Italic styles.
 
-The italic is derived from the upright program rather than drawn twice, but
-it is more than a slanted roman:
+The italic comes from the same program as the upright, in two steps:
 
-* everything alphabetic is slanted by ITALIC_ANGLE around the middle of the
-  x-height, so letters stay centred in their cell;
-* three letters change construction, as they do in a written hand:
-  ``a`` becomes single-storey, ``y`` becomes the squared, hooked form, and
-  ``f`` descends below the baseline;
-* everything that has to join or point - box drawing, block elements,
-  arrows, geometric shapes, the Powerline symbols - stays upright, so tables
-  and prompts look the same in a comment as anywhere else.
+* the lowercase is drawn in its written form (glyphs_italic.py: exit strokes,
+  branching arches, bowls that run back into their stem, a descending f) -
+  the glyph functions pick that form when ``Master.italic`` is set;
+* everything alphabetic is then slanted by ITALIC_ANGLE around the middle of
+  the x-height, so letters stay centred in their cell.
 
-Limitation, stated plainly: curves are sheared, not redrawn, so their stroke
-weight is not optically corrected (at 9.5 degrees the error is below 3 % of
-the stem).
+Everything that has to join or point - box drawing, block elements, arrows,
+geometric shapes, the Powerline symbols - stays upright, so tables and
+prompts look the same in a comment as anywhere else.
+
+Limitation, stated plainly: the slant is a shear, so the weight of curves is
+not optically corrected (at 9.5 degrees the error is below 3 % of the stem).
 """
 from __future__ import annotations
 
@@ -22,9 +21,7 @@ import math
 
 from . import params
 from .geom import Shape
-from .glyphs_lower import _lc
-from .kit import GLYPHS, Composite, blade, opath
-from .geom import rect
+from .kit import GLYPHS, Composite
 
 TAN = math.tan(math.radians(params.ITALIC_ANGLE))
 PIVOT = params.XH / 2
@@ -37,23 +34,6 @@ UPRIGHT_RANGES = [(0x2190, 0x21FF),     # arrows
                   (0xE0A0, 0xE0B3),     # Powerline
                   (0xFFFD, 0xFFFD)]
 UPRIGHT_NAMES = {".notdef", "LIG"}
-
-# letters that take another construction in the italic: name -> glyph whose drawing is used
-ITALIC_FORMS = {"a": "a.ss02", "y": "y.ss05"}
-
-
-def f_descending(m) -> Shape:
-    """italic f: the stem runs below the baseline and ends in the blade cut"""
-    sw, hw, a, b, L, R, xc = _lc(m)
-    xs = xc - 0.06 * m.W
-    xe = R + 0.014 * m.W
-    foot = m.desc * 0.66
-    hook = opath(m, [(xs, foot), (xs, m.asc - b), (xe, m.asc - b)], sw, hw, 0.29 * m.W, 0.27 * m.xh)
-    s = blade(m, hook, xs - a, sw, foot, up=False)
-    return s | rect(L - 0.004 * m.W, m.xh - hw, R - 0.012 * m.W, m.xh)
-
-
-ITALIC_DRAW = {"f": f_descending}
 
 
 def stays_upright(name: str) -> bool:
@@ -69,13 +49,8 @@ def _rounded(shape: Shape) -> Shape:
 
 def italicize(m, glyphs: dict) -> dict:
     """upright drawings of one master -> italic drawings (same glyph set)"""
-    src = dict(glyphs)
-    for name, fn in ITALIC_DRAW.items():
-        src[name] = fn(m)
-    for name, other in ITALIC_FORMS.items():
-        src[name] = glyphs[other]
     out = {}
-    for name, res in src.items():
+    for name, res in glyphs.items():
         if isinstance(res, Composite) or stays_upright(name):
             out[name] = res
         else:

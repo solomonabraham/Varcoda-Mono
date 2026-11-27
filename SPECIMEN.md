@@ -1,6 +1,20 @@
 # Specimen
 
-All images are generated from the fonts in `fonts/` by `python scripts/make-assets.py`.
+All images are generated from the fonts in `fonts/` by `python scripts/make-assets.py` and
+`python scripts/make-specimens.py`.
+
+## The full specimen
+
+Alphabets, Regular and Italic side by side, every ligature off and on, the italic before and after 1.4.0,
+small sizes, box drawing.
+
+![Specimen](specimens/specimen.png)
+
+## Code in twelve languages
+
+Comments and keywords are set in the italic, the way an editor theme sets them; both styles share one grid.
+
+![Code samples](specimens/code-samples.png)
 
 ## Dark and light
 

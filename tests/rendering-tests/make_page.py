@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build tests/rendering-tests/index.html: a self-contained browser test page.
 
-The four TTFs are embedded as data: URIs, so the page works from any folder
+The ten TTFs are embedded as data: URIs, so the page works from any folder
 and in any browser (no file:// font restrictions).  Open it on the machine
 you want to check - e.g. in Chrome/Edge on Windows, which use the same
 DirectWrite text stack as VS Code - and compare sizes, weights and features.
@@ -47,10 +47,11 @@ BOX = """┌──────────┬────────┬──�
 def build() -> str:
     faces = []
     for style, weight in STYLES:
-        with open(os.path.join(ROOT, "fonts", "VarcodaMono-%s.ttf" % style), "rb") as fh:
-            b64 = base64.b64encode(fh.read()).decode("ascii")
-        faces.append('@font-face{font-family:"Varcoda Mono Test";font-weight:%d;font-style:normal;'
-                     'src:url(data:font/ttf;base64,%s) format("truetype");}' % (weight, b64))
+        for slope, name in (("normal", style), ("italic", "Italic" if style == "Regular" else style + "Italic")):
+            with open(os.path.join(ROOT, "fonts", "VarcodaMono-%s.ttf" % name), "rb") as fh:
+                b64 = base64.b64encode(fh.read()).decode("ascii")
+            faces.append('@font-face{font-family:"Varcoda Mono Test";font-weight:%d;font-style:%s;'
+                         'src:url(data:font/ttf;base64,%s) format("truetype");}' % (weight, slope, b64))
     waterfall = "\n".join(
         '<div class="row" style="font-size:%dpx"><span class="tag">%dpx</span>'
         'for (let i = 0; i &lt; n; i++) { total += items[i].price * 1.07; }  // 0O 1lI| {}[]() !== =&gt;</div>' % (s, s)
@@ -58,6 +59,12 @@ def build() -> str:
     weights = "\n".join(
         '<div class="row" style="font-weight:%d;font-size:20px"><span class="tag wide">%s %d</span>'
         'The quick brown fox jumps over the lazy dog 0123456789</div>' % (w, s, w) for s, w in STYLES)
+    italics = "\n".join(
+        '<div class="row" style="font-size:%dpx"><span class="tag">%dpx</span>'
+        '<i>// a quick fix for every file: handle the empty input, unify buffering (0O 1lI) -&gt; done</i></div>' % (s, s)
+        for s in (12, 13, 14, 16, 20)) + "\n" + "\n".join(
+        '<div class="row" style="font-weight:%d;font-size:20px"><span class="tag wide">%s %d</span>'
+        'minimum quality <i>minimum quality</i>  final public <i>final public</i></div>' % (w, s, w) for s, w in STYLES)
     return """<!doctype html>
 <html lang="en">
 <head>
@@ -70,8 +77,8 @@ def build() -> str:
 body { margin: 24px; background: #13151a; color: #d8dce5; font: 400 14px/1.5 "Varcoda Mono Test", monospace;
        font-feature-settings: "calt" 0; }
 body.calt { font-feature-settings: "calt" 1; }
-body.ss01.calt { font-feature-settings: "calt" 1, "ss01" 1; }
-body.ss01:not(.calt) { font-feature-settings: "calt" 0, "ss01" 1; }
+body.zero.calt { font-feature-settings: "calt" 1, "zero" 1; }
+body.zero:not(.calt) { font-feature-settings: "calt" 0, "zero" 1; }
 body.light { background: #fafaf8; color: #14161c; color-scheme: light; }
 h1 { font-size: 30px; margin: 0 0 4px; }
 h2 { font-size: 13px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: #5fd0c4;
@@ -90,7 +97,7 @@ label { margin-right: 18px; cursor: pointer; }
 <h1>Varcoda Mono</h1>
 <div>
   <label><input type="checkbox" id="t-calt"> ligatures (calt)</label>
-  <label><input type="checkbox" id="t-ss01"> dotted zero (ss01)</label>
+  <label><input type="checkbox" id="t-zero"> slashed zero (zero)</label>
   <label><input type="checkbox" id="t-light"> light background</label>
 </div>
 
@@ -99,6 +106,9 @@ label { margin-right: 18px; cursor: pointer; }
 
 <h2>Weights</h2>
 %(weights)s
+
+<h2>Italic</h2>
+%(italics)s
 
 <h2>Code</h2>
 <pre id="code">%(code)s</pre>
@@ -115,18 +125,20 @@ label { margin-right: 18px; cursor: pointer; }
 <span class="probe" id="p-lig" style="font-feature-settings:'calt' 1">!== === =&gt; -&gt; &lt;=&gt; &amp;&amp; ||</span>
 <span class="probe" id="p-bold" style="font-weight:700">MMMMMMMMMMMMMMMMMMMM</span>
 <span class="probe" id="p-line" style="font-size:20px;line-height:normal">Mg</span>
+<span class="probe" id="p-ital" style="font-style:italic">fafafafafafafafafafa</span>
 
 <script>
-for (const [id, cls] of [["t-calt", "calt"], ["t-ss01", "ss01"], ["t-light", "light"]]) {
+for (const [id, cls] of [["t-calt", "calt"], ["t-zero", "zero"], ["t-light", "light"]]) {
   document.getElementById(id).addEventListener("change", (e) => document.body.classList.toggle(cls, e.target.checked));
 }
 document.fonts.ready.then(() => {
   const w = (id) => document.getElementById(id).getBoundingClientRect().width;
   const report = {
-    faces: [...document.fonts].map((f) => [f.family, f.weight, f.status]),
+    faces: [...document.fonts].map((f) => [f.family, f.weight, f.status, f.style]),
     width_i_x20: w("p-i"),
     width_M_x20: w("p-m"),
     width_bold_M_x20: w("p-bold"),
+    width_italic_x20: w("p-ital"),
     width_operators_plain: w("p-op"),
     width_operators_ligatures: w("p-lig"),
     line_height_20px: document.getElementById("p-line").getBoundingClientRect().height,
@@ -138,12 +150,13 @@ document.fonts.ready.then(() => {
 </script>
 </body>
 </html>
-""" % dict(faces="\n".join(faces), waterfall=waterfall, weights=weights, code=html.escape(CODE), box=html.escape(BOX))
+""" % dict(faces="\n".join(faces), waterfall=waterfall, weights=weights, italics=italics, code=html.escape(CODE),
+           box=html.escape(BOX))
 
 
 def main():
     path = os.path.join(HERE, "index.html")
-    with open(path, "w", encoding="utf-8") as fh:
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(build())
     print("wrote", path, "%.0f kB" % (os.path.getsize(path) / 1024))
 

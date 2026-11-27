@@ -6,15 +6,16 @@ by the empty spacer glyph ``LIG``.  A three-character ligature therefore
 still occupies exactly three cells and the text grid never shifts."""
 from __future__ import annotations
 
-from .geom import BIG, Shape, diag, pline, rect, sbox, slash
+from .geom import Shape, diag, rect, slash
 from .glyphs_lower import _lc
 from .glyphs_marks import cedilla_shape, ogonek_shape
 from .glyphs_punct import (ampersand_, asterisk_, bar_, chevron, chevron_vx, colon_, eq_gap, greater_, less_, less_geom,
                            obar, question_, slash_, equal_, hyphen_, period_, plus_)
 from .glyphs_lower import l_, m_full_, q_plain_, y_squared_
 from .geom import rect as _rect
-from .glyphs_upper import zero_ring, _dg
-from .kit import GLYPHS, Composite, bowl, g, vstem
+from .glyphs_upper import zero_ring, zero_slash
+from . import glyphs_italic as it
+from .kit import GLYPHS, Composite, bowl, g, ital, vstem
 
 # (ligature glyph, input glyph sequence, extra ignore contexts)
 LIGATURES = [
@@ -49,6 +50,8 @@ LIGATURES = [
     ("question_period.liga", ["question", "period"], []),
     ("plus_equal.liga", ["plus", "equal"], []),
     ("hyphen_equal.liga", ["hyphen", "equal"], ["less hyphen' equal"]),
+    # added in 1.400.  It comes after ** and /*, so **= and /*= keep those and a plain =
+    ("asterisk_equal.liga", ["asterisk", "equal"], []),
 ]
 
 
@@ -138,13 +141,17 @@ def lig_neq3_(m):
     return _triple(m, -2 * m.W + m.OL, m.W - m.OL) | _not_slash(m, -m.W / 2, 1.12)
 
 
+LE_HALF_W = 0.60         # half width of <= and >= as a fraction of the advance
+
+
 def _wide_less_equal(m):
-    hh = 0.20 * m.cap
-    cy = m.axis + 0.105 * m.cap
-    x_tip, x_open = -m.W + m.OL + 0.05 * m.W, m.W - m.OL - 0.05 * m.W
-    a, b = m.a * 0.94, m.b * 0.98
-    ch = pline([(x_open, cy + hh), (x_tip + 0.045 * m.W, cy), (x_open, cy - hh)], a, b, "v", "v") & rect(x_tip, -BIG, BIG, BIG)
-    return ch | obar(m, cy - hh - 0.125 * m.cap - m.hw * 0.5, x_tip, x_open)
+    """<= as one sign, centred on the border between its two cells.  It is not
+    stretched to fill them (until 1.300 it reached ±0.82): a chevron that flat
+    stops reading as '<', so the sign stays compact and gets white space instead."""
+    hh, gap = 0.245 * m.cap, 0.12 * m.cap          # half height of the chevron, its distance from the bar
+    cy = m.axis + (gap + m.hw / 2) / 2             # chevron and bar together are centred on the operator axis
+    x = LE_HALF_W * m.W
+    return chevron(m, -x, x, hh, m.a * 0.94, m.b * 0.96, cy=cy) | obar(m, cy - hh - gap - m.hw * 0.5, -x, x)
 
 
 @g("less_equal.liga")
@@ -251,6 +258,11 @@ def lig_minus_equal_(m):
     return _pair(m, hyphen_(m), 0.065, equal_(m))
 
 
+@g("asterisk_equal.liga")
+def lig_times_equal_(m):
+    return _pair(m, asterisk_(m), 0.065, equal_(m))
+
+
 # --------------------------------------------------------------------------
 # stylistic alternates
 # --------------------------------------------------------------------------
@@ -267,15 +279,13 @@ def l_flat_(m):
     return vstem(xs, 0, m.asc, sw) | _rect(L + 0.075 * m.W, m.asc - hw, xs + 2, m.asc) | _rect(L + 0.02 * m.W, 0, R - 0.02 * m.W, hw)
 
 
-@g("zero.ss01")
-def zero_dotted_(m):
-    sw, hw, a, b, L, R, xc, H = _dg(m)
-    s, x0, x1 = zero_ring(m)
-    w, h = sw * 1.02, 0.27 * H
-    return s | sbox(xc - w / 2, H / 2 - h / 2, xc + w / 2, H / 2 + h / 2, w * 0.42, w * 0.42, 0.60)
+@g("zero.zero")
+def zero_slashed_(m):
+    return zero_ring(m)[0] | zero_slash(m)
 
 
 @g("a.ss02")
+@ital(it.a_)
 def a_single_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     return vstem(R - sw, 0, m.xh, sw) | bowl(m, m.W - R, m.W - (L - m.rnd), 0, m.xh, sw, hw).flip_x(xc)
@@ -296,7 +306,6 @@ def _reg_a_alternates():
 
 _reg_a_alternates()
 
-SS01 = [("zero", "zero.ss01")]
 SS02 = [("a", "a.ss02")] + [(n, n + ".ss02") for n in A_ACCENTED] + [("aogonek", "aogonek.ss02")]
 @g("y.ss05")
 def y_squared_alt_(m):
@@ -316,9 +325,9 @@ g("m.ss07")(lambda m: m_full_(m))
 SS06 = [("q", "q.ss06")]
 SS07 = [("m", "m.ss07")]
 
-# tag, name shown by applications, substitutions.  ss01 and ss02 keep their 1.000 meaning.
-STYLISTIC_SETS = [("ss01", "Dotted zero", SS01),
-                  ("ss02", "Single-storey a", SS02),
+# tag, name shown by applications, substitutions.  Numbers are never reused: ss01 was the
+# dotted zero until it became the default in 1.300; the slashed zero is the 'zero' feature.
+STYLISTIC_SETS = [("ss02", "Single-storey a", SS02),
                   ("ss03", "Plain zero", SS03),
                   ("ss04", "Flat-foot l", SS04),
                   ("ss05", "Squared y", SS05),
@@ -354,6 +363,11 @@ def feature_code() -> str:
         out.append("        sub %s' %s by LIG;" % (seq[0], " ".join(seq[1:])))
         out.append("    } %s;" % name)
     out.append("} calt;")
+    out.append("")
+    out.append("# Slashed zero: the registered feature for it (CSS font-variant-numeric: slashed-zero).")
+    out.append("feature zero {")
+    out.append("    sub zero by zero.zero;")
+    out.append("} zero;")
     out.append("")
     for tag, label, subs in STYLISTIC_SETS:
         out.append("feature %s {" % tag)

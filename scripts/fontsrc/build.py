@@ -31,15 +31,15 @@ from .kit import GLYPHS, ORDER, Composite
 
 FAMILY = "Varcoda Mono"
 PS_FAMILY = "VarcodaMono"
-VERSION_MAJOR, VERSION_MINOR = 1, 300
+VERSION_MAJOR, VERSION_MINOR = 1, 400
 VERSION = "%d.%03d" % (VERSION_MAJOR, VERSION_MINOR)   # OpenType version
-RELEASE = "1.3.0"                                           # release tag (v1.3.0)
+RELEASE = "1.4.0"                                           # release tag (v1.4.0)
 COPYRIGHT = "Copyright 2026 The Varcoda Mono Project Authors"
 LICENSE = ("This Font Software is licensed under the SIL Open Font License, Version 1.1. "
            "This license is available with a FAQ at: https://openfontlicense.org")
 LICENSE_URL = "https://openfontlicense.org"
 DESCRIPTION = ("Varcoda Mono is a monospaced typeface for programming: geometric, technical and built for long "
-               "coding sessions. Slashed zero, clearly separated 1 l I, optional cell-preserving ligatures.")
+               "coding sessions. Dotted zero, clearly separated 1 l I, written italics, optional cell-preserving ligatures.")
 DESIGNER = "The Varcoda Mono Project Authors"
 
 PANOSE_WEIGHT = {300: 3, 400: 5, 500: 6, 600: 7, 700: 8}

@@ -8,7 +8,8 @@ from .geom import BIG, Shape, Skel, diag, diag_hw, pline, rect, round_path, slas
 from .glyphs_lower import (a_, b_, d_, e_, f_, h_, i_, j_, l_, n_, o_, t_, u_, _lc)
 from .glyphs_punct import chevron, comma_tail, pdot, tilde_shape
 from .glyphs_upper import D_, H_, L_, N_, O_, T_, _bowls, _uc
-from .kit import GLYPHS, ORDER, Composite, arch, bowl, dot, g, glyph_name, kay, opath, ring, srad, vstem
+from . import glyphs_italic as it
+from .kit import GLYPHS, ORDER, Composite, arch, bowl, dot, g, glyph_name, ital, kay, opath, ring, srad, vstem
 
 # --------------------------------------------------------------------------
 # accent drawing.  lc zone sits above the x-height, the .case zone above caps
@@ -195,6 +196,7 @@ def caron_alt_case_(m):
 # special letters
 # --------------------------------------------------------------------------
 @g("dotlessi", uni=0x131)
+@ital(it.dotless_i)
 def dotlessi_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     xs = xc + 0.012 * m.W - a
@@ -221,7 +223,7 @@ def ae_(m):
     x0, x1 = m.L - 0.04 * m.W, m.R + 0.04 * m.W
     half = (x1 - x0 + n.sw) / 2
     fa = n.with_(L=m.xc - half / 2, rnd=m.rnd * 0.4)
-    left = a_(fa).move(x0 - fa.L, 0)
+    left = a_.roman(fa).move(x0 - fa.L, 0)       # two-storey in the italic as well: there is no room for an exit stroke
     fe = n.with_(L=m.xc - half / 2 + fa.rnd, rnd=m.rnd * 0.4)
     right = e_(fe).move(x1 - (fe.R + fe.rnd), 0)
     return left | right
@@ -315,6 +317,7 @@ def dcroat_(m):
 
 
 @g("thorn", uni=0xFE)
+@ital(it.thorn_)
 def thorn_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     return vstem(L, m.desc, m.asc, sw) | bowl(m, L, R + m.rnd, 0, m.xh, sw, hw)
@@ -378,6 +381,7 @@ def Lslash_(m):
 
 
 @g("eng", uni=0x14B)
+@ital(it.eng_)
 def eng_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     yd = m.desc + b

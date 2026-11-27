@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import pathlib
 import re
 import shutil
 import subprocess
@@ -203,21 +204,23 @@ def test_chromium_loads_the_fonts_and_keeps_the_grid(page):
         pytest.skip("no Chrome/Chromium binary available")
     base = [chrome, "--headless=new", "--no-sandbox", "--disable-gpu", "--hide-scrollbars",
             "--force-device-scale-factor=1", "--virtual-time-budget=8000"]
-    dom = subprocess.run(base + ["--dump-dom", "file://" + page], capture_output=True, text=True, timeout=120).stdout
+    dom = subprocess.run(base + ["--dump-dom", pathlib.Path(page).as_uri()], capture_output=True, text=True, timeout=120).stdout
+    if not dom.strip() and os.name == "nt":
+        pytest.skip("chrome.exe detaches from the console on Windows and returns no DOM; open index.html instead")
     m = re.search(r'<pre id="report">(.*?)</pre>', dom, re.S)
     assert m, "page did not produce a report"
     import html as _html
     rep = json.loads(_html.unescape(m.group(1)))
-    faces = {(f[1], f[2]) for f in rep["faces"]}
-    assert faces == {("300", "loaded"), ("400", "loaded"), ("500", "loaded"), ("600", "loaded"), ("700", "loaded")}, rep["faces"]
+    assert len(rep["faces"]) == 10 and all(f[2] == "loaded" for f in rep["faces"]), rep["faces"]      # five weights, each with its italic
     cell = 16 * 0.6
     assert abs(rep["width_i_x20"] - 20 * cell) < 0.05, rep
     assert abs(rep["width_M_x20"] - 20 * cell) < 0.05, rep
     assert abs(rep["width_bold_M_x20"] - 20 * cell) < 0.05, rep
+    assert abs(rep["width_italic_x20"] - 20 * cell) < 0.05, rep
     assert abs(rep["width_operators_plain"] - rep["width_operators_ligatures"]) < 0.01, "ligatures change the width"
     assert abs(rep["line_height_20px"] - 20 * 1.23) < 1.0, rep          # hhea/typo line box
     shot = os.path.join(OUT, "chromium.png")
-    subprocess.run(base + ["--window-size=1280,1900", "--screenshot=" + shot, "file://" + page],
+    subprocess.run(base + ["--window-size=1280,1900", "--screenshot=" + shot, pathlib.Path(page).as_uri()],
                    capture_output=True, timeout=120)
     assert os.path.getsize(shot) > 20000
     with open(os.path.join(OUT, "chromium-report.json"), "w") as fh:
@@ -265,7 +268,7 @@ def test_installed_fonts_work_as_system_fonts_in_chromium(tmp_path):
     page = tmp_path / "system.html"
     page.write_text(SYSTEM_PAGE, encoding="utf-8")
     dom = subprocess.run([chrome, "--headless=new", "--no-sandbox", "--disable-gpu", "--virtual-time-budget=6000",
-                          "--user-data-dir=%s" % (tmp_path / "profile"), "--dump-dom", "file://%s" % page],
+                          "--user-data-dir=%s" % (tmp_path / "profile"), "--dump-dom", page.as_uri()],
                          capture_output=True, text=True, timeout=120, env=env).stdout
     m = re.search(r'<pre id="report">(.*?)</pre>', dom, re.S)
     assert m and m.group(1).strip(), "no report from Chromium"

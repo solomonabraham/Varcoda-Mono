@@ -269,8 +269,16 @@ def zero_ring(m):
     return ring(m, x0, -m.os, x1, H + m.os, sw, hw), x0, x1
 
 
+def zero_dot(m):
+    """the dot of the default zero: a pill as wide as a stem.  (A slash is too
+    close to the letter Ø; the slashed zero is the 'zero' feature.)"""
+    sw, hw, a, b, L, R, xc, H = _dg(m)
+    w, h = sw * 1.02, 0.27 * H
+    return sbox(xc - w / 2, H / 2 - h / 2, xc + w / 2, H / 2 + h / 2, w * 0.42, w * 0.42, 0.60)
+
+
 def zero_slash(m):
-    """the slash of the default zero: runs from side to side of the counter
+    """the slash of the slashed zero: runs from side to side of the counter
     and dies in the ring"""
     sw, hw, a, b, L, R, xc, H = _dg(m)
     ring_, x0, x1 = zero_ring(m)
@@ -282,7 +290,7 @@ def zero_slash(m):
 
 @g("0")
 def zero_(m):
-    return zero_ring(m)[0] | zero_slash(m)
+    return zero_ring(m)[0] | zero_dot(m)
 
 
 @g("1")

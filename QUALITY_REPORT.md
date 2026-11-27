@@ -1,25 +1,29 @@
-# Quality report: Varcoda Mono 1.3.0
+# Quality report: Varcoda Mono 1.4.0
 
-What was checked, how, and with what result. Every feature the README claims has a row here. Checks ran on
-Linux (Python 3.13, FreeType, HarfBuzz, fontconfig, Chrome headless) on 26 November 2026.
+What was checked, how, and with what result. Every feature the README claims has a row here. The checks for
+1.4.0 ran on Windows 11 (Python 3.13, FreeType, HarfBuzz, Chrome 157; no fontconfig) on 26 November 2026.
+Rows marked *Linux, 1.3.0* were last run on Linux for 1.3.0 (fontconfig, headless Chromium) and could not be
+repeated on this machine; the upright outlines they concern have not changed since.
 `tests/font-validation/REPORT.md` is the machine-generated companion with tool versions.
 
 ## Summary
 
 | Area | Result |
 | --- | --- |
-| Project test-suite | **570 passed**, 0 failed (`python -m pytest tests`) |
+| Project test-suite | 586 tests (`python -m pytest tests`). On Windows 11: **578 passed**, 0 failed, 8 skipped (they need fontconfig, or a Chrome that returns the page to the console). *Linux, 1.3.0:* 570 of 570 passed |
 | fontbakery universal, 10 TTF (upright and italic) | 0 FAIL · 30 WARN (3 checks, all reviewed) · 715 PASS |
 | fontbakery universal, 10 OTF | 0 FAIL · 10 WARN · 10 ERROR (one check that crashes inside fontbakery on CFF fonts) · 635 PASS |
 | OpenType Sanitizer | all 20 fonts pass (TTF and OTF of ten styles) |
 | ufolint | 10 of 10 UFO sources pass |
-| Reproducible build | a second build of Regular, Bold, Italic and Bold Italic is byte-identical (TTF, OTF, WOFF2) |
-| Italics | **shipped** for five weights; 65 dedicated tests pass |
+| Reproducible build | a second build of Regular, Bold, Italic and Bold Italic is byte-identical (TTF, OTF, WOFF2). For 1.3.0 a build on Windows 11 reproduced all 30 font files and all UFO files from Linux byte for byte; 1.4.0 has only been built on Windows. After the internal change to how italic forms are chosen, and before any drawing changed, the five upright TTFs were still byte-identical to 1.3.0 |
+| Italics | **shipped** for five weights, lowercase written since 1.4.0; 66 dedicated tests pass |
+| Upright styles | outlines **identical to 1.3.0** in all five weights (compared glyph by glyph); one glyph added (`asterisk_equal.liga`) |
 | Nerd Font builds | **not built** (no FontForge in this environment) |
-| Variable font | **not shipped**: 550 of 647 glyphs compatible |
-| Windows / macOS rendering | **not tested** |
+| Variable font | **not shipped**: 551 of 648 glyphs compatible |
+| Windows rendering | Chrome 157 on Windows 11 (below). **No editor or terminal was driven** |
+| macOS rendering | **not tested** |
 
-## Italics (new in 1.3.0)
+## Italics (since 1.3.0; the lowercase is written since 1.4.0)
 
 | Claim | Validated by (`test_italics.py`) | Result |
 | --- | --- | --- |
@@ -27,18 +31,38 @@ Linux (Python 3.13, FreeType, HarfBuzz, fontconfig, Chrome headless) on 26 Novem
 | Italic angle −9.5°, caret slope, ITALIC/BOLD bits, style linking, STAT axes | `test_italic_metadata` | pass |
 | Same line box, x-height, character set and features as the upright | `test_italic_metadata`, `test_same_characters_and_features_as_the_upright` | pass |
 | Letters are slanted; box drawing, blocks, arrows, shapes, Powerline are identical to the upright | `test_letters_are_slanted_and_joining_glyphs_are_not` | pass |
-| `a` single-storey, `y` hooked, `f` descending | `test_italic_letterforms` | pass |
+| The lowercase is written: exit strokes of `a d h i m n u` reach at least 35 units beyond their stem at the baseline, `f` reaches the descender line, `ss02` and `ss05` equal the defaults, `ą` follows `a` | `test_italic_letterforms` | pass |
+| Italic outlines are clean: the same number of contours in all five weights, no slivers, no micro-segments, integer coordinates | `test_italic_outlines_are_clean_and_consistent` | pass |
 | Ligatures and stylistic sets shape exactly as in the upright, all advances 600 | `test_ligatures_and_sets_shape_like_the_upright` (TTF, OTF) | pass |
 | One advance at 10–24 px hinted; fontconfig reports slant 100, spacing 100 | `test_hinted_advances_and_fontconfig` | pass |
 | OpenType Sanitizer | `test_opentype_sanitizer` | pass |
-| Ink stays close to the cell | `test_ink_stays_close_to_the_cell`: at most 52 units over the right edge (V, W in Bold Italic); ď ľ ť up to 79 | pass, with that stated tolerance |
+| Ink stays close to the cell | `test_ink_stays_close_to_the_cell`: at most 52 units over the right edge (V, W in Bold Italic); ď ľ ť up to 79; of the written lowercase, the top of `f` leans furthest: 24 units in Bold Italic | pass, with that stated tolerance |
 
-Viewed by eye in `assets/specimen-dark.png`, `assets/weights.png` and the test sheets at 10–18 px.
-**Not done for the italics:** the small-size look-alike bitmap tests of the upright were not repeated, and
-no italic was looked at on Windows or macOS.
+Viewed by eye in `specimens/specimen.png` (with the italic of 1.3.0 next to it), `specimens/code-samples.png`,
+`assets/weights.png`, the test sheets at 10–18 px, in all five weights at display size, and in Chrome on
+Windows 11 at 12–20 px. 84 glyphs of each italic differ from 1.3.0: the fifteen redrawn letters and what is
+built from them. **Not done for the italics:** the small-size look-alike bitmap tests of the upright were
+not repeated, and no italic was looked at on macOS.
 
-Known weakness: only `a`, `f`, `y` are redrawn; other curves are sheared, so their weight varies by up to
-about 3 % of the stem around the bowl.
+Known weakness: the slant is a shear, so the weight of curves varies by up to about 3 % of the stem around a
+bowl.
+
+## Chrome on Windows 11 (new in 1.4.0)
+
+`tests/rendering-tests/index.html`, with the ten TTFs embedded, was opened in headless Chrome 157 on Windows 11.
+Chrome rasterises with DirectWrite and shapes with HarfBuzz there, as VS Code and Cursor do. Read from the
+page's own report:
+
+| Measurement | Expected | Result |
+| --- | --- | --- |
+| The ten faces | loaded | all ten loaded |
+| 20 × `i`, 20 × `M`, 20 × Bold `M`, 10 × italic `fa`, at 16 px | 192 px | 192 px each |
+| Operators with and without ligatures | equal widths | 220.8125 px both |
+| Line height at 20 px | 24.6 px | 25 px |
+
+The screenshot was read by eye at 11–24 px (upright) and 12–20 px (italic, all five weights at 20 px). This is
+evidence for the browser text stack on one machine. It is not evidence for an installed font, for font menus or
+for an editor's own settings.
 
 ## Claimed features and their validation
 
@@ -50,16 +74,18 @@ about 3 % of the stem around the bowl.
 | No clipping | all glyphs inside the line box; tallest ĥ 936 < 980, lowest cedilla −196 > −250 (`test_glyphs_stay_inside_their_cells`) | pass |
 | Basic Latin, Latin-1, Latin Extended-A, box drawing, blocks complete | `test_unicode_coverage` | pass |
 | Five weights, correct style linking | `test_names_and_style_linking`, `test_weights_are_ordered`, fontconfig weights 50/80/100/180/200 | pass |
-| Look-alikes stay distinct | outline test (29 pairs, among them `D O`, `y g`, `y v`, `b h`) and hinted bitmaps at 12–16 px, all weights (18 pairs: `0O 1l 1I lI l| 5S 8B ., :; `' 2Z {( }) 1| I| '" yv yg`) | pass |
+| Look-alikes stay distinct | outline test (33 pairs, among them `0 Ø`, `D O`, `y g`, `y v`, `b h`) and hinted bitmaps at 12–16 px, all weights (18 pairs: `0O 1l 1I lI l| 5S 8B ., :; `' 2Z {( }) 1| I| '" yv yg`) | pass |
 | `rn` / `cl` do not fuse | `test_adjacent_letters_do_not_fuse` at 12, 13, 14 px, all weights | pass |
 | Operators and brackets share one axis | `test_operators_and_brackets_are_centred_on_the_axis` (± 2 units; asterisk ± 20) | pass |
 | Punctuation is no longer undersized | `test_punctuation_is_not_undersized`, measurements below | pass |
-| 27 ligatures substitute, keep the grid, and are optional | HarfBuzz shaping with `calt` on and off for every ligature, TTF and OTF; long runs; 400 random operator strings per font; ink stays inside the cells at 14/16/20 px | pass |
-| Ligatures work in a browser | headless Chromium: width of ligated text = width of plain text | pass |
-| `ss01`–`ss07` | HarfBuzz shaping, outline checks that the default `q` and `m` differ from `q.ss06` and `m.ss07`, feature names in the name table; nothing is on by default | pass |
+| 28 ligatures substitute, keep the grid, and are optional | HarfBuzz shaping with `calt` on and off for every ligature, TTF and OTF; long runs; 400 random operator strings per font; ink stays inside the cells at 14/16/20 px | pass |
+| The operators named in the 1.4.0 brief | `test_everyday_operators_have_their_ligature`: all twenty have their ligature; the nullsafe `?->` is `?` and the arrow; `**=`, `??=` and `/*=*/` keep the longer ligature and a plain `=` | pass |
+| Ligatures work in a browser | width of ligated text = width of plain text: read from the test page in Chrome on Windows 11; headless Chromium test (*Linux, 1.3.0*) | pass |
+| `<=` and `>=` are compact | `test_comparison_ligatures_are_not_stretched`: ink within ±0.62 of the advance, height more than 0.6 of the width, mirror images, centred on the operator axis | pass |
+| `zero`, `ss02`–`ss07` | HarfBuzz shaping, outline checks that the default `q` and `m` differ from `q.ss06` and `m.ss07` and that the dotted, slashed and plain zero share one ring, feature names in the name table; nothing is on by default; `ss01` changes nothing | pass |
 | Box drawing and Powerline separators join | overshoot test on outlines, seam test on hinted bitmaps (box drawing) | pass |
 | WOFF2 equals the TTF | `test_webfont_matches_the_ttf` | pass |
-| Fonts install and resolve by family name | fontconfig scan + Chromium using the installed family (Linux) | pass |
+| Fonts install and resolve by family name | fontconfig scan + Chromium using the installed family (*Linux, 1.3.0*; skipped on Windows) | pass for 1.3.0, not repeated |
 | Sources match binaries, no outline debris | `test_ufo_sources_match_fonts`, `test_sources_have_no_outline_debris` | pass |
 | `rename-family.py` works | a copy renamed to "Vector Mono", rebuilt, all tests passed | pass (manual run) |
 
@@ -127,8 +153,8 @@ From `tests/visual-regression/density.md`.
 | | 10 px | 11 px | 12 px | 13 px | 14 px | 16 px | 18 px |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1.000 Regular | 12.3 | 10.5 | 12.1 | 10.8 | 12.4 | 11.1 | 11.1 |
-| **1.2.0 Regular** | 13.5 | 11.5 | 13.2 | 11.7 | 13.6 | 12.1 | 12.2 |
-| 1.2.0 Medium | 15.2 | 13.1 | 15.0 | 13.2 | 15.4 | 13.8 | 13.8 |
+| **1.4.0 Regular** | 13.4 | 11.5 | 13.1 | 11.6 | 13.5 | 12.0 | 12.1 |
+| 1.4.0 Medium | 15.1 | 13.0 | 14.9 | 13.1 | 15.3 | 13.7 | 13.7 |
 | JetBrains Mono | 13.2 | 12.4 | 13.6 | 12.9 | 13.9 | 12.7 | 13.0 |
 | Fira Code | 12.0 | 11.3 | 12.4 | 11.7 | 12.6 | 11.5 | 11.8 |
 | Iosevka | 15.2 | 12.7 | 15.1 | 15.2 | 14.7 | 14.8 | 14.4 |
@@ -154,15 +180,15 @@ parentheses, wider braces, slightly darker text; no glyph became less distinct. 
 
 ## Not validated
 
-- **Windows:** installation, DirectWrite and GDI ClearType rendering, VS Code, Windows Terminal,
-  PowerShell console, JetBrains IDEs.
+- **Windows:** installation, GDI ClearType rendering, VS Code, Cursor, Windows Terminal, PowerShell console,
+  JetBrains IDEs. DirectWrite rendering was seen only through Chrome.
 - **macOS:** installation, Core Text rendering.
-- **Editors:** no editor was run. The Chromium tests exercise the same text stack VS Code uses on Linux,
-  which is not evidence for Windows.
+- **Editors:** no editor was run. Chrome on Windows shares its text stack with VS Code and Cursor; that is
+  evidence for the rendering, not for an editor.
+- **fontconfig and the installed-font Chromium test:** last run on Linux for 1.3.0; skipped on Windows.
 - **Powerline separators at small sizes:** outline overlap is tested; hinted seams were only tested for
   box drawing.
 - **GitHub Actions workflows:** parsed as YAML, never executed.
 - **Nerd Fonts patching:** not run (no FontForge), so no Nerd Font build exists.
-- **VS Code, Windows Terminal, PowerShell:** not run. Windows was the stated priority of the upgrade brief and
-  remains the largest gap.
+- **VS Code, Cursor, Windows Terminal, PowerShell:** not run. Real applications remain the largest gap.
 - **Trademark and repository-name clearance:** see `docs/BRANDING.md`.

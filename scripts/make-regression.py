@@ -105,7 +105,7 @@ def main():
              "| Font | " + " | ".join("%d px" % s for s in SIZES) + " |", "| --- | " + " | ".join("---:" for _ in SIZES) + " |"]
     for label, path in fonts:
         lines.append("| %s | %s |" % (label, " | ".join("%.1f" % (100 * density(path, s)) for s in SIZES)))
-    with open(os.path.join(OUT, "density.md"), "w", encoding="utf-8") as fh:
+    with open(os.path.join(OUT, "density.md"), "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join(lines) + "\n")
     print("\n".join(lines[5:]))
 

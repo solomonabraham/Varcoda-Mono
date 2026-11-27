@@ -21,6 +21,8 @@ import numpy as np  # noqa: E402
 from fontTools.ttLib import TTFont  # noqa: E402
 from PIL import Image  # noqa: E402
 
+from fontsrc.glyphs_liga import LIGATURES  # noqa: E402
+from fontsrc.params import italic_style  # noqa: E402
 from fontsrc.render import FontRenderer, to_image  # noqa: E402
 
 # palette -------------------------------------------------------------------
@@ -45,8 +47,11 @@ W = 1600
 MARGIN = 72
 
 
+BEFORE = os.path.join(ROOT, "tests", "baseline", "v1.300", "VarcodaMono-Italic.ttf")    # the slanted italic of 1.300
+
+
 def font_path(style):
-    return os.path.join(ROOT, "fonts", "VarcodaMono-%s.ttf" % style)
+    return style if os.path.sep in style else os.path.join(ROOT, "fonts", "VarcodaMono-%s.ttf" % style)
 
 
 _renderers = {}
@@ -79,6 +84,7 @@ class Page:
         base = self.y + (lh - (r.ascent + r.descent)) // 2 + r.ascent
         self.text(x, base, s, style, px, color, features, colors, hinting)
         self.y += lh
+        return r
 
     def gap(self, h):
         self.y += h
@@ -122,7 +128,7 @@ def colourise(code: str, lexer_name: str):
 
     def colour(tok):
         table = [
-            (T.Comment, C_COMMENT), (T.Keyword.Type, C_TYPE), (T.Keyword.Constant, C_NUMBER), (T.Keyword, C_KEYWORD),
+            (T.Comment, C_COMMENT), (T.Literal.String.Doc, C_COMMENT), (T.Keyword.Type, C_TYPE), (T.Keyword.Constant, C_NUMBER), (T.Keyword, C_KEYWORD),
             (T.Literal.String.Interpol, C_OP), (T.Literal.String, C_STRING), (T.Literal.Number, C_NUMBER),
             (T.Name.Function, C_FUNC), (T.Name.Class, C_TYPE), (T.Name.Builtin, C_FUNC), (T.Name.Decorator, C_FUNC),
             (T.Name.Tag, C_TAG), (T.Name.Attribute, C_ATTR), (T.Name.Variable, C_VAR), (T.Name.Entity, C_NUMBER),
@@ -199,9 +205,9 @@ if __name__ == "__main__":
   "name": "varcoda-mono",
   "version": "1.0.0",
   "private": false,
-  "weights": [300, 400, 500, 700],
+  "weights": [300, 400, 500, 600, 700],
   "metrics": { "unitsPerEm": 1000, "advance": 600, "xHeight": 540 },
-  "features": { "calt": true, "ss01": false, "ss02": null }
+  "features": { "calt": true, "zero": false, "ss02": null }
 }"""),
     ("HTML", "html", """<!doctype html>
 <html lang="en">
@@ -225,11 +231,12 @@ if __name__ == "__main__":
 
 :root { --accent: #5fd0c4; --radius: 6px; }
 
-pre > code {
+pre > code, .token.comment:not([hidden]) {
   font: 400 14px/1.5 "Varcoda Mono", monospace;
-  font-feature-settings: "calt" 0, "ss01" 1;
+  font-feature-settings: "calt" 0, "zero" 1;
   color: rgb(214 218 227 / 92%);
-  tab-size: 4;
+  border-left: 2px solid var(--accent);
+  border-radius: calc(var(--radius) * 2);
 }"""),
     ("TypeScript", "typescript", """type Result<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -244,16 +251,36 @@ export function parse<T>(raw: string, guard: (v: unknown) => v is T): Result<T> 
 const ids = items?.map((item) => item.id ?? fallback) ?? [];
 """),
     ("Drupal (PHP)", "php", """<?php
+
+declare(strict_types=1);
+
+namespace Drupal\\mymodule\\Hook;
+
+use Drupal\\Core\\Hook\\Attribute\\Hook;
+use Drupal\\node\\NodeInterface;
+use Psr\\Log\\LoggerInterface;
+
 /**
- * Implements hook_form_alter().
+ * Adds a reading time to article teasers.
  */
-function mymodule_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
-  if ($form_id !== 'node_article_edit_form' || !isset($form['field_tags'])) {
-    return;
+final class NodeHooks {
+
+  public function __construct(
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly ?LoggerInterface $logger = NULL,
+  ) {}
+
+  #[Hook('node_view')]
+  public function view(array &$build, NodeInterface $node, string $view_mode): void {
+    $wpm = $this->configFactory->get('mymodule.settings')->get('wpm') ?? 220;
+    $words = str_word_count($node->get('body')?->value ?? '');
+    $build['reading_time'] = [
+      '#markup' => $this->t('@min min read', ['@min' => intdiv($words, $wpm) ?: 1]),
+      '#weight' => -10,
+    ];
+    $this->logger?->debug('Viewed @id', ['@id' => $node->id()]);
   }
-  $form['field_tags']['widget']['#description'] = t('Up to @max tags.', ['@max' => 5]);
-  $form['#validate'][] = 'mymodule_validate_tags';
-  $config = \\Drupal::config('mymodule.settings')->get('limits') ?? [];
+
 }
 """),
     ("YAML", "yaml", """services:
@@ -309,22 +336,30 @@ def code_block(page: Page, title, lexer, code, px=27, style="Regular", features=
     for i, (text, cols) in enumerate(lines, 1):
         base = page.y + (lh - (r.ascent + r.descent)) // 2 + r.ascent
         page.text(MARGIN, base, str(i).rjust(gutter), style, px, (72, 80, 98))
-        page.text(MARGIN + (gutter + 2) * r.cell, base, text, style, px, FG, features, cols)
+        # comments and keywords go in the italic, as an editor theme sets them; both passes keep every
+        # character in its own cell, so the two styles share one grid
+        slanted = [c in (C_COMMENT, C_KEYWORD) for c in cols]
+        for flag, st in ((False, style), (True, italic_style(style))):
+            run = "".join(ch if sl == flag else " " for ch, sl in zip(text, slanted))
+            if run.strip():
+                page.text(MARGIN + (gutter + 2) * r.cell, base, run, st, px, FG, features, cols)
         page.y += lh
     page.gap(22)
 
 
 def build_code_samples(path):
-    page = Page(height=7600)
+    page = Page(height=12000)
     page.gap(64)
     page.line("Varcoda Mono", "Bold", 76, FG, lead=1.2)
-    page.line("Code samples · Regular 400 · ligatures off (the default)", "Regular", 26, MUTED)
+    page.line("Code samples · Regular, comments and keywords in Italic · ligatures off (the default)", "Regular", 26, MUTED)
     for title, lexer, code in SAMPLES:
         code_block(page, title, lexer, code)
     # the same code with the optional features enabled
     js = SAMPLES[1][2].split("\n")
     snippet = "\n".join(js[4:10])
     code_block(page, "JavaScript", "javascript", snippet, features={"calt": True},
+               note="with ligatures enabled (calt)")
+    code_block(page, "Drupal (PHP)", "php", "<?php\n" + "\n".join(SAMPLES[7][2].split("\n")[20:30]), features={"calt": True},
                note="with ligatures enabled (calt)")
     code_block(page, "PHP", "php", SAMPLES[0][2], style="Bold", note="Bold 700")
     page.gap(30)
@@ -341,16 +376,19 @@ def family_facts():
 
 def build_specimen(path):
     glyphs, chars, version = family_facts()
-    page = Page(height=8200)
+    page = Page(height=11000)
     page.gap(70)
     page.line("Varcoda Mono", "Bold", 132, FG, lead=1.12)
     page.gap(6)
     page.line("A geometric, technical typeface for code.", "Regular", 36, MUTED)
-    page.line("Light · Regular · Medium · SemiBold · Bold — %d glyphs, one 600-unit cell." % glyphs, "Regular", 26, MUTED)
+    page.line("Five weights from Light to Bold, each with a written italic · %d glyphs · one 600-unit cell" % glyphs,
+              "Regular", 26, MUTED)
 
-    page.label("Four weights")
+    page.label("Five weights, each with its italic")
     for style, wc in (("Light", 300), ("Regular", 400), ("Medium", 500), ("SemiBold", 600), ("Bold", 700)):
-        page.line("%-8s%d  fn main() -> Result<(), Error> {}" % (style, wc), style, 40, FG, lead=1.5)
+        r = page.line("%-9s%d  fn main() -> Result<(), Error> {}" % (style, wc), style, 32, FG, lead=1.5)
+        page.y -= round(32 * 1.5)
+        page.line("// quietly, after all", italic_style(style), 32, MUTED, x=MARGIN + 50 * r.cell, lead=1.5)
 
     page.label("Uppercase")
     page.line("ABCDEFGHIJKLM", "Regular", 86, FG, lead=1.22, hinting=False)
@@ -360,6 +398,19 @@ def build_specimen(path):
     page.line("nopqrstuvwxyz", "Regular", 86, FG, lead=1.22, hinting=False)
     page.label("Numbers")
     page.line("0123456789", "Regular", 86, FG, lead=1.22, hinting=False)
+
+    page.label("Regular and Italic")
+    for st in ("Regular", "Italic"):
+        page.line("abcdefghijklmnopqrstuvwxyz", st, 56, FG, lead=1.3, hinting=False)
+    page.gap(12)
+    page.line("The italic is written, not slanted: stems leave the baseline to the right, arches", "Regular", 26, MUTED)
+    page.line("branch out of their stem, bowls run back up into it, and f descends. Capitals,", "Regular", 26, MUTED)
+    page.line("figures and signs are sloped by 9.5°; box drawing and arrows stay upright.", "Regular", 26, MUTED)
+    page.gap(12)
+    for st in ("Regular", "Italic"):
+        page.line("handful of quick fixes: adjust, and unify buffering", st, 44, FG, lead=1.45)
+    for st in ("Regular", "Italic"):
+        page.line("ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 {}[]()<>?!&@", st, 36, MUTED, lead=1.45)
 
     page.label("Programming punctuation")
     for s in ("{} [] () <> != !== == === => -> && || ??", "++ -- += -= *= /* */ // # @ $ % ^ & * _ ~ ` | \\",
@@ -375,7 +426,7 @@ def build_specimen(path):
         page.text(x, base, gstr, "Regular", 104, FG, hinting=False)
         x += (len(gstr)) * r.cell + 46
     page.y += 160
-    page.line("slashed zero · hooked l, flagged 1, slab I · open-tail g · flat-top 5", "Regular", 26, MUTED)
+    page.line("dotted zero · hooked l, flagged 1, slab I · open-tail g · flat-top 5", "Regular", 26, MUTED)
     page.line("` ' \"   . , : ;   - _ ~   ( [ { < | > } ] )   rn m  cl d", "Regular", 44, FG, lead=1.5)
 
     page.label("Regular versus Bold")
@@ -386,9 +437,9 @@ def build_specimen(path):
     page.label("Optional ligatures — every glyph keeps its cell")
     px = 44
     r = R("Regular", px)
-    pairs = ["!=", "!==", "==", "===", "=>", "->", "<-", "<=", ">=", "<=>", "&&", "||", "??", "++", "--", "::", "//",
-             "/*", "*/", "|>"]
-    cols = 5
+    rev = {v: chr(k) for k, v in TTFont(font_path("Regular")).getBestCmap().items()}
+    pairs = ["".join(rev[g] for g in seq) for _, seq, _ in LIGATURES]            # all of them, straight from the feature code
+    cols = 6
     colw = (W - 2 * MARGIN) // cols
     lh = round(px * 1.55)
     for i, pr in enumerate(pairs):
@@ -401,10 +452,29 @@ def build_specimen(path):
     page.gap(10)
     page.line("if (a !== b && c >= d) return x ?? y;   // off", "Regular", 40, FG, {"calt": False}, lead=1.5)
     page.line("if (a !== b && c >= d) return x ?? y;   // calt on", "Regular", 40, FG, {"calt": True}, lead=1.5)
+    page.line("$name = $node?->getOwner()?->label() ?? 'n/a'; $n *= 2;", "Regular", 40, FG, {"calt": True}, lead=1.5)
 
-    page.label("Stylistic sets")
+    page.label("Alternates")
     page.line("0 a á   default", "Regular", 44, FG, lead=1.45)
-    page.line("0 a á   ss01 dotted zero · ss02 single-storey a", "Regular", 44, FG, {"calt": False, "ss01": True, "ss02": True}, lead=1.45)
+    page.line("0 a á   zero slashed zero · ss02 single-storey a", "Regular", 44, FG, {"calt": False, "zero": True, "ss02": True}, lead=1.45)
+
+    page.label("Before and after — the italic of 1.300 (grey) and of %s" % version.replace("Version ", ""))
+    if os.path.isfile(BEFORE):
+        r = R("Italic", 76, False)
+        for row in ("adfhi", "kmnpq", "ruy"):
+            base = page.y + 104
+            for i, ch in enumerate(row):
+                x = MARGIN + i * 6 * r.cell
+                page.text(x, base, ch, BEFORE, 76, MUTED, hinting=False)
+                page.text(x + 2 * r.cell, base, ch, "Italic", 76, FG, hinting=False)
+            page.y += 150
+        for st, col in ((BEFORE, MUTED), ("Italic", FG)):
+            page.line("// a handful of quick fixes: adjust, then unify buffering", st, 40, col, lead=1.5)
+        for st, col in ((BEFORE, MUTED), ("Italic", FG)):
+            page.line("// a handful of quick fixes: adjust the minimum, unify buffering (14 px, hinted)", st, 14, col, lead=1.7)
+        page.gap(8)
+        page.line("n *= 2;  new ligature, drawn like += and -=", "Regular", 40, FG, {"calt": True}, lead=1.5)
+        page.line("The upright styles are unchanged, point for point.", "Regular", 26, MUTED)
 
     page.label("Small sizes — actual pixels, hinted (FreeType)")
     text = "for (let i = 0; i < items.length; i++) { total += items[i].price * 1.07; }  // 0O 1lI| {}[]()"
@@ -413,6 +483,9 @@ def build_specimen(path):
     page.gap(10)
     for px in (12, 14, 16):
         page.line("%dpx  %s" % (px, text), "Bold", px, FG, lead=1.7)
+    for px in (12, 13, 14, 16):
+        page.line("%dpx  // %s" % (px, "walk the tree and adjust every heading, quietly; then unify buffering upstream (0O 1lI|)"),
+                  "Italic", px, FG, lead=1.7)
     page.gap(18)
     page.line("13px Regular, magnified 4×", "Regular", 20, MUTED)
     page.gap(8)

@@ -37,7 +37,7 @@
     <key>openTypeHheaLineGap</key>
     <integer>0</integer>
     <key>openTypeNameDescription</key>
-    <string>Varcoda Mono is a monospaced typeface for programming: geometric, technical and built for long coding sessions. Slashed zero, clearly separated 1 l I, optional cell-preserving ligatures.</string>
+    <string>Varcoda Mono is a monospaced typeface for programming: geometric, technical and built for long coding sessions. Dotted zero, clearly separated 1 l I, written italics, optional cell-preserving ligatures.</string>
     <key>openTypeNameDesigner</key>
     <string>The Varcoda Mono Project Authors</string>
     <key>openTypeNameLicense</key>
@@ -51,7 +51,7 @@
     <key>openTypeNamePreferredSubfamilyName</key>
     <string>Light</string>
     <key>openTypeNameVersion</key>
-    <string>Version 1.200</string>
+    <string>Version 1.400</string>
     <key>openTypeOS2Panose</key>
     <array>
       <integer>2</integer>
@@ -144,7 +144,7 @@
     <key>versionMajor</key>
     <integer>1</integer>
     <key>versionMinor</key>
-    <integer>200</integer>
+    <integer>400</integer>
     <key>xHeight</key>
     <integer>540</integer>
   </dict>

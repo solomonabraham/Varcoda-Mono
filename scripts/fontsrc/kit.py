@@ -44,6 +44,20 @@ def g(spec, uni=None):
     return deco
 
 
+def ital(form):
+    """In the italic masters draw this glyph with ``form`` instead; the roman
+    drawing stays reachable as ``<function>.roman``."""
+
+    def deco(fn):
+        def draw(m):
+            return form(m) if m.italic else fn(m)
+
+        draw.roman, draw.__doc__ = fn, fn.__doc__
+        return draw
+
+    return deco
+
+
 class Composite:
     """A glyph made purely of references to other glyphs."""
 
@@ -191,9 +205,10 @@ def ess(m, L, R, H, sw, hw, cut=0.215, upper_inset=(0.012, 0.018), lower_out=(0.
     return s
 
 
-def kay(m, L, sw, top, x_arm, x_leg, ka, kb, yj=0.36, t=0.30) -> Shape:
-    """Arm and leg of k / K: the arm leaves the stem's right edge at yj*top,
-    the leg leaves the arm at fraction t of its length."""
+def kay_arm(m, L, sw, top, x_arm, ka, kb, yj=0.36, t=0.30):
+    """Arm of k / K: leaves the stem's right edge at yj*top.  -> (shape, the
+    point at fraction t of its length where the leg leaves it, the half-plane
+    beyond its upper edge)"""
     pj = (L + sw, top * yj)
     h = ka
     for _ in range(8):
@@ -203,10 +218,15 @@ def kay(m, L, sw, top, x_arm, x_leg, ka, kb, yj=0.36, t=0.30) -> Shape:
     c0 = (pj[0] - slope * 0.3 * top, pj[1] - 0.3 * top)
     arm = diag(c0, c1, ka, kb) & rect(L + sw / 2, -BIG, BIG, BIG)
     j = (pj[0] + (c1[0] - pj[0]) * t, pj[1] + (c1[1] - pj[1]) * t)
+    return arm, j, halfplane((c0[0] - h, c0[1]), (c1[0] - h, c1[1]), +1)
+
+
+def kay(m, L, sw, top, x_arm, x_leg, ka, kb, yj=0.36, t=0.30) -> Shape:
+    """Arm and leg of k / K; the leg runs straight to the baseline."""
+    arm, j, above = kay_arm(m, L, sw, top, x_arm, ka, kb, yj, t)
     hl = ka
     for _ in range(8):
         hl = diag_hw((x_leg - hl) - j[0], -j[1], ka, kb)
     up = 0.1 * top
     leg = diag((j[0] - (x_leg - hl - j[0]) * (up / j[1]), j[1] + up), (x_leg - hl, 0), ka, kb)
-    leg = leg - halfplane((c0[0] - h, c0[1]), (c1[0] - h, c1[1]), +1)
-    return arm | leg
+    return arm | (leg - above)

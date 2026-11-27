@@ -39,7 +39,7 @@ are this project's own: every glyph is drawn by its own program. What was carrie
 | Ascender / cap height | 1.08 | 1.05 | 1.07 |
 
 It deliberately stops short of Saira's squareness, and it does not follow Saira where a coding font needs
-something else: the zero is slashed, `i` and `l` carry serifs and a tail, punctuation is far larger, and the
+something else: the zero has a dot, `i` and `l` carry serifs and a tail, punctuation is far larger, and the
 `y` stays diagonal by default (see below).
 
 ### Details that are Varcoda's own

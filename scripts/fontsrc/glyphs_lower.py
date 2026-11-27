@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from .geom import BIG, diag, diag_edge, diag_hw, halfplane, rect, round_path, slash, slash_in, stroke
-from .kit import arch, bowl, dot, ess, g, kay, opath, ring, srad, vstem, blade, cut_below
+from . import glyphs_italic as it
+from .kit import arch, bowl, dot, ess, g, ital, kay, opath, ring, srad, vstem, blade, cut_below
 
 
 def _lc(m):
@@ -10,6 +11,7 @@ def _lc(m):
 
 
 @g("a")
+@ital(it.a_)
 def a_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     hw, b = m.hw3, m.hw3 / 2
@@ -26,6 +28,7 @@ def a_(m):
 
 
 @g("b")
+@ital(it.b_)
 def b_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     return blade(m, _b_plain(m), L, sw, m.asc)
@@ -44,6 +47,7 @@ def c_(m):
 
 
 @g("d")
+@ital(it.d_)
 def d_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     return blade(m, _b_plain(m).flip_x(m.xc), m.W - L - sw, sw, m.asc)
@@ -61,6 +65,7 @@ def e_(m):
 
 
 @g("f")
+@ital(it.f_)
 def f_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     xs = xc - 0.06 * m.W
@@ -70,6 +75,7 @@ def f_(m):
 
 
 @g("g")
+@ital(it.g_)
 def g_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     bw = bowl(m, m.W - R, m.W - (L - m.rnd), 0, m.xh, sw, hw).flip_x(xc)
@@ -79,12 +85,14 @@ def g_(m):
 
 
 @g("h")
+@ital(it.h_)
 def h_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     return blade(m, vstem(L, 0, m.asc, sw) | arch(m, L, R, m.xh, 0, sw, hw), L, sw, m.asc)
 
 
 @g("i")
+@ital(it.i_)
 def i_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     xs = xc + 0.012 * m.W - a
@@ -101,6 +109,7 @@ def j_(m):
 
 
 @g("k")
+@ital(it.k_)
 def k_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     return blade(m, vstem(L, 0, m.asc, sw) | kay(m, L, sw, m.xh, R + 0.012 * m.W, R + 0.022 * m.W, a * 0.98, b), L, sw, m.asc)
@@ -115,6 +124,7 @@ def l_(m):
     return s | rect(L + 0.03 * m.W, m.asc - hw, xsc, m.asc)
 
 
+@ital(lambda m: it.m_(m, full=True))
 def m_full_(m):
     """m with all three legs on the baseline (m.ss07)"""
     sw, hw, a, b, L, R, xc = _lc(m)
@@ -131,6 +141,7 @@ def m_full_(m):
 
 
 @g("m")
+@ital(it.m_)
 def m_(m):
     """the middle leg stops short of the baseline: more air in the most
     crowded letter of a fixed-width alphabet"""
@@ -141,6 +152,7 @@ def m_(m):
 
 
 @g("q")
+@ital(it.q_)
 def q_(m):
     """a short tail turns right at the foot, so that q is not the mirror
     image of p"""
@@ -152,6 +164,7 @@ def q_(m):
 
 
 @g("n")
+@ital(it.n_)
 def n_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     return vstem(L, 0, m.xh, sw) | arch(m, L, R, m.xh, 0, sw, hw)
@@ -164,6 +177,7 @@ def o_(m):
 
 
 @g("p")
+@ital(it.p_)
 def p_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     return blade(m, _p_plain(m), L, sw, m.desc, up=False)
@@ -174,6 +188,7 @@ def _p_plain(m):
     return vstem(L, m.desc, m.xh, sw) | bowl(m, L, R + m.rnd, 0, m.xh, sw, hw)
 
 
+@ital(lambda m: it.q_(m, plain=True))
 def q_plain_(m):
     """the mirror image of p, with the blade cut at the foot (q.ss06)"""
     sw, hw, a, b, L, R, xc = _lc(m)
@@ -181,6 +196,7 @@ def q_plain_(m):
 
 
 @g("r")
+@ital(it.r_)
 def r_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     xs = L + m.lerp(0.068, 0.052) * m.W
@@ -205,6 +221,7 @@ def t_(m):
 
 
 @g("u")
+@ital(it.u_)
 def u_(m):
     return n_(m).rot180(m.xc, m.xh / 2)
 
@@ -239,6 +256,7 @@ def x_(m):
     return s1 | s1.flip_x(xc)
 
 
+@ital(it.y_)
 def y_squared_(m):
     """u with a descending, hooked right stem (y.ss05).  It suits the squared
     bowls, but at 12-14 px it sits too close to g and u to be the default:
@@ -250,6 +268,7 @@ def y_squared_(m):
 
 
 @g("y")
+@ital(it.y_)
 def y_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     xo = L - 0.03 * m.W

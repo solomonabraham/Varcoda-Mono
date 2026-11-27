@@ -1,6 +1,6 @@
 # Varcoda Mono — design and engineering specification
 
-Version 1.300 · ten styles (five weights, each with an italic) · 647 glyphs · 579 characters · SIL Open Font License 1.1
+Version 1.400 · ten styles (five weights, each with an italic) · 648 glyphs · 579 characters · SIL Open Font License 1.1
 
 This document records what Varcoda Mono is, how it is constructed and why the
 main decisions were taken. Every number below is defined in
@@ -103,7 +103,7 @@ sources and that every glyph has the same number of contours in all weights.
 
 | Group | How they differ |
 | --- | --- |
-| 0 O o | zero is narrower and carries a slash that runs from side to side of the counter; the slash is as heavy as a stem in Light so that it survives at 12 px. `ss01` offers a dotted zero. |
+| 0 O o Ø | zero is narrower and carries a dot: an upright pill as wide as a stem in the middle of the counter. A slash separates 0 from O just as well but makes it a look-alike of Ø, so the slashed zero (side to side of the counter, as heavy as a stem in Light) is the `zero` feature. |
 | 1 l I \| | 1: flag and foot bar · l: head serif and a curved tail to the right · I: full slabs top and bottom · bar: plain, taller, descending |
 | 5 S | 5 has a flat top bar and a sharp upper-left corner |
 | 8 B | 8 has a clear waist (its upper ring is visibly narrower than the lower one); B has a straight stem with square corners |
@@ -132,7 +132,7 @@ sources and that every glyph has the same number of contours in all weights.
 | Tag | Purpose |
 | --- | --- |
 | `calt` | programming ligatures (optional, see below) |
-| `ss01` | dotted zero |
+| `zero` | slashed zero (the default zero is dotted; until 1.300 the dotted zero was `ss01`, and that number is not reused) |
 | `ss02` | single-storey a (also for à á â ã ä å ā ă ą) |
 | `ss03` | plain zero without slash or dot (added in 1.200) |
 | `ss04` | l with a flat foot instead of the curved tail (added in 1.200; plain `l` only) |
@@ -146,7 +146,7 @@ the grid.
 ### Ligatures
 
 `!=` `!==` `==` `===` `=>` `->` `<-` `<->` `<=` `>=` `<=>` `&&` `||` `??`
-`++` `--` `::` `//` `/*` `*/` `|>` `<|` and, since 1.200, `:=` `**` `?.` `+=` `-=`
+`++` `--` `::` `//` `/*` `*/` `|>` `<|`, since 1.200 `:=` `**` `?.` `+=` `-=`, since 1.400 `*=`
 
 - **Optional.** They live in `calt`, the feature that the ligature switches
   of editors and terminals control. With `calt` off every operator is the
@@ -158,6 +158,10 @@ the grid.
   change (tested with 400 random operator strings per style).
 - **Conservative.** Longer runs are left alone: `====`, `---`, `///`, `:::`,
   `>>=`, `<<=`, `-->`, `==>` and similar sequences stay plain.
+- **Compact comparisons.** `<=` and `>=` are 720 units wide and centred on the
+  border between their two cells, with white space on both sides. Until 1.300
+  they filled both cells (980 units); the chevron then opened by only 17° and
+  stopped reading as `<`. It now opens by 33° (the plain `<` by 54°).
 
 Decision: `calt` rather than `dlig`. `dlig` would be off everywhere by
 default, but the "Enable ligatures" switch of JetBrains IDEs and
@@ -234,7 +238,7 @@ compares the files byte for byte.
 | Advance width | 600 / 1000 | the common coding-font proportion; integer cell at 10, 15, 20 px |
 | x-height | 540 (75 % of cap) | large enough for 12–14 px, still clearly smaller than capitals |
 | Arch joins | flush, eased inner corner | crisp on the pixel grid, no notch to clog, gives the family its look |
-| Zero | slashed by default, dotted as `ss01` | requested; slash weight tuned for small sizes |
+| Zero | dotted by default, slashed as `zero`, plain as `ss03` | a slashed zero is read as Ø by Danish and Norwegian readers (reader feedback) |
 | g | single-storey, flat open tail | simplest robust form at small sizes, distinct from q and 9 |
 | a | double-storey by default, single-storey as `ss02` | keeps a apart from o at small sizes |
 | `#` | upright | renders sharper than a slanted one at 12–16 px |
@@ -242,13 +246,14 @@ compares the files byte for byte.
 | Ligatures | `calt`, cell-preserving | works with the ligature switches of the target editors |
 | Line metrics | 980 / −250, gap 0, typo metrics on | same line height on all platforms |
 | Vendor ID | `NONE` | no registered vendor tag is claimed |
+| Italic | a written lowercase; capitals, figures and signs sloped | comments and keywords must differ from code at a glance and still sit on the same grid |
 | Kerning | none | would break monospaced alignment |
 
 ## 11. Known limitations
 
-See the "Known limitations" section of the README, which is kept current: derived italics, no variable font
-(97 of 647 glyphs are not yet interpolation-compatible), no Nerd Font build, automatic hinting only,
-precomposed accents only, Latin only, and no testing on Windows or macOS so far.
+See the "Known limitations" section of the README, which is kept current: an italic sloped by a shear, no
+variable font (97 of 648 glyphs are not yet interpolation-compatible), no Nerd Font build, automatic hinting
+only, precomposed accents only, Latin only, and no editor or terminal driven on Windows or macOS so far.
 
 ## 12. The Saira direction
 
@@ -259,24 +264,41 @@ is in `docs/BRANDING.md`. Nothing was copied; Saira was measured (`scripts/compa
 Details that are Varcoda's own: the blade cut on extender ends, flat shoulders, softened square dots, the
 tailed `q` (not the mirror image of `p`), the short middle leg of `m`, the hooked `l`, a `D` squarer than `O`.
 
-## 13. Italic (since 1.300)
+## 13. Italic (since 1.300, written since 1.400)
 
-The italic is produced by the same program as the upright (`scripts/fontsrc/italic.py`):
+The italic is produced by the same program as the upright. The lowercase is drawn in its own, written
+construction (`scripts/fontsrc/glyphs_italic.py`); everything alphabetic is then slanted (`italic.py`).
 
 | | |
 | --- | --- |
 | Slant | 9.5° clockwise, pivoting on the middle of the x-height so lowercase stays centred in the cell |
-| Own letterforms | `a` single-storey, `y` hooked and squared (the upright `ss05` form), `f` descending with a blade cut |
+| Exit stroke | a stem that reaches the baseline leaves it to the right: `a d h i k m n u`. It reaches 90 units beyond the stem (51 in `m`) and stands flat on the baseline. The roman `l` and `t` already end this way |
+| Branch | an arch grows out of its stem at 46 % of the x-height and has 74 % of the full weight there: `h m n r`, the bowls of `b p`. The roman meets the stem with a flat shoulder instead |
+| Return | the same curve turned by 180°: a bowl runs back up into its stem: `a d g q u y` |
+| Pen-cut tops | stems that start at the x-height (`m n p r u y`) begin with the blade cut of the ascenders |
+| `f` | descends to the descender line and ends in a hook to the left that answers the one at the top |
+| Room | letters with an exit stroke are 27 units narrower on the right, so the stroke fills the gap to the next letter instead of crowding it |
+| Kept from the roman | `c e j l o s t v w x z` (no stem standing on the baseline), all capitals, figures and signs, sloped |
 | Stays upright | box drawing, block elements, arrows, geometric shapes, check marks, the radical, Powerline |
+| Follows the base letter | accented letters, `ı ŋ þ ª µ` and the alternates are built from the italic forms; `æ œ ß ĳ ĸ ſ` keep their roman construction |
 | Metrics | identical line box, x-height and advance to the upright; `post.italicAngle` −9.5, caret slope set |
 | Linking | Regular / Italic / Bold / Bold Italic form one group; Light, Medium and SemiBold each pair with their italic; a STAT table describes both axes |
 
-Why this form: a geometric family such as Saira pairs its roman with a restrained, slanted italic rather
-than a cursive one, and code comments need to stay as legible as code. Three changed letters and the slant
-are enough to tell a comment from code at a glance without making it harder to read.
+Why this form. Until 1.300 the italic was the roman, slanted, with three substituted letters; it read as an
+oblique. The brief for 1.400 asked for an italic with a hand in it that still reads at 12–16 px. The three
+gestures above are the smallest set that changes the texture of a line (they touch fifteen of the twenty-six
+letters, among them most of the frequent ones) while keeping what makes the family: orthogonal terminals,
+superelliptic corners, the blade cut. Each gesture already exists in the roman, which is why the two styles
+sit together in one line of code.
 
-Limits: letters other than `a f y` are slanted, not redrawn, so curve weight is not optically corrected
-(under 3 % of the stem); wide capitals lean up to 52 units over the right cell edge.
+Considered and not drawn: a looped `k`, a script `s`, round `v` and `w`. At 12–14 px the loop of `k` fills in,
+and a round `v` comes too close to `u`; both would trade legibility in code for expression.
+
+Punctuation, brackets and operators are sloped, not redrawn. They keep their size, their axis and their cell,
+so a comment that quotes code shows the same signs as the code.
+
+Limits: the slant is a shear, so curve weight is not optically corrected (under 3 % of the stem); wide
+capitals lean up to 52 units over the right cell edge, the top of `f` up to 24.
 
 ## 14. Texture healing: evaluated, not implemented
 
@@ -290,7 +312,7 @@ Texture healing lets a narrow letter give room to a wide neighbour by swapping i
    separately can cut such glyphs. For a font whose first promise is "nothing leaves the cell", that is the
    wrong trade.
 3. **Cost and fragility.** It needs two extra drawings of every affected letter in ten styles and a
-   context state machine in `calt` that must not interfere with the 27 ligatures already there.
+   context state machine in `calt` that must not interfere with the 28 ligatures already there.
 
 If it is revisited, it should follow the variable-font work, be a separate opt-in feature, and be judged
 on rendered text in terminals as well as editors.

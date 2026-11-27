@@ -118,9 +118,9 @@ def main():
               "FreeType at 12-16 px, fontconfig, UFO sources, outline hygiene, reproducible build.",
               "",
               "`tests/rendering-tests/test_rendering.py` - hinted rasterisation at 12-16 px (grid, baseline, x-height,",
-              "look-alikes, letters that must not fuse), ligature cell containment, box-drawing seams, and two headless Chromium runs: the four fonts",
+              "look-alikes, letters that must not fuse), ligature cell containment, box-drawing seams, and two headless Chromium runs: the ten styles",
               "loaded as web fonts, and installed into a scratch font directory and used by family name through",
-              "fontconfig (both skipped when no Chrome/Chromium is installed).", ""]
+              "fontconfig (skipped without Chrome/Chromium or fontconfig, and on Windows, where chrome.exe returns no DOM).", ""]
 
     worst = code
     for kind, files in (("TTF", [os.path.join("fonts", "VarcodaMono-%s.ttf" % s) for s in STYLES]),
@@ -158,10 +158,10 @@ def main():
         lines += ["ufolint is not installed - skipped.", ""]
 
     lines += ["## Not covered by this report", "",
-              "The checks ran on Linux only. Installing the fonts on Windows, and rendering in VS Code, Windows Terminal,",
-              "PowerShell and JetBrains IDEs on Windows (DirectWrite / GDI ClearType) were **not** executed here.",
+              "No application was driven. Installing the fonts, and rendering in VS Code, Windows Terminal, PowerShell and",
+              "JetBrains IDEs (DirectWrite / GDI ClearType) or on macOS, were **not** executed by this script.",
               "`tests/rendering-tests/index.html` is a self-contained page for checking a real machine by eye.", ""]
-    with open(os.path.join(HERE, "REPORT.md"), "w", encoding="utf-8") as fh:
+    with open(os.path.join(HERE, "REPORT.md"), "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join(lines))
     print("\n".join(lines[:0]) + "wrote tests/font-validation/REPORT.md  (%s)" % summary)
     return worst
