@@ -48,7 +48,7 @@ def build() -> str:
     faces = []
     for style, weight in STYLES:
         for slope, name in (("normal", style), ("italic", "Italic" if style == "Regular" else style + "Italic")):
-            with open(os.path.join(ROOT, "fonts", "VarcodaMono-%s.ttf" % name), "rb") as fh:
+            with open(os.path.join(ROOT, "fonts", "ttf", "VarcodaMono-%s.ttf" % name), "rb") as fh:
                 b64 = base64.b64encode(fh.read()).decode("ascii")
             faces.append('@font-face{font-family:"Varcoda Mono Test";font-weight:%d;font-style:%s;'
                          'src:url(data:font/ttf;base64,%s) format("truetype");}' % (weight, slope, b64))

@@ -1,1 +1,5 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Installing, settings, ligatures, a font that does not show up
+    url: https://github.com/solomonabraham/Varcoda-Mono/blob/main/docs/INSTALLATION.md#troubleshooting
+    about: Most set-up questions are answered in the installation guide.

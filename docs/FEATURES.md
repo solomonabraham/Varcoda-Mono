@@ -1,13 +1,18 @@
 # OpenType features
 
+What the features of Varcoda Mono do, and why they are the way they are. How to switch them on in an editor or
+terminal is in [INSTALLATION.md](INSTALLATION.md#opentype-features-in-your-application).
+
 Everything here is in the compiled fonts and covered by tests (`TESTING.md`). Nothing is on by default
 except what the application itself enables (most editors and terminals enable `calt`).
+
+![All 29 ligatures off and on, and the stylistic sets](../assets/ligatures.png)
 
 ## Summary
 
 | Feature | What it does | Default |
 | --- | --- | --- |
-| `calt` | 28 programming ligatures | controlled by the application's "ligatures" switch |
+| `calt` | 29 programming ligatures | controlled by the application's "ligatures" switch |
 | `zero` | slashed zero (the default zero is dotted) | off |
 | `ss02` | single-storey `a` (and `à á â ã ä å ā ă ą`) | off |
 | `ss03` | plain zero | off |
@@ -21,7 +26,7 @@ There is no `liga`, `kern` or `cvNN` feature and no GPOS table. See "What is del
 ## Ligatures (`calt`)
 
 ```
-=== !== <=> <-> != == => -> <- <= >= && || ?? ++ -- :: // /* */ |> <| := ** ?. += -= *=
+=== !== <=> <-> != == => -> <- <= >= && || ?? ++ -- :: // /* */ |> <| := ** ?. += -= *= |=
 ```
 
 - **The text never changes.** Ligatures are drawn by substituting glyphs; copy, search and the file on disk
@@ -34,21 +39,12 @@ There is no `liga`, `kern` or `cvNN` feature and no GPOS table. See "What is del
   space on both sides. Stretched over both cells the chevron opened by only 17° and no longer read as `<`;
   now it opens by 33°.
 - **Longer runs are left alone:** `====`, `---`, `///`, `:::`, `>>=`, `-->`.
-- **Longer operators keep their first ligature:** `**=` is `**` and a plain `=`, `??=` is `??` and `=`, and the
+- **Shifts and ranges stay plain:** `<<` `>>` `<<=` `>>=` `..` `...` have no ligature, and `<=` `>=` never form
+  inside the shifts.
+- **Longer operators keep their first ligature:** `**=` is `**` and a plain `=`, `??=` is `??` and `=`, `||=` is `||` and `=`, and the
   nullsafe `?->` is `?` followed by the arrow.
 - **Why `calt` and not `liga`:** `calt` can look at context (needed to leave long runs alone), and it is the
   feature that editor and terminal ligature switches control. With `calt` off the font is complete.
-
-### Turning ligatures off or on
-
-| Application | Setting |
-| --- | --- |
-| VS Code | `"editor.fontLigatures": false` (or `true`) |
-| Windows Terminal | `"font": { "features": { "calt": 0 } }` |
-| JetBrains IDEs | Settings → Editor → Font → *Enable ligatures* |
-| kitty | `disable_ligatures always` |
-| WezTerm | `config.harfbuzz_features = { 'calt=0' }` |
-| CSS | `font-feature-settings: "calt" 0;` or `font-variant-ligatures: none;` |
 
 ## Slashed zero and stylistic sets
 
@@ -62,40 +58,7 @@ There is no `liga`, `kern` or `cvNN` feature and no GPOS table. See "What is del
 | `ss06` | tailed `q` | plain `q` | you prefer the conventional `q` |
 | `ss07` | short-leg `m` | full `m` | you prefer the conventional `m` |
 
-`assets/ligatures.png` shows every ligature and set, rendered from the fonts.
-
-### Activating sets
-
-```jsonc
-// VS Code: a CSS feature string replaces true/false
-"editor.fontLigatures": "'calt', 'zero', 'ss05'"
-"editor.fontLigatures": "'calt' off, 'ss03'"        // no ligatures, plain zero
-```
-
-```jsonc
-// Windows Terminal
-"font": { "face": "Varcoda Mono", "features": { "calt": 1, "zero": 1, "ss05": 1 } }
-```
-
-```conf
-# kitty (one line per style you use)
-font_features VarcodaMono-Regular +zero +ss05
-font_features VarcodaMono-Italic  +zero
-```
-
-```lua
--- WezTerm
-config.harfbuzz_features = { 'calt=1', 'zero=1', 'ss05=1' }
-```
-
-```css
-code { font-family: "Varcoda Mono", monospace; font-feature-settings: "calt" 1, "zero" 1; }
-```
-
-JetBrains IDEs and simple editors such as Notepad offer no switch for these features.
-
-`zero` and `ss03` both replace the zero; if both are on, `zero` wins. In CSS the slashed zero can also be
-requested with `font-variant-numeric: slashed-zero`.
+`zero` and `ss03` both replace the zero; if both are on, `zero` wins.
 
 `ss01` selected the dotted zero until 1.3.0. That zero is now the default, so the set is retired: a setting
 that still turns it on is ignored and shows the same zero as before. The number will not be reused.
@@ -117,6 +80,10 @@ roman: an application that wants an oblique can slant the upright itself.
 | `ss08` | no eighth alternate improved on a default in testing; an empty set would only clutter font menus |
 | `ss01` | it was the dotted zero, which is the default since 1.3.0; the number stays empty so that an old setting cannot select something else |
 | A double-storey `g` | the single-storey `g` matches the squared bowls; a double-storey `g` needs two counters in a 600-unit cell and closes up in the heavier weights |
-| Ligatures for `/=` `%=` | the slash leans away from the equals sign and the per cent sign fills its cell, so neither can be drawn closer the way `+=` `-=` `*=` are; the plain pairs are clear on the test sheet |
+| Ligatures for `/=` `%=` `&=` `^=` | measured: the two signs already stand as close as those of `+=` (108–179 units apart, `+=` 162), and the slash, the per cent sign and the ampersand leave no room to move. Only `\|=` was loose (340 units) and got its ligature in 1.5.0 |
+| Ligatures for `<<` `>>` `..` `...` | the chevrons are 159 units apart as they are; periods on the grid are what a range or an ellipsis is in monospaced text |
+| `salt` | it would turn all six alternates on together; the sets select each one |
+| `tnum` | every figure already has the one advance, so the feature would be empty |
+| `locl` | tried for Romanian (`Ş Ţ` to `Ș Ț`, which are in the font) and removed: `locl` is always on, and nothing in these fonts acts without being asked. Type the comma-below letters directly |
 | Kerning (`kern`, GPOS) | a monospaced font must not move glyphs |
 | Texture healing | evaluated and declined: `DESIGN.md` §14 |

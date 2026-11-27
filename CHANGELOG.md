@@ -1,10 +1,84 @@
 # Changelog
 
 All notable changes to this project are recorded here. The format follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Release tags use semantic versioning
-(`v1.2.0`); the version inside the font files is the OpenType form of the same number (`1.200`).
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Release tags are the bare semantic version
+(`1.2.0`); the version inside the font files is the OpenType form of the same number (`1.200`).
 
-## [1.4.0] - unreleased
+## [1.5.0] - unreleased
+
+A refinement after developer feedback. Every point of the brief was measured first;
+`docs/history/AUDIT-1.5.0.md` has the numbers, including those for what was left alone.
+
+### Changed
+
+- **`$`**: the S is drawn at 94 % of the cap height and the strokes reach 0.15 cap heights beyond it (−108 to
+  828 units; before −83 to 803 around a full-size S). `$` and `S` were the closest pair in the font: 14–16 % of
+  their ink apart, now 30–44 %.
+- **`G`**: the bar sits at 0.51 of the cap height (0.47) and starts left of the centre, and the upper arm is
+  shorter than that of `C`. `G` and `C`: 21–22 % apart before, 27–28 % now.
+- **`2`**: the side meets the diagonal at the waist of `3` and `8` (0.545 of the cap height, before 0.49). The
+  head is as tall as their upper bowls and the diagonal runs at 44° instead of 40°.
+- `Ĝ Ğ Ġ Ģ ² ₂ ½` follow. All other outlines are identical to 1.4.0 in all ten styles.
+
+### Added
+
+- Ligature **`|=`** (29 in total). Only the bar moves, as the colon does in `:=`: plain, the two signs stood 340
+  units apart, twice as far as in any other compound assignment. `||=` keeps `||` and a plain `=`.
+- **Nerd Font builds** as a separate download: `scripts/make-nerd-fonts.py` runs the official patcher
+  (Nerd Fonts 3.5.1) in Docker for all ten styles in two variants, checks every file against its source and
+  writes `releases/VarcodaMonoNerdFont-1.5.0.zip`. The fonts in `fonts/` are not touched. `docs/NERD-FONTS.md`
+- **Release archives people can use.** `VarcodaMono-1.5.0.zip` now holds `ttf/`, `otf/`, `webfonts/`, the licence and
+  a short `INSTALL.txt`, and nothing else; `VarcodaMono-1.5.0-web.zip` holds only the web fonts; `SHA256SUMS` lists
+  their checksums. The earlier releases on GitHub had no files attached.
+- `docs/INSTALLATION.md`: every system, eleven editors and terminals, OpenType features per application,
+  troubleshooting, and a table of what was verified on which machine.
+- `assets/code.png` and `assets/lookalikes.png` for the README.
+- The project address in the fonts: name IDs 11 and 12, and the copyright line.
+- `tests/test_project.py`: links and file names in the documentation resolve, its JSON and TOML examples parse and
+  spell the family name correctly, and the release archives hold what the README promises (605 tests in total).
+- `tests/visual-regression/compare-previous-dark.png` and `-light.png`: 1.4.0 against 1.5.0. Look-alikes and
+  operators at 10, 11, 12, 13, 14, 16, 18 and 20 px, PHP, JavaScript and Python at 12, 14 and 16 px, one line in
+  all ten styles. Written by `scripts/make-regression.py`; the 1.4.0 fonts it needs are in `tests/baseline/v1.400/`.
+- Tests: `$` `S`, `G` `C` and `G` `6` joined the look-alike pairs; `|=` and `||=`; the shifts, ranges and compound
+  assignments that must stay exactly as typed.
+- The audit of this release, `docs/history/AUDIT-1.5.0.md`.
+
+### Changed in the repository
+
+- **Layout.** The TrueType fonts moved from `fonts/` to `fonts/ttf/`, next to `fonts/otf/` and `fonts/webfonts/`.
+  The reference documents moved from the top level to `docs/` (`FEATURES`, `DESIGN`, `SPECIMEN`, `TESTING`,
+  `QUALITY_REPORT`, `ROADMAP`; `BUILD.md` is now `docs/BUILDING.md`, `docs/PUBLISHING.md` is `docs/RELEASING.md`).
+  The audits and release notes of all versions are in `docs/history/`.
+- The README is a landing page: download, install, features with pictures, specifications, questions.
+- The release workflow starts on the tags this project actually uses (`1.5.0`, not `v1.5.0`) and attaches both
+  archives and the checksums to a draft release.
+- The build workflow fails, instead of warning, when a committed font is not what the sources build.
+
+### Fixed
+
+- **Builds are byte-identical across machines again.** fontTools packs the GSUB table with HarfBuzz when
+  `uharfbuzz` happens to be installed, and that package was listed only for the tests. A build without it produced
+  the same fonts in a different byte layout, so every CI build since 1.2.0 warned that all committed fonts differed.
+  `uharfbuzz` is now a pinned build dependency. Verified: 1.4.0 built on Windows 11 without it equals the Ubuntu CI
+  artifact in all 30 files.
+- The banner: the family name and the last line ran to the right edge of the picture.
+- Documentation that still said the project was unpublished and its workflows had never run.
+- A JSON example for VS Code that was not valid as written.
+- `tests/font-validation/REPORT.md` no longer contains the path of the machine it was generated on.
+
+### Evaluated, not changed
+
+- **Weights.** Ink relative to Regular at 12–16 px: Light 0.74–0.77, Medium 1.13, SemiBold 1.28, Bold 1.42
+  (JetBrains Mono Bold 1.33, Fira Code Bold 1.72). The steps are even and Light is clearly apart.
+- **`a`** with a longer upper left: closer to `e` and `o` in every weight, under the limit of the tests in Light.
+- `B 8`, `0 O`, `l I 1`, `p q`, `m`, quotes, backtick, brackets, braces, the question mark, `@`, `<=`: measured
+  again, unchanged.
+- Ligatures for `%=` `&=` `^=` `/=` `<<` `>>` `<<=` `>>=` `..` `...`; the features `salt`, `tnum` and `locl`:
+  `docs/FEATURES.md`.
+- Condensed widths (the program can redraw every glyph on a narrower cell, but `m w M W @` close up), Cyrillic,
+  a variable font (552 of 649 glyphs are interpolation-compatible): not shipped.
+
+## [1.4.0] - 2026-11-27
 
 ### Added
 
@@ -48,7 +122,7 @@ All notable changes to this project are recorded here. The format follows
 - Variable font (551 of 648 glyphs are interpolation-compatible), Nerd Font builds, more arrows and
   mathematical operators: unchanged.
 
-## [1.3.0] - unreleased
+## [1.3.0] - 2026-11-26
 
 ### Added
 
@@ -136,3 +210,8 @@ First release under the name **Varcoda Mono**.
 Initial version, as "Vector Mono" (never published). Four weights (Light, Regular, Medium, Bold), 610
 glyphs, Basic Latin, Latin-1, Latin Extended-A, box drawing and block elements, 22 ligatures, `ss01`,
 `ss02`, TTF and OTF. The fonts are archived in `tests/baseline/v1.000/`.
+
+[1.5.0]: https://github.com/solomonabraham/Varcoda-Mono/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/solomonabraham/Varcoda-Mono/releases/tag/1.4.0
+[1.3.0]: https://github.com/solomonabraham/Varcoda-Mono/releases/tag/1.3.0
+[1.2.0]: https://github.com/solomonabraham/Varcoda-Mono/releases/tag/1.2.0

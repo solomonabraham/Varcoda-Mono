@@ -93,9 +93,12 @@ def G_(m):
     sw, hw, a, b, L, R, xc, H = _uc(m)
     x1 = R + m.rnd - 0.006 * m.W
     s = ring(m, L - m.rnd, -m.os, x1, H + m.os, sw, hw)
-    yb = H * 0.47
-    s = s - rect(xc, yb, BIG, H * 0.735)
-    return s | rect(xc + 0.012 * m.W, yb - b, x1, yb + b)
+    # the bar sits just above the middle and reaches past the centre, and the upper arm is
+    # shorter than that of C: what separates G from C at 12-14 px (until 1.400: bar at 0.47
+    # of the cap height, starting right of the centre, arm as long as that of C)
+    yb = H * 0.51
+    s = s - rect(xc, yb, BIG, H * 0.78)
+    return s | rect(xc - 0.06 * m.W, yb - b, x1, yb + b)
 
 
 @g("H")
@@ -308,7 +311,9 @@ def two_(m):
     xl, xr = L + 0.016 * m.W + a, R - 0.004 * m.W - a
     rx, ry = srad(m, R - L, H * 0.80, sw, hw)
     xbl = L - 0.004 * m.W
-    ix = (xr, H * 0.49)                       # where the side would meet the diagonal
+    # where the side would meet the diagonal: at the waist of 3 and 8, so the head is as tall as
+    # their upper bowls and the diagonal runs at 44 degrees (until 1.400: 0.49, a 40-degree diagonal)
+    ix = (xr, H * 0.545)
     h = a
     for _ in range(8):
         e = (xbl + h, hw)
@@ -317,7 +322,7 @@ def two_(m):
     dx, dy = e[0] - ix[0], e[1] - ix[1]
     dl = (dx * dx + dy * dy) ** 0.5
     d = (dx / dl, dy / dl)
-    rn = 0.17 * H
+    rn = 0.19 * H
     sk = Skel(xl, yt - ry * 0.85)
     sk.arc(xl + rx * 0.92, yt, "v", m.k)
     sk.line(xr - rx, yt)

@@ -6,6 +6,8 @@ ufo2ft==3.11.0
 skia-pathops==0.9.2
 ttfautohint-py==0.6.1      # TrueType hinting; without it the TTFs are built unhinted
 brotli==1.2.1              # WOFF2 web fonts; without it they are skipped
+uharfbuzz==0.57.0          # fontTools packs GSUB with it when it is installed; without it the fonts are
+                           # equivalent, but not byte-identical to the released files
 
 # Optional: PostScript hints for the OTF builds (otherwise they are unhinted)
 # afdko==5.0.1

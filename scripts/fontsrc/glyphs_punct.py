@@ -299,11 +299,16 @@ def numbersign_(m):
 
 @g("$")
 def dollar_(m):
+    """The S is drawn at 94 % of the cap height and the strokes reach 0.15 cap
+    heights beyond the cap height and the baseline.  With a full-size S and
+    short strokes (until 1.400) $ and S were the closest pair in the font:
+    14-16 % of their ink apart, now 30-44 %."""
     sw, hw, a, b, xc, H = _p(m)
-    s = ess(m, m.UL + 0.004 * m.W, m.UR - 0.004 * m.W, H, m.csw, m.chw3, cut=0.205)
+    f, ext = 0.94, 0.15 * H
+    y0, y1 = H * (1 - f) / 2, H * (1 + f) / 2          # bottom and top of the S
+    s = ess(m, m.UL + 0.004 * m.W, m.UR - 0.004 * m.W, H * f, m.csw, m.chw3, cut=0.205).move(0, y0)
     w = m.csw * 0.92
-    ext = 0.115 * H
-    return s | rect(xc - w / 2, H - m.chw3 / 2, xc + w / 2, H + ext) | rect(xc - w / 2, -ext, xc + w / 2, m.chw3 / 2)
+    return s | rect(xc - w / 2, y1 - m.chw3 / 2, xc + w / 2, H + ext) | rect(xc - w / 2, -ext, xc + w / 2, y0 + m.chw3 / 2)
 
 
 def small_ring(m, x0, y0, x1, y1, sw, hw):

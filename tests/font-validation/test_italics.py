@@ -23,7 +23,7 @@ W = params.WIDTH
 
 
 def path(style, kind="ttf"):
-    sub = {"ttf": (), "otf": ("otf",), "woff2": ("webfonts",)}[kind]
+    sub = {"ttf": ("ttf",), "otf": ("otf",), "woff2": ("webfonts",)}[kind]
     return os.path.join(ROOT, "fonts", *sub, "%s-%s.%s" % (build.PS_FAMILY, style, kind))
 
 

@@ -23,8 +23,10 @@ and steps to reproduce. You should get an acknowledgement within a week.
 
 ## Verifying a release
 
-Builds are reproducible. Check out the tag, install the pinned versions from `requirements.txt`, run
-`python scripts/build-fonts.py --root /tmp/check` and compare the files with the release. Two builds on
-the same machine are byte-identical (this is tested); identity across operating systems and CPU
-architectures has not been verified yet. All released fonts pass the OpenType Sanitizer as part of the
-test-suite.
+Every release lists the SHA-256 checksums of its archives in `SHA256SUMS`.
+
+Builds are reproducible. Check out the tag, install the pinned versions (`pip install -r requirements.txt
+afdko==5.0.1`), run `python scripts/build-fonts.py --root /tmp/check` and compare the files with the release. Two
+builds on one machine are byte-identical (this is tested), and a build on Windows 11 equals one on Ubuntu, both
+x86-64, file for file. Other operating systems and CPU architectures have not been compared. All released fonts
+pass the OpenType Sanitizer as part of the test-suite.

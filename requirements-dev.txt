@@ -3,7 +3,6 @@
 pillow>=10
 numpy
 freetype-py
-uharfbuzz
 pygments
 pytest
 opentype-sanitizer

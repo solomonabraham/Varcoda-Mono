@@ -420,6 +420,8 @@
     <string>bar.glif</string>
     <key>bar_bar.liga</key>
     <string>bar_bar.liga.glif</string>
+    <key>bar_equal.liga</key>
+    <string>bar_equal.liga.glif</string>
     <key>bar_greater.liga</key>
     <string>bar_greater.liga.glif</string>
     <key>block</key>

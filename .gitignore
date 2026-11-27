@@ -15,8 +15,8 @@ Thumbs.db
 refs/
 node_modules/
 
-# release archives are attached to GitHub releases, not committed
-releases/*.zip
+# release archives and their checksums are attached to GitHub releases, not committed
+releases/
 
 # rendered proofs written by the rendering tests
 tests/rendering-tests/proofs/

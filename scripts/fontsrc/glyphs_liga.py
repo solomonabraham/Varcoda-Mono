@@ -52,6 +52,8 @@ LIGATURES = [
     ("hyphen_equal.liga", ["hyphen", "equal"], ["less hyphen' equal"]),
     # added in 1.400.  It comes after ** and /*, so **= and /*= keep those and a plain =
     ("asterisk_equal.liga", ["asterisk", "equal"], []),
+    # added in 1.500.  It comes after ||, so ||= keeps that and a plain =
+    ("bar_equal.liga", ["bar", "equal"], []),
 ]
 
 
@@ -261,6 +263,13 @@ def lig_minus_equal_(m):
 @g("asterisk_equal.liga")
 def lig_times_equal_(m):
     return _pair(m, asterisk_(m), 0.065, equal_(m))
+
+
+@g("bar_equal.liga")
+def lig_or_equal_(m):
+    # only the bar moves, as the colon does in := .  Plain, the gap between | and = is 340
+    # units, twice that of any other compound assignment; here it is 262, about that of :=
+    return bar_(m).move(-m.W + 0.13 * m.W, 0) | equal_(m)
 
 
 # --------------------------------------------------------------------------

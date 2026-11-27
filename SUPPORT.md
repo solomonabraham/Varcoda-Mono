@@ -2,10 +2,10 @@
 
 **Before opening an issue**
 
-- Installation, editor and terminal settings: see the README.
+- Installation, editor and terminal settings, troubleshooting: [docs/INSTALLATION.md](docs/INSTALLATION.md).
 - "The ligatures don't show" / "I don't want ligatures": they are controlled by the application
   (`editor.fontLigatures` in VS Code, *Enable ligatures* in JetBrains IDEs, the `calt` feature in terminals).
-- "Bold looks wrong / is synthesised": install all five weights, then restart the application.
+- "Bold or italic looks wrong / is synthesised": install all ten files, then restart the application.
 - "The font does not appear in the list": restart the application; on Linux run `fc-cache -f` and check
   `fc-list "Varcoda Mono"`.
 - Icons in a prompt show as boxes: only the core Powerline symbols are built in; see `docs/NERD-FONTS.md`.

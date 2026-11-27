@@ -4,7 +4,7 @@
     python3 scripts/make-specimens.py
 
 Writes specimens/specimen.png and specimens/code-samples.png.  Everything is
-rendered with the TTF files in fonts/ (HarfBuzz shaping + FreeType
+rendered with the TTF files in fonts/ttf/ (HarfBuzz shaping + FreeType
 rasterising), never from the drawing code, so the images show what the
 released fonts really do.  Syntax colours come from Pygments.
 """
@@ -51,7 +51,7 @@ BEFORE = os.path.join(ROOT, "tests", "baseline", "v1.300", "VarcodaMono-Italic.t
 
 
 def font_path(style):
-    return style if os.path.sep in style else os.path.join(ROOT, "fonts", "VarcodaMono-%s.ttf" % style)
+    return style if os.path.sep in style else os.path.join(ROOT, "fonts", "ttf", "VarcodaMono-%s.ttf" % style)
 
 
 _renderers = {}

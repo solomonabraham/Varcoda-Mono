@@ -2,8 +2,8 @@
 
 Thank you for helping. This project is small; the most valuable contributions are, in this order:
 
-1. **Rendering reports from real machines**, especially Windows (VS Code, Windows Terminal, PowerShell,
-   JetBrains IDEs) and macOS. Nothing has been verified there yet.
+1. **Rendering reports from real machines**: macOS above all, where nothing has been looked at yet, and editors
+   and terminals on any system (VS Code, JetBrains IDEs, Windows Terminal, kitty, WezTerm).
 2. **Bug reports** about a specific glyph: wrong shape, collision, something that looks off at a given size.
 3. **Fixes** to the drawing code, with before/after images.
 4. **Glyph requests** with a concrete use case.
@@ -19,11 +19,12 @@ and attaching a screenshot of it is a quick way to give all of that at once.
 
 ## Changing the design
 
-The fonts are generated. Do not edit files in `fonts/`; edit the program that draws them.
+The fonts are generated. Do not edit files in `fonts/`; edit the program that draws them
+([docs/BUILDING.md](docs/BUILDING.md)).
 
 ```sh
-python -m venv .venv && . .venv/bin/activate
-pip install -r requirements-dev.txt
+python -m venv .venv && . .venv/bin/activate    # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt afdko==5.0.1
 python scripts/build-fonts.py -w Regular --no-otf   # fast loop: one weight, TTF only
 python scripts/build-fonts.py                       # everything
 python -m pytest tests
@@ -52,15 +53,17 @@ Rules that the tests enforce and reviews will ask for:
   `scripts/make-assets.py`.
 - Run `python -m pytest tests`. If fontbakery is installed, `python tests/font-validation/validate.py` too.
 - Commit the regenerated `sources/` and `fonts/` together with the script change, so the repository always
-  contains fonts that match its sources. Builds are reproducible, so reviewers can verify this.
+  contains fonts that match its sources. Builds are reproducible, and the *Build* check fails when they do not.
 - Add a line to `CHANGELOG.md` under the unreleased heading.
 
-## Releases (maintainers)
+## Documentation
 
-1. Update `VERSION_MINOR` and `RELEASE` in `scripts/fontsrc/build.py`, and `CHANGELOG.md`.
-2. `python scripts/build-fonts.py && python -m pytest tests && python tests/font-validation/validate.py`
-3. `python scripts/make-assets.py && python scripts/make-specimens.py && python scripts/make-release.py`
-4. Tag `vX.Y.Z`. The release workflow rebuilds, tests and attaches the ZIP.
+Corrections are welcome, above all to the settings in [docs/INSTALLATION.md](docs/INSTALLATION.md) for an editor
+or terminal you use. The tests check that links resolve and that JSON and TOML examples parse.
+
+## Releases
+
+For maintainers: [docs/RELEASING.md](docs/RELEASING.md).
 
 ## License of contributions
 
