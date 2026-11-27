@@ -4,7 +4,45 @@ All notable changes to this project are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Release tags are the bare semantic version
 (`1.2.0`); the version inside the font files is the OpenType form of the same number (`1.200`).
 
-## [1.5.0] - unreleased
+## [1.6.0] - 2026-11-27
+
+A weight and legibility refinement for long sessions at 12–16 px, on dark and light themes. Every point of the
+brief was measured first; `docs/history/AUDIT-1.6.0.md` has the numbers, the variants that were built and
+rejected (a taller x-height among them), and what is still weak.
+
+### Changed
+
+- **Regular is 7 % heavier:** stem 84 → 90 units, horizontal strokes 70 → 75. It rendered thin on dark themes at
+  13–15 px; hinted text at 12–16 px carries 6.6–8.1 % more ink. The counter of `n` loses 3 %.
+- **Medium and SemiBold** moved with it (stems 97 → 101 and 110 → 112) so that the steps up to the Bold stay even.
+  Light and Bold keep their pens. Bold is now 1.32 times as dark as Regular (1.42 before).
+- **Punctuation dots** of `. : ; ! ?` are 11 % larger (150 → 166 units in Regular), and the tails of `,` and `;`
+  are deeper, thicker and reach further left. Straight quotes are 7 % taller.
+- **`Q`**: the tail starts inside the counter and crosses the ring. `O` and `Q` were the closest pair in the font,
+  10 % of their ink apart; now 17–19 %.
+- **`3`** is more open on the left (shorter arms and middle bar): `3` and `8` 38 % → 45 % apart at 12–16 px.
+- **`r`** stands 13 units further right and its arm ends lower: the white on its right falls from 310 to 282 units
+  (`rl` 555 → 526). `f` and `j` moved towards the middle of their white; the tails of `l` and `t` are larger.
+- **The dot of `i` and `j`** is 5 % larger and sits 16 units higher, so that a row stays empty between dot and
+  stem at 11–16 px in every style. In 1.5.0 Bold lost that row at 11 px.
+- `*` is larger and heavier, `%` slightly heavier.
+- In Light and Bold only these eighteen glyphs and what is built from them differ from 1.5.0:
+  `! " % ' * , . 3 : ; ? Q f i j l r t`.
+
+### Added
+
+- **A test bench against the previous release**, written by `scripts/make-regression.py`:
+  `tests/visual-regression/compare-previous-dark.png` and `-light.png` now show the confusable matrix, PHP/Drupal,
+  TypeScript, Python and regular expressions at 12, 14 and 16 px, and `testbench.html` shows the same with both
+  versions embedded, for a real browser. The 1.5.0 fonts it needs are in `tests/baseline/v1.500/`.
+- Test: the dots of `i j ! : ;` stay clear of their stems at 11–16 px in all weights (635 tests in total).
+
+### Not changed
+
+- The grid: x-height 540, cap height 720, the advance, the operator axis, the line box. All bowls, the dotted zero,
+  brackets, ligatures and features.
+
+## [1.5.0] - 2026-11-27
 
 A refinement after developer feedback. Every point of the brief was measured first;
 `docs/history/AUDIT-1.5.0.md` has the numbers, including those for what was left alone.

@@ -4,16 +4,16 @@
   <unicode hex="007A"/>
   <outline>
     <contour>
-      <point x="179" y="90" type="line"/>
-      <point x="552" y="450" type="line"/>
+      <point x="181" y="91" type="line"/>
+      <point x="552" y="449" type="line"/>
       <point x="567" y="540" type="line"/>
-      <point x="126" y="540" type="line"/>
-      <point x="111" y="450" type="line"/>
-      <point x="413" y="450" type="line"/>
-      <point x="41" y="90" type="line"/>
-      <point x="26" y="0" type="line"/>
-      <point x="486" y="0" type="line"/>
-      <point x="501" y="90" type="line"/>
+      <point x="125" y="540" type="line"/>
+      <point x="110" y="449" type="line"/>
+      <point x="412" y="449" type="line"/>
+      <point x="40" y="91" type="line"/>
+      <point x="25" y="0" type="line"/>
+      <point x="487" y="0" type="line"/>
+      <point x="502" y="91" type="line"/>
     </contour>
   </outline>
 </glyph>

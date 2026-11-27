@@ -68,7 +68,7 @@ def e_(m):
 @ital(it.f_)
 def f_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
-    xs = xc - 0.06 * m.W
+    xs = xc - 0.045 * m.W
     xe = R + 0.014 * m.W
     hook = opath(m, [(xs, 0), (xs, m.asc - b), (xe, m.asc - b)], sw, hw, 0.29 * m.W, 0.27 * m.xh)
     return hook | rect(L - 0.004 * m.W, m.xh - hw, R - 0.012 * m.W, m.xh)
@@ -96,16 +96,18 @@ def h_(m):
 def i_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     xs = xc + 0.012 * m.W - a
-    s = vstem(xs, 0, m.xh, sw) | rect(L + 0.075 * m.W, m.xh - hw, xs + 2, m.xh) | rect(L + 0.02 * m.W, 0, R - 0.02 * m.W, hw)
-    return s | dot(m, xs + a, m.xh * 1.255)
+    s = vstem(xs, 0, m.xh, sw) | rect(L + 0.055 * m.W, m.xh - hw, xs + 2, m.xh) | rect(L + 0.02 * m.W, 0, R - 0.02 * m.W, hw)
+    # the dot of i and j sits high enough to leave an empty pixel row above the stem at 11-16 px in
+    # every weight (tests/rendering-tests: test_dots_stay_clear_of_their_stems)
+    return s | dot(m, xs + a, m.xh * 1.285)
 
 
 @g("j")
 def j_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
-    xsc = xc + 0.115 * m.W
+    xsc = xc + 0.10 * m.W
     hook = opath(m, [(xsc, m.xh), (xsc, m.desc + b), (L + 0.025 * m.W, m.desc + b)], sw, hw, 0.27 * m.W, 0.25 * m.xh)
-    return hook | rect(L + 0.11 * m.W, m.xh - hw, xsc, m.xh) | dot(m, xsc, m.xh * 1.255)
+    return hook | rect(L + 0.11 * m.W, m.xh - hw, xsc, m.xh) | dot(m, xsc, m.xh * 1.285)
 
 
 @g("k")
@@ -119,8 +121,8 @@ def k_(m):
 def l_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     xsc = xc - 0.04 * m.W
-    r = 0.25 * m.W
-    s = opath(m, [(xsc, m.asc), (xsc, b), (R + 0.006 * m.W, b)], sw, hw, r, r * 0.92)
+    r = 0.28 * m.W
+    s = opath(m, [(xsc, m.asc), (xsc, b), (R + 0.02 * m.W, b)], sw, hw, r, r * 0.92)
     return s | rect(L + 0.03 * m.W, m.asc - hw, xsc, m.asc)
 
 
@@ -199,10 +201,10 @@ def q_plain_(m):
 @ital(it.r_)
 def r_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
-    xs = L + m.lerp(0.068, 0.052) * m.W
+    xs = L + m.lerp(0.100, 0.076) * m.W
     xe = R + m.rnd + 0.008 * m.W
     s = vstem(xs, 0, m.xh, sw) | arch(m, xs, xe, m.xh, -0.1 * m.xh, sw, hw)
-    return s - rect(xs + sw + 1, -BIG, BIG, m.xh * 0.70)
+    return s - rect(xs + sw + 1, -BIG, BIG, m.xh * 0.655)
 
 
 @g("s")
@@ -215,8 +217,8 @@ def s_(m):
 def t_(m):
     sw, hw, a, b, L, R, xc = _lc(m)
     xsc = xc - 0.07 * m.W
-    r = 0.25 * m.W
-    s = opath(m, [(xsc, m.xh * 1.27), (xsc, b), (R + 0.006 * m.W, b)], sw, hw, r, r * 0.92)
+    r = 0.28 * m.W
+    s = opath(m, [(xsc, m.xh * 1.27), (xsc, b), (R + 0.02 * m.W, b)], sw, hw, r, r * 0.92)
     return blade(m, s, xsc - a, sw, m.xh * 1.27) | rect(L - 0.016 * m.W, m.xh - hw, R - 0.02 * m.W, m.xh)
 
 

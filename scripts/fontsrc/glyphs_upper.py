@@ -176,8 +176,13 @@ def P_(m):
 @g("Q")
 def Q_(m):
     sw, hw, a, b, L, R, xc, H = _uc(m)
-    tail = diag((xc + 0.02 * m.W, b), (R - 0.055 * m.W, -H * 0.20), a * 0.92, b)
-    return O_(m) | tail
+    # the tail starts inside the counter and crosses the ring: a tail that only hangs below it
+    # (until 1.500) left Q and O 10 % of their ink apart, the closest pair in the font
+    p0, xb, ye = (xc + 0.005 * m.W, H * 0.27), R + m.rnd + 0.03 * m.W, -H * 0.215
+    h = a
+    for _ in range(8):
+        h = diag_hw((xb - h) - p0[0], ye - p0[1], a, b)
+    return O_(m) | diag(p0, (xb - h, ye), a, b)
 
 
 @g("R")
@@ -344,15 +349,15 @@ def three_(m):
     ym = H * 0.535
     xr1, xr2 = R - 0.026 * m.W - a, R + 0.002 * m.W - a
     xl1, xl2 = L + 0.03 * m.W + a, L + 0.002 * m.W + a
-    xm = xc - 0.07 * m.W
+    xm = xc - 0.03 * m.W
     ru, rl = (yt - ym) / 2, (ym - yb) / 2
     rx1, rx2 = (xr1 - xl1) * 0.50, (xr2 - xl2) * 0.50
     top = opath(m, [(xl1, yt - ru * 0.9), (xl1, yt), (xr1, yt), (xr1, ym), (xm, ym)], sw, hw, rx1, ru * 0.98,
                 radii=[(rx1 * 0.9, ru * 0.85), None, None])
     bot = opath(m, [(xm, ym), (xr2, ym), (xr2, yb), (xl2, yb), (xl2, yb + rl * 0.9)], sw, hw, rx2, rl * 0.98,
                 radii=[None, None, (rx2 * 0.9, rl * 0.85)])
-    top = top - rect(-BIG, ym + b + 1, xc, H * 0.765)
-    bot = bot - rect(-BIG, H * 0.235, xc, ym - b - 1)
+    top = top - rect(-BIG, ym + b + 1, xc, H * 0.80)
+    bot = bot - rect(-BIG, H * 0.20, xc, ym - b - 1)
     return top | bot
 
 

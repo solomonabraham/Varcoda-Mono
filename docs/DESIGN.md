@@ -1,6 +1,6 @@
 # Varcoda Mono — design and engineering specification
 
-Version 1.500 · ten styles (five weights, each with an italic) · 649 glyphs · 579 characters · SIL Open Font License 1.1
+Version 1.600 · ten styles (five weights, each with an italic) · 649 glyphs · 579 characters · SIL Open Font License 1.1
 
 This document records what Varcoda Mono is, how it is constructed and why the
 main decisions were taken. Every number below is defined in
@@ -63,14 +63,14 @@ glyphs (see section 7).
 | | Light | Regular | Medium | SemiBold | Bold |
 | --- | --- | --- | --- | --- | --- |
 | usWeightClass | 300 | 400 | 500 | 600 | 700 |
-| Lowercase stem (vertical) | 60 | 84 | 97 | 110 | 124 |
-| Lowercase horizontal | 52 | 70 | 80 | 90 | 100 |
-| Capital / figure stem | 64 | 90 | 104 | 118 | 133 |
-| Capital / figure horizontal | 56 | 75 | 85 | 95 | 106 |
-| Left edge of n (side bearing) | 94 | 84 | 79 | 74 | 68 |
-| Left edge of H | 77 | 67 | 62 | 56 | 50 |
-| Left edge of figures | 90 | 83 | 78 | 74 | 70 |
-| Dot of i j / punctuation dot | 90 / 129 | 115 / 150 | 128 / 161 | 142 / 172 | 156 / 184 |
+| Lowercase stem (vertical) | 60 | 90 | 101 | 112 | 124 |
+| Lowercase horizontal | 52 | 75 | 83 | 91 | 100 |
+| Capital / figure stem | 64 | 96 | 108 | 120 | 133 |
+| Capital / figure horizontal | 56 | 79 | 88 | 97 | 106 |
+| Left edge of n (side bearing) | 94 | 82 | 77 | 73 | 68 |
+| Left edge of H | 77 | 65 | 60 | 55 | 50 |
+| Left edge of figures | 90 | 81 | 77 | 74 | 70 |
+| Dot of i j / punctuation dot | 90 / 141 | 121 / 166 | 132 / 175 | 144 / 184 | 156 / 194 |
 
 A master is defined by its stem alone; all other values are interpolated
 between two anchor pens (stems 54 and 124). Capitals and figures are about 7 % heavier
@@ -79,7 +79,10 @@ they get bolder (side bearings shrink) to keep the counters open.
 
 Version 1.200 re-drew the weight scale after measuring the family against other coding fonts
 (see `QUALITY_REPORT.md`): Regular went from a 78-unit to an 84-unit stem, Light from 54 to 60,
-and SemiBold was added.
+and SemiBold was added. Version 1.600 made the Regular 7 % heavier (84 to 90), because it rendered thin on dark
+themes at 13–15 px, and moved Medium (97 to 101) and SemiBold (110 to 112) so that the steps up to the Bold stay
+even. Light and Bold kept their pens. The punctuation dot grew by 11 % in the same release
+(`docs/history/AUDIT-1.6.0.md`).
 
 ## 3. Construction
 
@@ -108,8 +111,9 @@ sources and that every glyph has the same number of contours in all weights.
 | 5 S | 5 has a flat top bar and a sharp upper-left corner |
 | 8 B | 8 has a clear waist (its upper ring is visibly narrower than the lower one); B has a straight stem with square corners |
 | D O | D has square left corners, tighter right corners than O and no overshoot |
+| O Q | the tail of Q starts inside the counter and crosses the ring (since 1.600; before, it only hung below it) |
 | g q 9 | single-storey g with a flat open tail; q is a plain stem; 9 is a rotated 6 with a closed bowl |
-| . , : ; | comma and semicolon have a long, sturdy tail reaching about −170 units |
+| . , : ; | comma and semicolon have a long, sturdy tail reaching about −190 units (−170 until 1.500) |
 | \` ' " | the backtick is wide and clearly slanted; quotes are straight ticks |
 | - _ | hyphen sits on the operator axis and is as wide as the bars of + and =; the underscore leaves a 108-unit gap so that `__` stays countable |
 
@@ -236,7 +240,7 @@ compares the files byte for byte.
 | --- | --- | --- |
 | Source format | Parametric Python that writes UFO | one construction for all weights, repeatable builds, still editable in font editors |
 | Advance width | 600 / 1000 | the common coding-font proportion; integer cell at 10, 15, 20 px |
-| x-height | 540 (75 % of cap) | large enough for 12–14 px, still clearly smaller than capitals |
+| x-height | 540 (75 % of cap) | large enough for 12–14 px, still clearly smaller than capitals. 546 and 550 were built for 1.600: they gain a pixel row at 13 px and cost the capitals one at 14 px (`docs/history/AUDIT-1.6.0.md`) |
 | Arch joins | flush, eased inner corner | crisp on the pixel grid, no notch to clog, gives the family its look |
 | Zero | dotted by default, slashed as `zero`, plain as `ss03` | a slashed zero is read as Ø by Danish and Norwegian readers (reader feedback) |
 | g | single-storey, flat open tail | simplest robust form at small sizes, distinct from q and 9 |

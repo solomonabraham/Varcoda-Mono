@@ -468,7 +468,7 @@ def ij_(m):
     xj = R - 0.005 * m.W - sw2 / 2
     hook = opath(m, [(xj, m.xh), (xj, m.desc + b), (xc - 0.06 * m.W, m.desc + b)], sw2, hw, 0.18 * m.W, 0.22 * m.xh)
     d = m.dot * 0.96
-    return vstem(xi, 0, m.xh, sw2) | hook | dot(m, xi + sw2 / 2, m.xh * 1.255, d) | dot(m, xj, m.xh * 1.255, d)
+    return vstem(xi, 0, m.xh, sw2) | hook | dot(m, xi + sw2 / 2, m.xh * 1.285, d) | dot(m, xj, m.xh * 1.285, d)
 
 
 @g("dcaron", uni=0x10F)

@@ -146,6 +146,19 @@ def test_adjacent_letters_do_not_fuse(style, px):
             pair, px, style, np.round(cols[seam - 2:seam + 3], 2))
 
 
+@pytest.mark.parametrize("style", STYLES)
+@pytest.mark.parametrize("px", [11] + SIZES)
+def test_dots_stay_clear_of_their_stems(style, px):
+    """Between the dot of i j ! : ; and the rest of the glyph there is a row that stays (almost)
+    empty.  A larger dot at the old height closed that gap in Regular at 12 and 13 px, and i read
+    as 1; until 1.500 Bold lost it at 11 px."""
+    for ch in "ij!:;":
+        cov, r = ink(style, px, ch)
+        rows = cov.max(axis=1)
+        ys = np.where(rows > 0.02)[0]
+        assert rows[ys.min():ys.max() + 1].min() < 0.5, "the dot of %r touches its stem at %d px (%s)" % (ch, px, style)
+
+
 @pytest.mark.parametrize("style", ["Regular", "Bold"])
 def test_ligatures_draw_inside_their_cells(style):
     """with calt on, ink never spills into the neighbouring characters"""

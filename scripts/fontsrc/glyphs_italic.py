@@ -147,7 +147,7 @@ def dotless_i(m):
 
 
 def i_(m):
-    return dotless_i(m) | dot(m, m.xc - 0.02 * m.W, m.xh * 1.255)
+    return dotless_i(m) | dot(m, m.xc - 0.02 * m.W, m.xh * 1.285)
 
 
 def k_(m):
@@ -196,9 +196,9 @@ def q_(m, plain=False):
 
 def r_(m):
     sw, hw, a, b, L, xr = _f(m)
-    xs = L + m.lerp(0.068, 0.052) * m.W
+    xs = L + m.lerp(0.100, 0.076) * m.W
     arm = hump(m, xs + a, m.R + m.rnd + 0.008 * m.W - a, m.xh, m.xh * 0.4)
-    return blade(m, vstem(xs, 0, m.xh, sw) | (arm - rect(xs + sw + 1, -BIG, BIG, m.xh * 0.70)), xs, sw, m.xh)
+    return blade(m, vstem(xs, 0, m.xh, sw) | (arm - rect(xs + sw + 1, -BIG, BIG, m.xh * 0.655)), xs, sw, m.xh)
 
 
 def thorn_(m):

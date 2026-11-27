@@ -55,7 +55,7 @@ separate projects under their own licenses and are not distributed here. Method:
 | [The full specimen](../specimens/specimen.png) | alphabets, Regular and Italic side by side, every ligature off and on, the italic before and after 1.4.0, small sizes, box drawing |
 | [Code in twelve languages](../specimens/code-samples.png) | PHP, Drupal, JavaScript, TypeScript, Python, JSON, YAML, HTML, CSS, SQL, Bash, PowerShell |
 | [Before and after 1.000](../tests/visual-regression/before-after-dark.png) | the first version against the current one, at seven sizes |
-| [1.4.0 against 1.5.0](../tests/visual-regression/compare-previous-dark.png) | the previous release against this one: look-alikes, operators, three languages, all ten styles |
+| [1.5.0 against 1.6.0](../tests/visual-regression/compare-previous-dark.png) | the previous release against this one: the confusable matrix, operators, PHP/Drupal, TypeScript, Python and regular expressions, all ten styles. [`testbench.html`](../tests/visual-regression/testbench.html) shows the same in a browser |
 
 ## In your own environment
 

@@ -55,7 +55,7 @@
     <key>openTypeNamePreferredSubfamilyName</key>
     <string>SemiBold</string>
     <key>openTypeNameVersion</key>
-    <string>Version 1.500</string>
+    <string>Version 1.600</string>
     <key>openTypeOS2Panose</key>
     <array>
       <integer>2</integer>
@@ -74,9 +74,9 @@
       <integer>7</integer>
     </array>
     <key>openTypeOS2StrikeoutPosition</key>
-    <integer>315</integer>
+    <integer>316</integer>
     <key>openTypeOS2StrikeoutSize</key>
-    <integer>90</integer>
+    <integer>91</integer>
     <key>openTypeOS2Type</key>
     <array/>
     <key>openTypeOS2TypoAscender</key>
@@ -123,13 +123,13 @@
     </array>
     <key>postscriptStemSnapH</key>
     <array>
-      <integer>90</integer>
-      <integer>95</integer>
+      <integer>91</integer>
+      <integer>97</integer>
     </array>
     <key>postscriptStemSnapV</key>
     <array>
-      <integer>110</integer>
-      <integer>118</integer>
+      <integer>112</integer>
+      <integer>120</integer>
     </array>
     <key>postscriptUnderlinePosition</key>
     <integer>-90</integer>
@@ -148,7 +148,7 @@
     <key>versionMajor</key>
     <integer>1</integer>
     <key>versionMinor</key>
-    <integer>500</integer>
+    <integer>600</integer>
     <key>xHeight</key>
     <integer>540</integer>
   </dict>

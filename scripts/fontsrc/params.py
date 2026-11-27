@@ -42,9 +42,9 @@ LIGHT_STEM, BOLD_STEM = 54, 124
 
 #            name      usWeightClass  stem
 WEIGHTS = [("Light", 300, 60),
-           ("Regular", 400, 84),
-           ("Medium", 500, 97),
-           ("SemiBold", 600, 110),
+           ("Regular", 400, 90),
+           ("Medium", 500, 101),
+           ("SemiBold", 600, 112),
            ("Bold", 700, 124)]
 
 ITALIC_ANGLE = 9.5                     # degrees, clockwise
@@ -63,7 +63,7 @@ ITALICS = [(italic_style(w[0]),) + tuple(w) for w in WEIGHTS]
 class Master:
     """Every measurement a glyph function may use."""
 
-    def __init__(self, name="Regular", weight_class=400, stem=84, italic=False):
+    def __init__(self, name="Regular", weight_class=400, stem=90, italic=False):
         self.name = name
         self.italic = italic              # glyph functions draw their written form (glyphs_italic.py)
         self.weight_class = weight_class
@@ -104,7 +104,7 @@ class Master:
         self.br = lerp(0.56, 0.40)        # how far arches reach into a stem (× stem)
         self.ease = lerp(40, 34)          # visible width of the eased corner where an arch leaves a stem
         self.dot = lerp(84, 156)          # diameter of the squircle dot (i j)
-        self.pdot = lerp(124, 184)        # punctuation dot ( . : ; ! ? )
+        self.pdot = lerp(136, 194)        # punctuation dot ( . : ; ! ? )
         self.OL = lerp(88, 72)            # left end of operator bars ( + - = )
 
     # -- derived -----------------------------------------------------------

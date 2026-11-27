@@ -1,6 +1,6 @@
 # Roadmap
 
-**1.5.0** is the current version. Everything below it is a plan, not a promise, and none of it is available in the
+**1.6.0** is the version in the repository; it is not tagged yet, and the last release is 1.5.0. Everything below it is a plan, not a promise, and none of it is available in the
 current fonts. Version numbers may shift; the order reflects dependencies and expected value.
 
 | Version | Status | Scope |
@@ -9,10 +9,11 @@ current fonts. Version numbers may shift; the order reflects dependencies and ex
 | 1.2.0 | released 26 November 2026 | rename, squared Saira-inspired geometry and blade-cut extenders, measured legibility refinements, SemiBold, 5 ligatures, 2 stylistic sets, Powerline, WOFF2, repository scaffolding. Covers what was originally sketched as 1.1 (legibility) and 1.2 (ligatures and features) |
 | 1.3.0 | released 26 November 2026 | italics for all five weights (own `a`, `f`, `y`), STAT table, typography test sheet, feature / build / testing documentation |
 | 1.4.0 | released 27 November 2026 | a written italic lowercase in all five weights, the `*=` ligature, a specimen with comments and keywords in the italic, build and tests on Windows 11 |
-| **1.5.0** | **current** | `$`, `G` and `2` redrawn after measurement, the `\|=` ligature, a comparison sheet against the previous release, Nerd Font builds as a separate download; release archives with an install guide, the installation guide, a reorganised repository |
-| 1.5.x | planned | fixes from real-machine testing: VS Code, Cursor, Windows Terminal, PowerShell and JetBrains IDEs on Windows, macOS, HiDPI |
-| 1.6.0 | planned | interpolation-compatible outlines for all glyphs, then a variable font with a weight axis (300–700); optically corrected italic curves |
-| 1.7.0 | planned | the Nerd Font build in CI, more arrows and math operators, Greek for technical text; narrow drawings of `m w M W @` as the first step towards a SemiCondensed width (`docs/history/AUDIT-1.5.0.md` §6) |
+| 1.5.0 | tagged 27 November 2026 | `$`, `G` and `2` redrawn after measurement, the `\|=` ligature, a comparison sheet against the previous release, Nerd Font builds as a separate download; release archives with an install guide, the installation guide, a reorganised repository |
+| **1.6.0** | **in the repository, not tagged** | a Regular 7 % heavier for dark themes, with Medium and SemiBold re-spaced; larger punctuation dots and comma tails; `Q` and `3` redrawn; `r f j l t` re-centred; the dot of `i j` clear of its stem at 11–16 px; a test bench against the previous release (`docs/history/AUDIT-1.6.0.md`) |
+| 1.6.x | planned | fixes from real-machine testing: VS Code, Cursor, Windows Terminal, PowerShell and JetBrains IDEs on Windows, macOS, HiDPI |
+| 1.7.0 | planned | interpolation-compatible outlines for all glyphs, then a variable font with a weight axis (300–700); optically corrected italic curves |
+| 1.8.0 | planned | the Nerd Font build in CI, more arrows and math operators, Greek for technical text; narrow drawings of `m w M W @` as the first step towards a SemiCondensed width (`docs/history/AUDIT-1.5.0.md` §6) |
 | 2.0.0 | planned | hand-checked hinting at 11–14 px, combining marks, wider Latin; a stable glyph-name and feature contract |
 
 ## Why the open items are open
@@ -27,6 +28,7 @@ only be changed metadata.
 **A weight between Regular and Medium for dark themes.** Light text on a dark background usually looks
 thinner than the reverse. 1.2.0 answers this in two ways: Regular itself moved from a 78- to an 84-unit
 stem (about 433 on the old 400–500 scale), and Medium (500) and SemiBold (600) are there to choose from.
+1.6.0 moved the Regular again, to a 90-unit stem.
 A continuous choice needs the variable font. `tests/visual-regression/density.md` has the measured
 ink density per size.
 
@@ -54,7 +56,7 @@ build in CI and trying the files in real terminals. `docs/NERD-FONTS.md`.
 | WOFF2 | web use, documentation sites | medium | low | one more dependency (brotli) | **done** |
 | Narrower capitals | more even capital rhythm | low | low | `8`/`B`, `0`/`O` get closer | rejected |
 | Narrower cell / taller line | density, air | unclear | high | changes the design | rejected |
-| Variable font | one file, any weight | high | high | needs restructured outlines | later (1.6) |
+| Variable font | one file, any weight | high | high | needs restructured outlines | later (1.7) |
 | Italic | emphasis, comments | high | medium (derived) | curves not optically corrected | **done** in 1.3.0; written lowercase in 1.4.0 |
 | Texture healing | evens out m/w against i/l | unclear here: rhythm already measures level with the references | very high | glyphs must reach into neighbouring cells | not planned (see `DESIGN.md`) |
 | Nerd Font build | icons in prompts | medium | medium | large files, third-party glyphs | **done** in 1.5.0, as a separate download |

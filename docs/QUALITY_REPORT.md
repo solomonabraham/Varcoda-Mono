@@ -1,7 +1,7 @@
-# Quality report: Varcoda Mono 1.5.0
+# Quality report: Varcoda Mono 1.6.0
 
 What was checked, how, and with what result. Every feature the README claims has a row here. The checks for
-1.5.0 ran on Windows 11 (Python 3.13, FreeType, HarfBuzz, Chrome 157; no fontconfig) on 27 November 2026.
+1.6.0 ran on Windows 11 (Python 3.13, FreeType, HarfBuzz, Chrome 157; no fontconfig) on 27 November 2026.
 The tests that need fontconfig or a Chromium that returns its page are skipped there. They run in CI on Ubuntu,
 where the whole suite passed on every push up to 1.4.0 (586 of 586); rows marked *CI, 1.4.0* rest on that run and
 will be repeated for 1.5.0 when it is pushed.
@@ -11,16 +11,16 @@ will be repeated for 1.5.0 when it is pushed.
 
 | Area | Result |
 | --- | --- |
-| Project test-suite | 605 tests (`python -m pytest tests`). On Windows 11: **597 passed**, 0 failed, 8 skipped (they need fontconfig, or a Chrome that returns the page to the console). *CI, 1.4.0:* 586 of 586 passed on Ubuntu, none skipped |
+| Project test-suite | 635 tests (`python -m pytest tests`). On Windows 11: **627 passed**, 0 failed, 8 skipped (they need fontconfig, or a Chrome that returns the page to the console). *CI, 1.4.0:* 586 of 586 passed on Ubuntu, none skipped |
 | fontbakery universal, 10 TTF (upright and italic) | 0 FAIL · 30 WARN (3 checks, all reviewed) · 715 PASS |
 | fontbakery universal, 10 OTF | 0 FAIL · 10 WARN · 10 ERROR (one check that crashes inside fontbakery on CFF fonts) · 635 PASS |
 | OpenType Sanitizer | all 20 fonts pass (TTF and OTF of ten styles) |
 | ufolint | 10 of 10 UFO sources pass |
 | Reproducible build | **on one machine:** a second build of Regular, Bold, Italic and Bold Italic is byte-identical (TTF, OTF, WOFF2; a test), and a fresh build of 1.5.0 reproduced all 30 committed fonts, every UFO file and the stylesheet. **Across machines:** 1.4.0 built on Windows 11 equals the Ubuntu CI build in all 30 files when both have the same packages. The committed fonts of 1.2.0 to 1.4.0 did not: they were built with `uharfbuzz` installed and CI built without it, which packs the GSUB table differently (same content, different bytes; outlines and hinting identical). Since 1.5.0 `uharfbuzz` is a pinned build dependency and the *Build* workflow fails on any difference |
-| Names and metadata | read back from all 30 files: one family with correct style linking (Regular, Italic, Bold, Bold Italic linked; Light, Medium, SemiBold with typographic family names), weight classes 300 to 700, PostScript names, version 1.500, embedding allowed, licence and licence address. New in 1.5.0: the project address (name IDs 11 and 12, and in the copyright line). Adding it changed `name` and `head` (in the OTFs also the copyright string inside `CFF`) and **no outline**: compared glyph by glyph in all 30 files |
+| Names and metadata | read back from all 30 files: one family with correct style linking (Regular, Italic, Bold, Bold Italic linked; Light, Medium, SemiBold with typographic family names), weight classes 300 to 700, PostScript names, version 1.600, embedding allowed, licence and licence address. New in 1.5.0: the project address (name IDs 11 and 12, and in the copyright line). Adding it changed `name` and `head` (in the OTFs also the copyright string inside `CFF`) and **no outline**: compared glyph by glyph in all 30 files |
 | Installed on Windows 11 | the ten TTFs, for one user. DirectWrite lists one family, `Varcoda Mono`, with ten faces (five weights, upright and italic); the older GDI interface lists `Varcoda Mono` and, separately, Light, Medium and SemiBold, as the name table intends |
 | Web fonts | the web archive, unpacked and served as it ships, in Chrome 157 on Windows 11: all ten faces load through `varcoda-mono.css`; text with and without ligatures is equally wide (264 px); 20 × `i` and 20 × `M` are both 240 px at 20 px; `zero` switches the zero without changing its width |
-| Release archives | `VarcodaMono-1.5.0.zip` (33 files) and `VarcodaMono-1.5.0-web.zip` (12 files): contents, stylesheet references and determinism are tested (`tests/test_project.py`) |
+| Release archives | `VarcodaMono-1.6.0.zip` (33 files) and `VarcodaMono-1.6.0-web.zip` (12 files): contents, stylesheet references and determinism are tested (`tests/test_project.py`) |
 | Documentation | every link, heading anchor and file name resolves; every JSON, JSONC and TOML example parses and spells the family name correctly (`tests/test_project.py`). The VS Code setting names were looked up in VS Code 1.147 |
 | Italics | **shipped** for five weights, lowercase written since 1.4.0; 66 dedicated tests pass |
 | Outlines | ten glyphs differ from 1.4.0, the same ten in every style: `$ G 2` and what is built from them (`Ĝ Ğ Ġ Ģ ² ₂ ½`). One glyph added (`bar_equal.liga`). All others identical (compared glyph by glyph in Regular, Bold, Italic and Light Italic) |
@@ -28,6 +28,28 @@ will be repeated for 1.5.0 when it is pushed.
 | Variable font | **not shipped**: 552 of 649 glyphs compatible |
 | Windows rendering | Chrome 157 on Windows 11 (below). **No editor or terminal was driven** |
 | macOS rendering | **not tested** |
+
+## Measured for 1.6.0
+
+`docs/history/AUDIT-1.6.0.md` has the full tables, the variants that were built and rejected, and the weaknesses
+that remain. Regular unless a weight is named.
+
+| Claim | Measured | Result |
+| --- | --- | --- |
+| Regular is heavier | stem 84 → 90 units; ink of hinted text at 12–16 px +6.6 to +8.1 %, unhinted +6.3 to +7.4 % | measured |
+| The weights are still stepped | ink at 12–16 px relative to Regular: Light 0.69–0.73, Medium 1.11–1.13, SemiBold 1.21–1.23, Bold 1.32–1.33 | pass (`test_weights_are_ordered`) |
+| Punctuation is larger | period 150 → 166 units, comma 189 × 319 → 234 × 355; `. ,` and `: ;` differ by 2.8 px of ink at their worst size (2.4) | pass (`test_punctuation_is_not_undersized`, look-alike tests) |
+| `Q` cannot be taken for `O` | outline difference 15–17 % across the weights (1.5.0: 10 %), hinted 17–19 % | measured; the pair is not in the test |
+| `3` stands further from `8` | 39 % as outlines, 45 % hinted (35 and 38 %) | measured |
+| The dot of `i j ! : ;` never touches its stem | an empty row at 11–16 px in all five weights | pass (`test_dots_stay_clear_of_their_stems`) |
+| Narrow letters sit more evenly | variation of the pair gaps 31.9 → 31.3 % (JetBrains Mono 27.8 %); `rl` 555 → 526 units | measured |
+| Nothing left its cell, no debris | the existing tests | pass |
+| In a browser on Windows | `tests/visual-regression/testbench.html` in headless Chrome 157 (DirectWrite, greyscale): 1.5.0 and 1.6.0 side by side, read by eye at 12 and 14 px, dark and light | seen |
+
+**Repeated for 1.6.0:** the Nerd Font build (20 of 20 files pass the checks below, 10,873 code points added to
+each, patcher 3.5.1) and the release archives. **Not repeated:** the web archive in Chrome and the listing of the
+installed family. The rows about them below describe 1.5.0, and the fonts installed on the test machine are
+still 1.5.0.
 
 ## Measured for 1.5.0
 
@@ -190,7 +212,9 @@ From `tests/visual-regression/density.md`.
 | | 10 px | 11 px | 12 px | 13 px | 14 px | 16 px | 18 px |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1.000 Regular | 12.3 | 10.5 | 12.1 | 10.8 | 12.4 | 11.1 | 11.1 |
-| **1.5.0 Regular** | 13.4 | 11.5 | 13.1 | 11.6 | 13.5 | 12.0 | 12.1 |
+| 1.5.0 Regular | 13.4 | 11.5 | 13.1 | 11.6 | 13.5 | 12.0 | 12.1 |
+| **1.6.0 Regular** | 14.3 | 12.3 | 14.2 | 12.5 | 14.4 | 13.0 | 13.0 |
+| 1.6.0 Medium | 16.0 | 13.8 | 16.0 | 14.0 | 16.3 | 14.5 | 14.4 |
 | 1.5.0 Medium | 15.1 | 13.0 | 14.9 | 13.1 | 15.3 | 13.7 | 13.7 |
 | JetBrains Mono | 13.2 | 12.4 | 13.6 | 12.9 | 13.9 | 12.7 | 13.0 |
 | Fira Code | 12.0 | 11.3 | 12.4 | 11.7 | 12.6 | 11.5 | 11.8 |

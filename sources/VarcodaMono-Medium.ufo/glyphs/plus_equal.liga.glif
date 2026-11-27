@@ -3,30 +3,30 @@
   <advance width="600"/>
   <outline>
     <contour>
-      <point x="-39.0" y="279.0" type="line"/>
-      <point x="-39.0" y="361.0" type="line"/>
-      <point x="-215.0" y="361.0" type="line"/>
-      <point x="-215.0" y="542.0" type="line"/>
-      <point x="-307.0" y="542.0" type="line"/>
-      <point x="-307.0" y="361.0" type="line"/>
-      <point x="-483.0" y="361.0" type="line"/>
-      <point x="-483.0" y="279.0" type="line"/>
-      <point x="-307.0" y="279.0" type="line"/>
-      <point x="-307.0" y="98.0" type="line"/>
-      <point x="-215.0" y="98.0" type="line"/>
-      <point x="-215.0" y="279.0" type="line"/>
+      <point x="-38.0" y="278.0" type="line"/>
+      <point x="-38.0" y="362.0" type="line"/>
+      <point x="-213.0" y="362.0" type="line"/>
+      <point x="-213.0" y="543.0" type="line"/>
+      <point x="-309.0" y="543.0" type="line"/>
+      <point x="-309.0" y="362.0" type="line"/>
+      <point x="-484.0" y="362.0" type="line"/>
+      <point x="-484.0" y="278.0" type="line"/>
+      <point x="-309.0" y="278.0" type="line"/>
+      <point x="-309.0" y="97.0" type="line"/>
+      <point x="-213.0" y="97.0" type="line"/>
+      <point x="-213.0" y="278.0" type="line"/>
     </contour>
     <contour>
-      <point x="39.0" y="267.0" type="line"/>
-      <point x="39.0" y="186.0" type="line"/>
-      <point x="483.0" y="186.0" type="line"/>
-      <point x="483.0" y="267.0" type="line"/>
+      <point x="38.0" y="268.0" type="line"/>
+      <point x="38.0" y="184.0" type="line"/>
+      <point x="484.0" y="184.0" type="line"/>
+      <point x="484.0" y="268.0" type="line"/>
     </contour>
     <contour>
-      <point x="39.0" y="454.0" type="line"/>
-      <point x="39.0" y="373.0" type="line"/>
-      <point x="483.0" y="373.0" type="line"/>
-      <point x="483.0" y="454.0" type="line"/>
+      <point x="38.0" y="456.0" type="line"/>
+      <point x="38.0" y="372.0" type="line"/>
+      <point x="484.0" y="372.0" type="line"/>
+      <point x="484.0" y="456.0" type="line"/>
     </contour>
   </outline>
 </glyph>
